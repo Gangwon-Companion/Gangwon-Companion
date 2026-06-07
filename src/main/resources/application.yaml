@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: gangwon-companion
+  profiles:
+    active: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:gangwon}
+    username: ${POSTGRES_USER:gangwon_user}
+    password: ${POSTGRES_PASSWORD:your_password_here}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
