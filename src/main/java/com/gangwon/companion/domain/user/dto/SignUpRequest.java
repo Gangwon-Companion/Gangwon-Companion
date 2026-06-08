@@ -7,6 +7,7 @@ import lombok.Getter;
 public class SignUpRequest {
 
     @NotBlank
+    @Size(max = 20, message = "아이디는 최대 20자까지 입력 가능합니다.")
     @Pattern(regexp = "^[a-z0-9]+$", message = "아이디는 영문 소문자와 숫자만 사용할 수 있습니다.")
     private String username;
 
