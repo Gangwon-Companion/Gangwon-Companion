@@ -1,4 +1,22 @@
 services:
+  spring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring_gangwon
+    restart: always
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - networks_gangwon
+
   postgres:
     image: postgres:16-alpine
     container_name: postgres_gangwon

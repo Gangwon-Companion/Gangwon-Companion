@@ -1,17 +1,14 @@
-# Build stage
-FROM gradle:8.5-jdk17 AS build
-WORKDIR /app
-COPY build.gradle settings.gradle gradlew ./
-COPY gradle ./gradle
-RUN chmod +x gradlew
-RUN ./gradlew dependencies --no-daemon || true
-COPY . .
-RUN ./gradlew clean bootJar -x test --no-daemon
+FROM gradle:8.14-jdk17 AS build
+WORKDIR /workspace
 
-# Run stage
-FROM eclipse-temurin:17-jre-alpine AS runtime
+COPY . .
+RUN ./gradlew bootJar --no-daemon
+RUN JAR_FILE=$(find build/libs -name '*.jar' ! -name '*-plain.jar' | head -n 1) && cp "$JAR_FILE" /app.jar
+
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+
+COPY --from=build /app.jar app.jar
+
 EXPOSE 8080
-ENV TZ=Asia/Seoul
-ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
