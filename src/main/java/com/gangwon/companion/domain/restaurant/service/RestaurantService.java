@@ -1,7 +1,7 @@
 package com.gangwon.companion.domain.restaurant.service;
 
 import com.gangwon.companion.domain.restaurant.dto.RestaurantDetailResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantItemDto;
+import com.gangwon.companion.domain.restaurant.dto.RestaurantItemResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantListResponse;
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
@@ -34,8 +34,8 @@ public class RestaurantService {
                 criteria.pageable()
         );
 
-        List<RestaurantItemDto> items = result.getContent().stream()
-                .map(RestaurantItemDto::new)
+        List<RestaurantItemResponse> items = result.getContent().stream()
+                .map(RestaurantItemResponse::new)
                 .toList();
 
         return new RestaurantListResponse(result.getTotalElements(), items);
