@@ -37,12 +37,6 @@ public class Restaurant {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private Double latitude;
-
-    @Column(nullable = false)
-    private Double longitude;
-
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -55,14 +49,12 @@ public class Restaurant {
 
     @Builder
     public Restaurant(String name, String menuType, String region, Double rating,
-                      String thumbnailUrl, String address, Double latitude, Double longitude) {
+                      String thumbnailUrl, String address) {
         this.name = name;
         this.menuType = menuType;
         this.region = region;
         this.rating = rating;
         this.thumbnailUrl = thumbnailUrl;
         this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 }
