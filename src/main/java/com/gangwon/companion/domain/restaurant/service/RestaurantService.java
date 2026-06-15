@@ -10,8 +10,6 @@ import com.gangwon.companion.domain.restaurant.query.RestaurantSpecifications;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantReviewRepository;
 import com.gangwon.companion.global.exception.ResourceNotFoundException;
-import com.gangwon.companion.global.route.RouteResponse;
-import com.gangwon.companion.global.route.RouteResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,6 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final RestaurantReviewRepository restaurantReviewRepository;
-    private final RouteResponseFactory routeResponseFactory;
 
     @Transactional(readOnly = true)
     public RestaurantListResponse searchRestaurants(RestaurantSearchCriteria criteria) {
@@ -47,24 +44,6 @@ public class RestaurantService {
         List<RestaurantReview> reviews = restaurantReviewRepository.findByRestaurantId(restaurantId);
 
         return new RestaurantDetailResponse(restaurant, reviews);
-    }
-
-    @Transactional(readOnly = true)
-    public RouteResponse getRoute(Long restaurantId, Double userLat, Double userLng) {
-        Restaurant restaurant = findRestaurant(restaurantId);
-
-        return routeResponseFactory.create(
-                userLat,
-                userLng,
-                restaurant.getLatitude(),
-                restaurant.getLongitude(),
-                restaurant.getName()
-        );
-    }
-
-    private Restaurant findRestaurant(Long restaurantId) {
-        return restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 식당을 찾을 수 없습니다."));
     }
 
     private Restaurant findRestaurantWithPhotos(Long restaurantId) {
