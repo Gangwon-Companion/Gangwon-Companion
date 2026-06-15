@@ -2,7 +2,6 @@ package com.gangwon.companion.domain.restaurant.dto;
 
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
-import com.gangwon.companion.global.web.LocationResponse;
 import com.gangwon.companion.global.web.ReviewResponse;
 import lombok.Getter;
 
@@ -16,9 +15,9 @@ public class RestaurantDetailResponse {
     private final String menuType;
     private final String region;
     private final Double rating;
+    private final String address;
     private final List<String> photos;
     private final List<ReviewResponse> reviews;
-    private final LocationResponse location;
 
     public RestaurantDetailResponse(Restaurant restaurant, List<RestaurantReview> reviews) {
         this.restaurantId = restaurant.getId();
@@ -26,6 +25,7 @@ public class RestaurantDetailResponse {
         this.menuType = restaurant.getMenuType();
         this.region = restaurant.getRegion();
         this.rating = restaurant.getRating();
+        this.address = restaurant.getAddress();
         this.photos = restaurant.getPhotos().stream()
                 .map(p -> p.getUrl())
                 .toList();
@@ -38,10 +38,5 @@ public class RestaurantDetailResponse {
                         review.getCreatedAt()
                 ))
                 .toList();
-        this.location = new LocationResponse(
-                restaurant.getLatitude(),
-                restaurant.getLongitude(),
-                restaurant.getAddress()
-        );
     }
 }
