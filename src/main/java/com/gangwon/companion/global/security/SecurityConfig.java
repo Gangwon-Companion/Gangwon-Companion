@@ -1,9 +1,5 @@
 package com.gangwon.companion.global.security;
 
-import com.gangwon.companion.global.exception.JwtAccessDeniedHandler;
-import com.gangwon.companion.global.exception.JwtAuthenticationEntryPoint;
-import com.gangwon.companion.global.jwt.JwtAuthenticationFilter;
-import com.gangwon.companion.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

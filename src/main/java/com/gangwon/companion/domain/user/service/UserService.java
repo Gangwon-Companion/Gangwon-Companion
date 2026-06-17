@@ -6,7 +6,7 @@ import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
-import com.gangwon.companion.global.jwt.JwtTokenProvider;
+import com.gangwon.companion.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

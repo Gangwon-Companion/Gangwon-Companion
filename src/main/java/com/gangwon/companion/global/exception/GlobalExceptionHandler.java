@@ -27,12 +27,6 @@ public class GlobalExceptionHandler {
         return buildResponse(e.getErrorCode(), request);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException e,
-                                                                HttpServletRequest request) {
-        return buildResponse(ErrorCode.RESOURCE_NOT_FOUND, e.getMessage(), request);
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException e,
                                                                HttpServletRequest request) {
