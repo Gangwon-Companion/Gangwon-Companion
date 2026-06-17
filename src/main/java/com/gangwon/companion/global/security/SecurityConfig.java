@@ -1,5 +1,7 @@
 package com.gangwon.companion.global.security;
 
+import com.gangwon.companion.global.exception.JwtAccessDeniedHandler;
+import com.gangwon.companion.global.exception.JwtAuthenticationEntryPoint;
 import com.gangwon.companion.global.jwt.JwtAuthenticationFilter;
 import com.gangwon.companion.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,6 +34,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/swagger-ui/**",
