@@ -2,7 +2,7 @@ package com.gangwon.companion.domain.restaurant.controller;
 
 import com.gangwon.companion.domain.restaurant.dto.RestaurantDetailResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantListResponse;
-import com.gangwon.companion.domain.restaurant.query.RestaurantSearchCriteria;
+import com.gangwon.companion.domain.restaurant.dto.RestaurantSearchCriteria;
 import com.gangwon.companion.domain.restaurant.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
