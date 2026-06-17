@@ -1,6 +1,8 @@
 package com.gangwon.companion.domain.user.controller;
 
 import com.gangwon.companion.domain.user.service.UserService;
+import com.gangwon.companion.global.exception.BusinessException;
+import com.gangwon.companion.global.exception.ErrorCode;
 import com.gangwon.companion.global.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +19,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -45,7 +49,7 @@ class UserControllerTest {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "test@test.com",
-                  "nickname": "테스터"
+                  "nickname": "테스트"
                 }
                 """;
 
@@ -63,14 +67,15 @@ class UserControllerTest {
                   "username": "testuser1",
                   "password": "1234",
                   "email": "test@test.com",
-                  "nickname": "테스터"
+                  "nickname": "테스트"
                 }
                 """;
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_FAILED.getCode()));
     }
 
     @Test
@@ -80,14 +85,15 @@ class UserControllerTest {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "invalid-email",
-                  "nickname": "테스터"
+                  "nickname": "테스트"
                 }
                 """;
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_FAILED.getCode()));
     }
 
     @Test
@@ -123,7 +129,8 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("아이디 또는 비밀번호가 올바르지 않습니다."));
+                .andExpect(jsonPath("$.code").value(ErrorCode.BAD_CREDENTIALS.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BAD_CREDENTIALS.getMessage()));
     }
 
     @Test
@@ -133,17 +140,18 @@ class UserControllerTest {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "test@test.com",
-                  "nickname": "테스터"
+                  "nickname": "테스트"
                 }
                 """;
 
-        willThrow(new IllegalArgumentException("이미 사용 중인 아이디입니다.")).given(userService).signUp(any());
+        willThrow(new BusinessException(ErrorCode.DUPLICATE_USERNAME)).given(userService).signUp(any());
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("이미 사용 중인 아이디입니다."));
+                .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USERNAME.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_USERNAME.getMessage()));
     }
 
     @Test
