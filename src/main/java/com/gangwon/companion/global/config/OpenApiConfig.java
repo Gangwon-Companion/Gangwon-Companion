@@ -18,6 +18,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Gangwon Companion API")
+                        .description("강원도 숙소·음식점 조회 및 회원 인증 API")
                         .version("v1"))
                 .components(new Components()
                         .addSecuritySchemes(BEARER_AUTH, new SecurityScheme()

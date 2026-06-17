@@ -4,10 +4,24 @@ import com.gangwon.companion.domain.restaurant.dto.RestaurantDetailResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantListResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantSearchCriteria;
 import com.gangwon.companion.domain.restaurant.service.RestaurantService;
+import com.gangwon.companion.global.exception.ErrorResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "음식점", description = "음식점 검색 및 상세 조회 API")
 @RestController
 @RequestMapping("/api/restaurants")
 @RequiredArgsConstructor
@@ -15,19 +29,30 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+    @Operation(summary = "음식점 목록 검색")
+    @ApiResponse(responseCode = "200", description = "검색 결과 반환")
+    @SecurityRequirements
     @GetMapping
     public ResponseEntity<RestaurantListResponse> searchRestaurants(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String menuType,
-            @RequestParam(required = false) String region,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @Parameter(description = "검색 키워드 (음식점 이름)") @RequestParam(required = false) String keyword,
+            @Parameter(description = "음식 종류") @RequestParam(required = false) String menuType,
+            @Parameter(description = "지역") @RequestParam(required = false) String region,
+            @Parameter(description = "페이지 번호 (0부터 시작)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "20") int size) {
         RestaurantSearchCriteria criteria = new RestaurantSearchCriteria(keyword, menuType, region, page, size);
         return ResponseEntity.ok(restaurantService.searchRestaurants(criteria));
     }
 
+    @Operation(summary = "음식점 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상세 정보 반환"),
+            @ApiResponse(responseCode = "404", description = "음식점을 찾을 수 없음",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @SecurityRequirements
     @GetMapping("/{restaurantId}")
-    public ResponseEntity<RestaurantDetailResponse> getRestaurantDetail(@PathVariable Long restaurantId) {
+    public ResponseEntity<RestaurantDetailResponse> getRestaurantDetail(
+            @Parameter(description = "음식점 ID") @PathVariable Long restaurantId) {
         return ResponseEntity.ok(restaurantService.getRestaurantDetail(restaurantId));
     }
 }
