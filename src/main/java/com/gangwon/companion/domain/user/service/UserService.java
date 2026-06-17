@@ -4,6 +4,8 @@ import com.gangwon.companion.domain.user.dto.LoginRequest;
 import com.gangwon.companion.domain.user.dto.SignUpRequest;
 import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
+import com.gangwon.companion.global.exception.BusinessException;
+import com.gangwon.companion.global.exception.ErrorCode;
 import com.gangwon.companion.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,15 +26,7 @@ public class UserService {
 
     @Transactional
     public void signUp(SignUpRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        }
-        if (userRepository.existsByNickname(request.getNickname())) {
-            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
-        }
+        validateDuplicatedUser(request);
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -57,5 +51,17 @@ public class UserService {
 
     public boolean existsByNickname(String nickname) {
         return userRepository.existsByNickname(nickname);
+    }
+
+    private void validateDuplicatedUser(SignUpRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
+        }
+        if (userRepository.existsByNickname(request.getNickname())) {
+            throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
+        }
     }
 }
