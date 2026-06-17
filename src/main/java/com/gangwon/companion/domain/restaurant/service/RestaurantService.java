@@ -9,7 +9,8 @@ import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantReviewRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantSpecifications;
-import com.gangwon.companion.global.exception.ResourceNotFoundException;
+import com.gangwon.companion.global.exception.BusinessException;
+import com.gangwon.companion.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,6 @@ public class RestaurantService {
 
     private Restaurant findRestaurantWithPhotos(Long restaurantId) {
         return restaurantRepository.findByIdWithPhotos(restaurantId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 식당을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
     }
 }
