@@ -3,12 +3,16 @@ package com.gangwon.companion.domain.restaurant.service;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantDetailResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantItemResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantListResponse;
+import com.gangwon.companion.domain.restaurant.dto.RestaurantReviewRequest;
+import com.gangwon.companion.domain.restaurant.dto.RestaurantReviewResponse;
 import com.gangwon.companion.domain.restaurant.dto.RestaurantSearchCriteria;
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantReviewRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantSpecifications;
+import com.gangwon.companion.domain.user.entity.User;
+import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final RestaurantReviewRepository restaurantReviewRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public RestaurantListResponse searchRestaurants(RestaurantSearchCriteria criteria) {
@@ -47,8 +52,68 @@ public class RestaurantService {
         return new RestaurantDetailResponse(restaurant, reviews);
     }
 
+    @Transactional
+    public RestaurantReviewResponse createReview(Long restaurantId, String username, RestaurantReviewRequest request) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+        User user = findUserByUsername(username);
+
+        RestaurantReview review = RestaurantReview.builder()
+                .restaurant(restaurant)
+                .user(user)
+                .content(request.content())
+                .rating(request.rating())
+                .build();
+
+        RestaurantReview saved = restaurantReviewRepository.save(review);
+        return toReviewResponse(saved);
+    }
+
+    @Transactional
+    public RestaurantReviewResponse updateReview(Long restaurantId, Long reviewId, String username, RestaurantReviewRequest request) {
+        RestaurantReview review = findReviewByIdAndRestaurantId(reviewId, restaurantId);
+        checkOwnership(review.getUser().getUsername(), username);
+
+        review.update(request.content(), request.rating());
+        return toReviewResponse(review);
+    }
+
+    @Transactional
+    public void deleteReview(Long restaurantId, Long reviewId, String username) {
+        RestaurantReview review = findReviewByIdAndRestaurantId(reviewId, restaurantId);
+        checkOwnership(review.getUser().getUsername(), username);
+
+        restaurantReviewRepository.delete(review);
+    }
+
     private Restaurant findRestaurantWithPhotos(Long restaurantId) {
         return restaurantRepository.findByIdWithPhotos(restaurantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    private RestaurantReview findReviewByIdAndRestaurantId(Long reviewId, Long restaurantId) {
+        return restaurantReviewRepository.findByIdAndRestaurantId(reviewId, restaurantId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.REVIEW_NOT_FOUND));
+    }
+
+    private void checkOwnership(String ownerUsername, String requestUsername) {
+        if (!ownerUsername.equals(requestUsername)) {
+            throw new BusinessException(ErrorCode.REVIEW_FORBIDDEN);
+        }
+    }
+
+    private RestaurantReviewResponse toReviewResponse(RestaurantReview review) {
+        return new RestaurantReviewResponse(
+                review.getId(),
+                review.getUser().getNickname(),
+                review.getContent(),
+                review.getRating(),
+                review.getCreatedAt()
+        );
     }
 }
