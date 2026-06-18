@@ -15,6 +15,8 @@ public class RestaurantDetailResponse {
     private final String region;
     private final Double rating;
     private final String address;
+    private final Double latitude;
+    private final Double longitude;
     private final List<String> photos;
     private final List<RestaurantReviewResponse> reviews;
 
@@ -25,6 +27,8 @@ public class RestaurantDetailResponse {
         this.region = restaurant.getRegion();
         this.rating = restaurant.getRating();
         this.address = restaurant.getAddress();
+        this.latitude = restaurant.getLatitude();
+        this.longitude = restaurant.getLongitude();
         this.photos = restaurant.getPhotos().stream()
                 .map(p -> p.getUrl())
                 .toList();
