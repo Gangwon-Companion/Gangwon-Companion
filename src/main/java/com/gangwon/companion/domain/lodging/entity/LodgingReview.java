@@ -1,5 +1,6 @@
 package com.gangwon.companion.domain.lodging.entity;
 
+import com.gangwon.companion.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,8 +23,9 @@ public class LodgingReview {
     @JoinColumn(name = "lodging_id", nullable = false)
     private Lodging lodging;
 
-    @Column(nullable = false, length = 20)
-    private String nickname;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -36,9 +38,14 @@ public class LodgingReview {
     private LocalDateTime createdAt;
 
     @Builder
-    public LodgingReview(Lodging lodging, String nickname, String content, Double rating) {
+    public LodgingReview(Lodging lodging, User user, String content, Double rating) {
         this.lodging = lodging;
-        this.nickname = nickname;
+        this.user = user;
+        this.content = content;
+        this.rating = rating;
+    }
+
+    public void update(String content, Double rating) {
         this.content = content;
         this.rating = rating;
     }
