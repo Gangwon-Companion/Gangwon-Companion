@@ -31,7 +31,7 @@ public class RestaurantDetailResponse {
         this.reviews = reviews.stream()
                 .map(review -> new RestaurantReviewResponse(
                         review.getId(),
-                        review.getNickname(),
+                        review.getUser().getNickname(),
                         review.getContent(),
                         review.getRating(),
                         review.getCreatedAt()

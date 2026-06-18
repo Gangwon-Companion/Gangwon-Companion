@@ -33,7 +33,7 @@ public class LodgingDetailResponse {
         this.reviews = reviews.stream()
                 .map(review -> new LodgingReviewResponse(
                         review.getId(),
-                        review.getNickname(),
+                        review.getUser().getNickname(),
                         review.getContent(),
                         review.getRating(),
                         review.getCreatedAt()
