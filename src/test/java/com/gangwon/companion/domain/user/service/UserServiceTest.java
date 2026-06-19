@@ -6,8 +6,9 @@ import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
-import com.gangwon.companion.global.jwt.JwtTokenProvider;
+import com.gangwon.companion.global.security.JwtTokenProvider;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,15 +36,16 @@ class UserServiceTest {
     @InjectMocks UserService userService;
 
     @Test
-    void 회원가입_성공() {
+    @DisplayName("signUp valid request -> user saved")
+    void signUp_savesUser_whenRequestValid() {
         SignUpRequest request = mock(SignUpRequest.class);
         given(request.getUsername()).willReturn("testuser1");
         given(request.getEmail()).willReturn("test@test.com");
-        given(request.getNickname()).willReturn("테스트");
+        given(request.getNickname()).willReturn("tester");
         given(request.getPassword()).willReturn("Test1234!");
         given(userRepository.existsByUsername("testuser1")).willReturn(false);
         given(userRepository.existsByEmail("test@test.com")).willReturn(false);
-        given(userRepository.existsByNickname("테스트")).willReturn(false);
+        given(userRepository.existsByNickname("tester")).willReturn(false);
         given(passwordEncoder.encode(any())).willReturn("encodedPassword");
 
         assertThatCode(() -> userService.signUp(request)).doesNotThrowAnyException();
@@ -51,7 +53,8 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입_중복_아이디_예외() {
+    @DisplayName("signUp duplicate username -> DUPLICATE_USERNAME exception")
+    void signUp_throwsDuplicateUsername_whenUsernameExists() {
         SignUpRequest request = mock(SignUpRequest.class);
         given(request.getUsername()).willReturn("testuser1");
         given(userRepository.existsByUsername("testuser1")).willReturn(true);
@@ -62,7 +65,8 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입_중복_이메일_예외() {
+    @DisplayName("signUp duplicate email -> DUPLICATE_EMAIL exception")
+    void signUp_throwsDuplicateEmail_whenEmailExists() {
         SignUpRequest request = mock(SignUpRequest.class);
         given(request.getUsername()).willReturn("testuser1");
         given(request.getEmail()).willReturn("test@test.com");
@@ -75,14 +79,15 @@ class UserServiceTest {
     }
 
     @Test
-    void 회원가입_중복_닉네임_예외() {
+    @DisplayName("signUp duplicate nickname -> DUPLICATE_NICKNAME exception")
+    void signUp_throwsDuplicateNickname_whenNicknameExists() {
         SignUpRequest request = mock(SignUpRequest.class);
         given(request.getUsername()).willReturn("testuser1");
         given(request.getEmail()).willReturn("test@test.com");
-        given(request.getNickname()).willReturn("테스트");
+        given(request.getNickname()).willReturn("tester");
         given(userRepository.existsByUsername("testuser1")).willReturn(false);
         given(userRepository.existsByEmail("test@test.com")).willReturn(false);
-        given(userRepository.existsByNickname("테스트")).willReturn(true);
+        given(userRepository.existsByNickname("tester")).willReturn(true);
 
         assertThatThrownBy(() -> userService.signUp(request))
                 .isInstanceOf(BusinessException.class)
@@ -90,7 +95,8 @@ class UserServiceTest {
     }
 
     @Test
-    void 로그인_성공() {
+    @DisplayName("login valid credentials -> JWT token")
+    void login_returnsToken_whenCredentialsValid() {
         LoginRequest request = mock(LoginRequest.class);
         given(request.getUsername()).willReturn("testuser1");
         given(request.getPassword()).willReturn("Test1234!");
@@ -106,7 +112,8 @@ class UserServiceTest {
     }
 
     @Test
-    void 아이디_존재여부_확인() {
+    @DisplayName("existsByUsername called -> repository result")
+    void existsByUsername_returnsRepositoryResult_whenCalled() {
         given(userRepository.existsByUsername("testuser1")).willReturn(true);
         assertThat(userService.existsByUsername("testuser1")).isTrue();
 
@@ -115,11 +122,12 @@ class UserServiceTest {
     }
 
     @Test
-    void 닉네임_존재여부_확인() {
-        given(userRepository.existsByNickname("테스트")).willReturn(true);
-        assertThat(userService.existsByNickname("테스트")).isTrue();
+    @DisplayName("existsByNickname called -> repository result")
+    void existsByNickname_returnsRepositoryResult_whenCalled() {
+        given(userRepository.existsByNickname("tester")).willReturn(true);
+        assertThat(userService.existsByNickname("tester")).isTrue();
 
-        given(userRepository.existsByNickname("새닉")).willReturn(false);
-        assertThat(userService.existsByNickname("새닉")).isFalse();
+        given(userRepository.existsByNickname("newbie")).willReturn(false);
+        assertThat(userService.existsByNickname("newbie")).isFalse();
     }
 }

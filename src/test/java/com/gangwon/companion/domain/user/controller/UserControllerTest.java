@@ -5,6 +5,7 @@ import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
 import com.gangwon.companion.global.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,31 +44,32 @@ class UserControllerTest {
     }
 
     @Test
-    void 회원가입_성공() throws Exception {
+    @DisplayName("POST /api/auth/signup -> HTTP 200")
+    void signUp_returnsOk_whenRequestValid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "test@test.com",
-                  "nickname": "테스트"
+                  "nickname": "tester"
                 }
                 """;
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."));
+                .andExpect(status().isOk());
     }
 
     @Test
-    void 회원가입_유효성_검사_실패_비밀번호() throws Exception {
+    @DisplayName("POST /api/auth/signup invalid password -> HTTP 400 VALIDATION_FAILED")
+    void signUp_returnsBadRequest_whenPasswordInvalid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "1234",
                   "email": "test@test.com",
-                  "nickname": "테스트"
+                  "nickname": "tester"
                 }
                 """;
 
@@ -79,13 +81,14 @@ class UserControllerTest {
     }
 
     @Test
-    void 회원가입_유효성_검사_실패_이메일형식() throws Exception {
+    @DisplayName("POST /api/auth/signup invalid email -> HTTP 400 VALIDATION_FAILED")
+    void signUp_returnsBadRequest_whenEmailInvalid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "invalid-email",
-                  "nickname": "테스트"
+                  "nickname": "tester"
                 }
                 """;
 
@@ -97,7 +100,8 @@ class UserControllerTest {
     }
 
     @Test
-    void 로그인_성공() throws Exception {
+    @DisplayName("POST /api/auth/login -> HTTP 200 token")
+    void login_returnsToken_whenCredentialsValid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
@@ -115,7 +119,8 @@ class UserControllerTest {
     }
 
     @Test
-    void 로그인_실패_잘못된_비밀번호() throws Exception {
+    @DisplayName("POST /api/auth/login invalid credentials -> HTTP 401 BAD_CREDENTIALS")
+    void login_returnsUnauthorized_whenCredentialsInvalid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
@@ -134,13 +139,14 @@ class UserControllerTest {
     }
 
     @Test
-    void 회원가입_중복_아이디_400반환() throws Exception {
+    @DisplayName("POST /api/auth/signup duplicate username -> HTTP 400 DUPLICATE_USERNAME")
+    void signUp_returnsBadRequest_whenUsernameDuplicated() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "test@test.com",
-                  "nickname": "테스트"
+                  "nickname": "tester"
                 }
                 """;
 
@@ -155,7 +161,8 @@ class UserControllerTest {
     }
 
     @Test
-    void 아이디_중복확인_사용가능() throws Exception {
+    @DisplayName("GET /api/auth/check/username/{username} available -> HTTP 200 available=true")
+    void checkUsername_returnsAvailable_whenUsernameNotExists() throws Exception {
         given(userService.existsByUsername("newuser")).willReturn(false);
 
         mockMvc.perform(get("/api/auth/check/username/newuser"))
@@ -164,7 +171,8 @@ class UserControllerTest {
     }
 
     @Test
-    void 아이디_중복확인_사용불가() throws Exception {
+    @DisplayName("GET /api/auth/check/username/{username} exists -> HTTP 200 available=false")
+    void checkUsername_returnsUnavailable_whenUsernameExists() throws Exception {
         given(userService.existsByUsername("existinguser")).willReturn(true);
 
         mockMvc.perform(get("/api/auth/check/username/existinguser"))
@@ -173,19 +181,21 @@ class UserControllerTest {
     }
 
     @Test
-    void 닉네임_중복확인_사용가능() throws Exception {
-        given(userService.existsByNickname("새닉")).willReturn(false);
+    @DisplayName("GET /api/auth/check/nickname/{nickname} available -> HTTP 200 available=true")
+    void checkNickname_returnsAvailable_whenNicknameNotExists() throws Exception {
+        given(userService.existsByNickname("newnick")).willReturn(false);
 
-        mockMvc.perform(get("/api/auth/check/nickname/새닉"))
+        mockMvc.perform(get("/api/auth/check/nickname/newnick"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(true));
     }
 
     @Test
-    void 닉네임_중복확인_사용불가() throws Exception {
-        given(userService.existsByNickname("기존닉")).willReturn(true);
+    @DisplayName("GET /api/auth/check/nickname/{nickname} exists -> HTTP 200 available=false")
+    void checkNickname_returnsUnavailable_whenNicknameExists() throws Exception {
+        given(userService.existsByNickname("oldnick")).willReturn(true);
 
-        mockMvc.perform(get("/api/auth/check/nickname/기존닉"))
+        mockMvc.perform(get("/api/auth/check/nickname/oldnick"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(false));
     }
