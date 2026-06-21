@@ -11,8 +11,7 @@ public class LodgingSpecifications {
     }
 
     public static Specification<Lodging> from(LodgingSearchCriteria criteria) {
-        return Specification
-                .where(keywordContains(criteria.keyword()))
+        return keywordContains(criteria.keyword())
                 .and(regionEquals(criteria.region()))
                 .and(priceGreaterThanOrEqual(criteria.minPrice()))
                 .and(priceLessThanOrEqual(criteria.maxPrice()))
@@ -20,37 +19,27 @@ public class LodgingSpecifications {
     }
 
     private static Specification<Lodging> keywordContains(String keyword) {
-        if (!StringUtils.hasText(keyword)) {
-            return null;
-        }
+        if (!StringUtils.hasText(keyword)) return (root, query, cb) -> cb.conjunction();
         return (root, query, cb) -> cb.like(root.get("name"), "%" + keyword + "%");
     }
 
     private static Specification<Lodging> regionEquals(String region) {
-        if (!StringUtils.hasText(region)) {
-            return null;
-        }
+        if (!StringUtils.hasText(region)) return (root, query, cb) -> cb.conjunction();
         return (root, query, cb) -> cb.equal(root.get("region"), region);
     }
 
     private static Specification<Lodging> priceGreaterThanOrEqual(Long minPrice) {
-        if (minPrice == null) {
-            return null;
-        }
+        if (minPrice == null) return (root, query, cb) -> cb.conjunction();
         return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), minPrice);
     }
 
     private static Specification<Lodging> priceLessThanOrEqual(Long maxPrice) {
-        if (maxPrice == null) {
-            return null;
-        }
+        if (maxPrice == null) return (root, query, cb) -> cb.conjunction();
         return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), maxPrice);
     }
 
     private static Specification<Lodging> ratingGreaterThanOrEqual(Double rating) {
-        if (rating == null) {
-            return null;
-        }
+        if (rating == null) return (root, query, cb) -> cb.conjunction();
         return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("rating"), rating);
     }
 }

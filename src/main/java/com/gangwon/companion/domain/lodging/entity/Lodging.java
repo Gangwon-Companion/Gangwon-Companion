@@ -23,7 +23,7 @@ public class Lodging {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false, length = 50)
@@ -56,14 +56,32 @@ public class Lodging {
     @OneToMany(mappedBy = "lodging", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LodgingReview> reviews = new ArrayList<>();
 
+    @Column(unique = true)
+    private String externalId;
+
     @Builder
     public Lodging(String name, String description, String region, Long price, Double rating,
-                   String thumbnailUrl, String address, Double latitude, Double longitude) {
+                   String thumbnailUrl, String address, Double latitude, Double longitude,
+                   String externalId) {
         this.name = name;
         this.description = description;
         this.region = region;
         this.price = price;
         this.rating = rating;
+        this.thumbnailUrl = thumbnailUrl;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.externalId = externalId;
+    }
+
+    public void updateFromApi(String name, String description, String region, Long price,
+                               String thumbnailUrl, String address,
+                               Double latitude, Double longitude) {
+        this.name = name;
+        this.description = description;
+        this.region = region;
+        this.price = price;
         this.thumbnailUrl = thumbnailUrl;
         this.address = address;
         this.latitude = latitude;
