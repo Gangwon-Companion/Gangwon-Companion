@@ -12,4 +12,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long>, J
 
     @Query("SELECT r FROM Restaurant r LEFT JOIN FETCH r.photos WHERE r.id = :id")
     Optional<Restaurant> findByIdWithPhotos(@Param("id") Long id);
+
+    Optional<Restaurant> findByExternalId(String externalId);
+
+    boolean existsByExternalIdIsNotNull();
 }

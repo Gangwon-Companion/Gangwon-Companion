@@ -53,13 +53,30 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RestaurantReview> reviews = new ArrayList<>();
 
+    @Column(unique = true)
+    private String externalId;
+
     @Builder
     public Restaurant(String name, String menuType, String region, Double rating,
-                      String thumbnailUrl, String address, Double latitude, Double longitude) {
+                      String thumbnailUrl, String address, Double latitude, Double longitude,
+                      String externalId) {
         this.name = name;
         this.menuType = menuType;
         this.region = region;
         this.rating = rating;
+        this.thumbnailUrl = thumbnailUrl;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.externalId = externalId;
+    }
+
+    public void updateFromApi(String name, String menuType, String region,
+                               String thumbnailUrl, String address,
+                               Double latitude, Double longitude) {
+        this.name = name;
+        this.menuType = menuType;
+        this.region = region;
         this.thumbnailUrl = thumbnailUrl;
         this.address = address;
         this.latitude = latitude;
