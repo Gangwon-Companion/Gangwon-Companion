@@ -20,15 +20,26 @@ public class RestaurantSyncService {
 
     private static final int PAGE_SIZE = 100;
 
-    private static final Map<String, String> LCLSSYSTM_MENU_TYPE_MAP = Map.ofEntries(
-            Map.entry("FD060100", "한식"),
-            Map.entry("FD060200", "서양식"),
-            Map.entry("FD060300", "일식"),
-            Map.entry("FD060400", "중식"),
-            Map.entry("FD060600", "카페"),
-            Map.entry("FD060700", "패스트푸드"),
-            Map.entry("FD060900", "뷔페"),
-            Map.entry("FD061000", "기타")
+    private static final Map<String, String> LCLSSYSTM3_MENU_TYPE_MAP = Map.ofEntries(
+            Map.entry("FD020100", "중식"),
+            Map.entry("FD020200", "일식"),
+            Map.entry("FD020300", "서양식"),
+            Map.entry("FD020400", "기타외국식"),
+            Map.entry("FD020500", "퓨전음식"),
+            Map.entry("FD030100", "제과"),
+            Map.entry("FD030200", "패스트푸드"),
+            Map.entry("FD030300", "치킨"),
+            Map.entry("FD030400", "분식"),
+            Map.entry("FD030500", "기타"),
+            Map.entry("FD030600", "기타")
+    );
+
+    private static final Map<String, String> LCLSSYSTM2_MENU_TYPE_MAP = Map.of(
+            "FD01", "한식",
+            "FD02", "외국식",
+            "FD03", "간이음식",
+            "FD04", "주점",
+            "FD05", "카페"
     );
 
     private final RestaurantRepository restaurantRepository;
@@ -95,9 +106,16 @@ public class RestaurantSyncService {
     private String resolveMenuType(TourApiItem item) {
         String lclsSystm3 = item.getLclsSystm3();
         if (lclsSystm3 != null && !lclsSystm3.isBlank()) {
-            String mapped = LCLSSYSTM_MENU_TYPE_MAP.get(lclsSystm3);
+            String mapped = LCLSSYSTM3_MENU_TYPE_MAP.get(lclsSystm3);
             if (mapped != null) return mapped;
         }
+
+        String lclsSystm2 = item.getLclsSystm2();
+        if (lclsSystm2 != null && !lclsSystm2.isBlank()) {
+            String mapped = LCLSSYSTM2_MENU_TYPE_MAP.get(lclsSystm2);
+            if (mapped != null) return mapped;
+        }
+
         return "기타";
     }
 
