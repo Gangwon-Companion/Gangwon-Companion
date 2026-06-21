@@ -40,9 +40,9 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/lodgings", "/api/lodgings/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/restaurants", "/api/restaurants/*").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/lodgings", "/api/v1/lodgings/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/restaurants", "/api/v1/restaurants/*").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
                         UsernamePasswordAuthenticationFilter.class);

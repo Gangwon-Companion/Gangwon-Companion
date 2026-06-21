@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인증", description = "회원가입, 로그인, 중복 확인 API")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @SecurityRequirements
 public class UserController {

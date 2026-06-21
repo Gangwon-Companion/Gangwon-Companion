@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "음식점", description = "음식점 검색 및 상세 조회 API")
 @RestController
-@RequestMapping("/api/restaurants")
+@RequestMapping("/api/v1/restaurants")
 @RequiredArgsConstructor
 public class RestaurantController {
 
@@ -93,7 +93,7 @@ public class RestaurantController {
             @ApiResponse(responseCode = "404", description = "리뷰를 찾을 수 없음",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PutMapping("/{restaurantId}/reviews/{reviewId}")
+    @PatchMapping("/{restaurantId}/reviews/{reviewId}")
     public ResponseEntity<RestaurantReviewResponse> updateReview(
             @Parameter(description = "음식점 ID") @PathVariable Long restaurantId,
             @Parameter(description = "리뷰 ID") @PathVariable Long reviewId,
