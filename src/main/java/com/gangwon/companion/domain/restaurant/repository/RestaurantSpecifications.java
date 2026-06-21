@@ -5,6 +5,9 @@ import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
+import jakarta.persistence.criteria.Predicate;
+import java.util.Arrays;
+
 public class RestaurantSpecifications {
 
     private RestaurantSpecifications() {
@@ -18,7 +21,18 @@ public class RestaurantSpecifications {
 
     private static Specification<Restaurant> keywordContains(String keyword) {
         if (!StringUtils.hasText(keyword)) return (root, query, cb) -> cb.conjunction();
-        return (root, query, cb) -> cb.like(root.get("name"), "%" + keyword + "%");
+        String[] terms = keyword.trim().toLowerCase().split("\\s+");
+        return (root, query, cb) -> cb.and(Arrays.stream(terms)
+                .map(term -> {
+                    String pattern = "%" + term + "%";
+                    return cb.or(
+                            cb.like(cb.lower(root.get("name")), pattern),
+                            cb.like(cb.lower(root.get("menuType")), pattern),
+                            cb.like(cb.lower(root.get("region")), pattern),
+                            cb.like(cb.lower(root.get("address")), pattern)
+                    );
+                })
+                .toArray(Predicate[]::new));
     }
 
     private static Specification<Restaurant> menuTypeEquals(String menuType) {
