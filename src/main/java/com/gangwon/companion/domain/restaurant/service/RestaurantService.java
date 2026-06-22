@@ -1,11 +1,11 @@
 package com.gangwon.companion.domain.restaurant.service;
 
-import com.gangwon.companion.domain.restaurant.dto.RestaurantDetailResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantItemResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantListResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantReviewRequest;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantReviewResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantSearchCriteria;
+import com.gangwon.companion.domain.restaurant.dto.request.RestaurantReviewRequest;
+import com.gangwon.companion.domain.restaurant.dto.request.RestaurantSearchCriteria;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantDetailResponse;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantItemResponse;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantListResponse;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantReviewResponse;
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;

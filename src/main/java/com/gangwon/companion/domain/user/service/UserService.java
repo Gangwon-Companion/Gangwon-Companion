@@ -1,7 +1,7 @@
 package com.gangwon.companion.domain.user.service;
 
-import com.gangwon.companion.domain.user.dto.LoginRequest;
-import com.gangwon.companion.domain.user.dto.SignUpRequest;
+import com.gangwon.companion.domain.user.dto.request.LoginRequest;
+import com.gangwon.companion.domain.user.dto.request.SignUpRequest;
 import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;

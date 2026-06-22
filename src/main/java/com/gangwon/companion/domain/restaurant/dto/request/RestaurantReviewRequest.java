@@ -1,4 +1,4 @@
-package com.gangwon.companion.domain.restaurant.dto;
+package com.gangwon.companion.domain.restaurant.dto.request;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;

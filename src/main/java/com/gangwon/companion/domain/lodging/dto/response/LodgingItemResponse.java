@@ -1,4 +1,4 @@
-package com.gangwon.companion.domain.lodging.dto;
+package com.gangwon.companion.domain.lodging.dto.response;
 
 import com.gangwon.companion.domain.lodging.entity.Lodging;
 import lombok.Getter;

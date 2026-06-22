@@ -1,6 +1,6 @@
 package com.gangwon.companion.domain.restaurant.repository;
 
-import com.gangwon.companion.domain.restaurant.dto.RestaurantSearchCriteria;
+import com.gangwon.companion.domain.restaurant.dto.request.RestaurantSearchCriteria;
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;

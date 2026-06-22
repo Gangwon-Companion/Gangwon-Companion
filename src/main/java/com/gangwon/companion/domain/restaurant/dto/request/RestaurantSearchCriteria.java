@@ -1,4 +1,4 @@
-package com.gangwon.companion.domain.restaurant.dto;
+package com.gangwon.companion.domain.restaurant.dto.request;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

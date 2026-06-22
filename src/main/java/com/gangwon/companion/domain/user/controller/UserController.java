@@ -1,7 +1,7 @@
 package com.gangwon.companion.domain.user.controller;
 
-import com.gangwon.companion.domain.user.dto.LoginRequest;
-import com.gangwon.companion.domain.user.dto.SignUpRequest;
+import com.gangwon.companion.domain.user.dto.request.LoginRequest;
+import com.gangwon.companion.domain.user.dto.request.SignUpRequest;
 import com.gangwon.companion.domain.user.service.UserService;
 import com.gangwon.companion.global.exception.ErrorResponse;
 import com.gangwon.companion.global.web.AvailabilityResponse;

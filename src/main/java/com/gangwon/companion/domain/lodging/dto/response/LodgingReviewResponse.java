@@ -1,8 +1,8 @@
-package com.gangwon.companion.domain.restaurant.dto;
+package com.gangwon.companion.domain.lodging.dto.response;
 
 import java.time.LocalDateTime;
 
-public record RestaurantReviewResponse(
+public record LodgingReviewResponse(
         Long reviewId,
         String nickname,
         String content,

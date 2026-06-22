@@ -1,8 +1,8 @@
 package com.gangwon.companion.domain.restaurant.controller;
 
-import com.gangwon.companion.domain.restaurant.dto.RestaurantDetailResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantListResponse;
-import com.gangwon.companion.domain.restaurant.dto.RestaurantReviewResponse;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantDetailResponse;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantListResponse;
+import com.gangwon.companion.domain.restaurant.dto.response.RestaurantReviewResponse;
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import com.gangwon.companion.domain.restaurant.service.RestaurantService;
 import com.gangwon.companion.global.exception.BusinessException;

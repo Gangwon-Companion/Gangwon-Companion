@@ -1,4 +1,4 @@
-package com.gangwon.companion.domain.restaurant.dto;
+package com.gangwon.companion.domain.restaurant.dto.response;
 
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import lombok.Getter;

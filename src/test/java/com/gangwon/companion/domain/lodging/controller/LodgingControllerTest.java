@@ -1,8 +1,8 @@
 package com.gangwon.companion.domain.lodging.controller;
 
-import com.gangwon.companion.domain.lodging.dto.LodgingDetailResponse;
-import com.gangwon.companion.domain.lodging.dto.LodgingListResponse;
-import com.gangwon.companion.domain.lodging.dto.LodgingReviewResponse;
+import com.gangwon.companion.domain.lodging.dto.response.LodgingDetailResponse;
+import com.gangwon.companion.domain.lodging.dto.response.LodgingListResponse;
+import com.gangwon.companion.domain.lodging.dto.response.LodgingReviewResponse;
 import com.gangwon.companion.domain.lodging.entity.Lodging;
 import com.gangwon.companion.domain.lodging.service.LodgingService;
 import com.gangwon.companion.global.exception.BusinessException;

@@ -1,10 +1,10 @@
 package com.gangwon.companion.domain.lodging.controller;
 
-import com.gangwon.companion.domain.lodging.dto.LodgingDetailResponse;
-import com.gangwon.companion.domain.lodging.dto.LodgingListResponse;
-import com.gangwon.companion.domain.lodging.dto.LodgingReviewRequest;
-import com.gangwon.companion.domain.lodging.dto.LodgingReviewResponse;
-import com.gangwon.companion.domain.lodging.dto.LodgingSearchCriteria;
+import com.gangwon.companion.domain.lodging.dto.request.LodgingReviewRequest;
+import com.gangwon.companion.domain.lodging.dto.request.LodgingSearchCriteria;
+import com.gangwon.companion.domain.lodging.dto.response.LodgingDetailResponse;
+import com.gangwon.companion.domain.lodging.dto.response.LodgingListResponse;
+import com.gangwon.companion.domain.lodging.dto.response.LodgingReviewResponse;
 import com.gangwon.companion.domain.lodging.service.LodgingService;
 import com.gangwon.companion.global.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;

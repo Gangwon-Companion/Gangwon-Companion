@@ -1,6 +1,6 @@
 package com.gangwon.companion.domain.lodging.repository;
 
-import com.gangwon.companion.domain.lodging.dto.LodgingSearchCriteria;
+import com.gangwon.companion.domain.lodging.dto.request.LodgingSearchCriteria;
 import com.gangwon.companion.domain.lodging.entity.Lodging;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
