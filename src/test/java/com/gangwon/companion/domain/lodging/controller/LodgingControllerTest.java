@@ -36,8 +36,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,12 +61,12 @@ class LodgingControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/lodgings -> HTTP 200 list")
+    @DisplayName("GET /api/v1/lodgings -> HTTP 200 list")
     void searchLodgings_returnsList_whenRequestValid() throws Exception {
         given(lodgingService.searchLodgings(any()))
                 .willReturn(new LodgingListResponse(0, List.of()));
 
-        mockMvc.perform(get("/api/lodgings")
+        mockMvc.perform(get("/api/v1/lodgings")
                         .param("keyword", "hotel")
                         .param("page", "0")
                         .param("size", "20"))
@@ -76,24 +76,24 @@ class LodgingControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/lodgings/{lodgingId} -> HTTP 200 detail")
+    @DisplayName("GET /api/v1/lodgings/{lodgingId} -> HTTP 200 detail")
     void getLodgingDetail_returnsDetail_whenLodgingExists() throws Exception {
         given(lodgingService.getLodgingDetail(1L))
                 .willReturn(new LodgingDetailResponse(lodging(), List.of()));
 
-        mockMvc.perform(get("/api/lodgings/1"))
+        mockMvc.perform(get("/api/v1/lodgings/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ocean Hotel"))
                 .andExpect(jsonPath("$.location.address").value("Sokcho"));
     }
 
     @Test
-    @DisplayName("POST /api/lodgings/{lodgingId}/reviews -> HTTP 201 created")
+    @DisplayName("POST /api/v1/lodgings/{lodgingId}/reviews -> HTTP 201 created")
     void createReview_returnsCreated_whenRequestValid() throws Exception {
         given(lodgingService.createReview(eq(1L), eq("owner"), any()))
                 .willReturn(new LodgingReviewResponse(10L, "ownerNick", "great", 4.5, LocalDateTime.now()));
 
-        mockMvc.perform(post("/api/lodgings/1/reviews")
+        mockMvc.perform(post("/api/v1/lodgings/1/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -107,9 +107,9 @@ class LodgingControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/lodgings/{lodgingId}/reviews invalid request -> HTTP 400 VALIDATION_FAILED")
+    @DisplayName("POST /api/v1/lodgings/{lodgingId}/reviews invalid request -> HTTP 400 VALIDATION_FAILED")
     void createReview_returnsBadRequest_whenRequestInvalid() throws Exception {
-        mockMvc.perform(post("/api/lodgings/1/reviews")
+        mockMvc.perform(post("/api/v1/lodgings/1/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -122,12 +122,12 @@ class LodgingControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/lodgings/{lodgingId}/reviews/{reviewId} not owner -> HTTP 403 REVIEW_FORBIDDEN")
+    @DisplayName("PUT /api/v1/lodgings/{lodgingId}/reviews/{reviewId} not owner -> HTTP 403 REVIEW_FORBIDDEN")
     void updateReview_returnsForbidden_whenUserIsNotOwner() throws Exception {
         given(lodgingService.updateReview(eq(1L), eq(10L), eq("owner"), any()))
                 .willThrow(new BusinessException(ErrorCode.REVIEW_FORBIDDEN));
 
-        mockMvc.perform(put("/api/lodgings/1/reviews/10")
+        mockMvc.perform(patch("/api/v1/lodgings/1/reviews/10")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -140,9 +140,9 @@ class LodgingControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/lodgings/{lodgingId}/reviews/{reviewId} owner -> HTTP 204")
+    @DisplayName("DELETE /api/v1/lodgings/{lodgingId}/reviews/{reviewId} owner -> HTTP 204")
     void deleteReview_returnsNoContent_whenUserIsOwner() throws Exception {
-        mockMvc.perform(delete("/api/lodgings/1/reviews/10"))
+        mockMvc.perform(delete("/api/v1/lodgings/1/reviews/10"))
                 .andExpect(status().isNoContent());
 
         verify(lodgingService).deleteReview(1L, 10L, "owner");

@@ -44,7 +44,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/signup -> HTTP 200")
+    @DisplayName("POST /api/v1/auth/signup -> HTTP 200")
     void signUp_returnsOk_whenRequestValid() throws Exception {
         String body = """
                 {
@@ -55,14 +55,14 @@ class UserControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("POST /api/auth/signup invalid password -> HTTP 400 VALIDATION_FAILED")
+    @DisplayName("POST /api/v1/auth/signup invalid password -> HTTP 400 VALIDATION_FAILED")
     void signUp_returnsBadRequest_whenPasswordInvalid() throws Exception {
         String body = """
                 {
@@ -73,7 +73,7 @@ class UserControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
@@ -81,7 +81,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/signup invalid email -> HTTP 400 VALIDATION_FAILED")
+    @DisplayName("POST /api/v1/auth/signup invalid email -> HTTP 400 VALIDATION_FAILED")
     void signUp_returnsBadRequest_whenEmailInvalid() throws Exception {
         String body = """
                 {
@@ -92,7 +92,7 @@ class UserControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
@@ -100,7 +100,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/login -> HTTP 200 token")
+    @DisplayName("POST /api/v1/auth/login -> HTTP 200 token")
     void login_returnsToken_whenCredentialsValid() throws Exception {
         String body = """
                 {
@@ -111,7 +111,7 @@ class UserControllerTest {
 
         given(userService.login(any())).willReturn("mock.jwt.token");
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())
@@ -119,7 +119,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/login invalid credentials -> HTTP 401 BAD_CREDENTIALS")
+    @DisplayName("POST /api/v1/auth/login invalid credentials -> HTTP 401 BAD_CREDENTIALS")
     void login_returnsUnauthorized_whenCredentialsInvalid() throws Exception {
         String body = """
                 {
@@ -130,7 +130,7 @@ class UserControllerTest {
 
         given(userService.login(any())).willThrow(new BadCredentialsException(""));
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isUnauthorized())
@@ -139,7 +139,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/signup duplicate username -> HTTP 400 DUPLICATE_USERNAME")
+    @DisplayName("POST /api/v1/auth/signup duplicate username -> HTTP 400 DUPLICATE_USERNAME")
     void signUp_returnsBadRequest_whenUsernameDuplicated() throws Exception {
         String body = """
                 {
@@ -152,7 +152,7 @@ class UserControllerTest {
 
         willThrow(new BusinessException(ErrorCode.DUPLICATE_USERNAME)).given(userService).signUp(any());
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
@@ -161,41 +161,41 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/auth/check/username/{username} available -> HTTP 200 available=true")
+    @DisplayName("GET /api/v1/auth/check/username/{username} available -> HTTP 200 available=true")
     void checkUsername_returnsAvailable_whenUsernameNotExists() throws Exception {
         given(userService.existsByUsername("newuser")).willReturn(false);
 
-        mockMvc.perform(get("/api/auth/check/username/newuser"))
+        mockMvc.perform(get("/api/v1/auth/check/username/newuser"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(true));
     }
 
     @Test
-    @DisplayName("GET /api/auth/check/username/{username} exists -> HTTP 200 available=false")
+    @DisplayName("GET /api/v1/auth/check/username/{username} exists -> HTTP 200 available=false")
     void checkUsername_returnsUnavailable_whenUsernameExists() throws Exception {
         given(userService.existsByUsername("existinguser")).willReturn(true);
 
-        mockMvc.perform(get("/api/auth/check/username/existinguser"))
+        mockMvc.perform(get("/api/v1/auth/check/username/existinguser"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(false));
     }
 
     @Test
-    @DisplayName("GET /api/auth/check/nickname/{nickname} available -> HTTP 200 available=true")
+    @DisplayName("GET /api/v1/auth/check/nickname/{nickname} available -> HTTP 200 available=true")
     void checkNickname_returnsAvailable_whenNicknameNotExists() throws Exception {
         given(userService.existsByNickname("newnick")).willReturn(false);
 
-        mockMvc.perform(get("/api/auth/check/nickname/newnick"))
+        mockMvc.perform(get("/api/v1/auth/check/nickname/newnick"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(true));
     }
 
     @Test
-    @DisplayName("GET /api/auth/check/nickname/{nickname} exists -> HTTP 200 available=false")
+    @DisplayName("GET /api/v1/auth/check/nickname/{nickname} exists -> HTTP 200 available=false")
     void checkNickname_returnsUnavailable_whenNicknameExists() throws Exception {
         given(userService.existsByNickname("oldnick")).willReturn(true);
 
-        mockMvc.perform(get("/api/auth/check/nickname/oldnick"))
+        mockMvc.perform(get("/api/v1/auth/check/nickname/oldnick"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(false));
     }

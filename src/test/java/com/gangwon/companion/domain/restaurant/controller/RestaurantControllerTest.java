@@ -36,8 +36,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,12 +61,12 @@ class RestaurantControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/restaurants -> HTTP 200 list")
+    @DisplayName("GET /api/v1/restaurants -> HTTP 200 list")
     void searchRestaurants_returnsList_whenRequestValid() throws Exception {
         given(restaurantService.searchRestaurants(any()))
                 .willReturn(new RestaurantListResponse(0, List.of()));
 
-        mockMvc.perform(get("/api/restaurants")
+        mockMvc.perform(get("/api/v1/restaurants")
                         .param("keyword", "food")
                         .param("page", "0")
                         .param("size", "20"))
@@ -76,24 +76,24 @@ class RestaurantControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/restaurants/{restaurantId} -> HTTP 200 detail")
+    @DisplayName("GET /api/v1/restaurants/{restaurantId} -> HTTP 200 detail")
     void getRestaurantDetail_returnsDetail_whenRestaurantExists() throws Exception {
         given(restaurantService.getRestaurantDetail(1L))
                 .willReturn(new RestaurantDetailResponse(restaurant(), List.of()));
 
-        mockMvc.perform(get("/api/restaurants/1"))
+        mockMvc.perform(get("/api/v1/restaurants/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Sea Restaurant"))
                 .andExpect(jsonPath("$.address").value("Gangneung"));
     }
 
     @Test
-    @DisplayName("POST /api/restaurants/{restaurantId}/reviews -> HTTP 201 created")
+    @DisplayName("POST /api/v1/restaurants/{restaurantId}/reviews -> HTTP 201 created")
     void createReview_returnsCreated_whenRequestValid() throws Exception {
         given(restaurantService.createReview(eq(1L), eq("owner"), any()))
                 .willReturn(new RestaurantReviewResponse(10L, "ownerNick", "great", 4.5, LocalDateTime.now()));
 
-        mockMvc.perform(post("/api/restaurants/1/reviews")
+        mockMvc.perform(post("/api/v1/restaurants/1/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -107,9 +107,9 @@ class RestaurantControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/restaurants/{restaurantId}/reviews invalid request -> HTTP 400 VALIDATION_FAILED")
+    @DisplayName("POST /api/v1/restaurants/{restaurantId}/reviews invalid request -> HTTP 400 VALIDATION_FAILED")
     void createReview_returnsBadRequest_whenRequestInvalid() throws Exception {
-        mockMvc.perform(post("/api/restaurants/1/reviews")
+        mockMvc.perform(post("/api/v1/restaurants/1/reviews")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -122,12 +122,12 @@ class RestaurantControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /api/restaurants/{restaurantId}/reviews/{reviewId} not owner -> HTTP 403 REVIEW_FORBIDDEN")
+    @DisplayName("PUT /api/v1/restaurants/{restaurantId}/reviews/{reviewId} not owner -> HTTP 403 REVIEW_FORBIDDEN")
     void updateReview_returnsForbidden_whenUserIsNotOwner() throws Exception {
         given(restaurantService.updateReview(eq(1L), eq(10L), eq("owner"), any()))
                 .willThrow(new BusinessException(ErrorCode.REVIEW_FORBIDDEN));
 
-        mockMvc.perform(put("/api/restaurants/1/reviews/10")
+        mockMvc.perform(patch("/api/v1/restaurants/1/reviews/10")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -140,9 +140,9 @@ class RestaurantControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /api/restaurants/{restaurantId}/reviews/{reviewId} owner -> HTTP 204")
+    @DisplayName("DELETE /api/v1/restaurants/{restaurantId}/reviews/{reviewId} owner -> HTTP 204")
     void deleteReview_returnsNoContent_whenUserIsOwner() throws Exception {
-        mockMvc.perform(delete("/api/restaurants/1/reviews/10"))
+        mockMvc.perform(delete("/api/v1/restaurants/1/reviews/10"))
                 .andExpect(status().isNoContent());
 
         verify(restaurantService).deleteReview(1L, 10L, "owner");
