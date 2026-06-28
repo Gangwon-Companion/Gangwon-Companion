@@ -10,3 +10,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+external:
+  tour-api:
+    service-key: ${TOUR_API_KEY}
+    base-url: https://apis.data.go.kr/B551011/KorService2

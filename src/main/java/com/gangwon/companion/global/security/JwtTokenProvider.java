@@ -1,4 +1,4 @@
-package com.gangwon.companion.global.jwt;
+package com.gangwon.companion.global.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

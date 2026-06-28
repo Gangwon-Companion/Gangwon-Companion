@@ -1,4 +1,4 @@
-package com.gangwon.companion.global.jwt;
+package com.gangwon.companion.global.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
