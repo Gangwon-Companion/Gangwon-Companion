@@ -1,4 +1,4 @@
-HELP.md
+﻿HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -36,5 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 
-# ȯ�溯��
+# 환경변수
 .env
+
+# ngrok logs
+ngrok.log
+ngrok-error.log
