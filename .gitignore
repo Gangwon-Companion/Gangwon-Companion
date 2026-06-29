@@ -36,5 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 
-# È¯°æº¯¼ö
+# È¯ï¿½æº¯ï¿½ï¿½
 .env
+
+# ngrok logs
+ngrok.log
+ngrok-error.log
