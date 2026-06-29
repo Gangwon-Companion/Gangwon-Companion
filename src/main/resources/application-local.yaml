@@ -19,3 +19,6 @@ external:
   tour-api:
     service-key: ${TOUR_API_KEY}
     base-url: https://apis.data.go.kr/B551011/KorService2
+  tats-cnctr-rate:
+    service-key: ${TATS_CNCTR_RATE_KEY:}
+    base-url: http://apis.data.go.kr/B551011/TatsCnctrRateService
