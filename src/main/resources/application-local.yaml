@@ -12,6 +12,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+server:
+  port: 8081
+
 jwt:
   secret: ${JWT_SECRET:gangwon_jwt_secret_key_2024_very_long_string}
 
@@ -20,5 +23,5 @@ external:
     service-key: ${TOUR_API_KEY}
     base-url: https://apis.data.go.kr/B551011/KorService2
   tats-cnctr-rate:
-    service-key: ${TATS_CNCTR_RATE_KEY:}
-    base-url: http://apis.data.go.kr/B551011/TatsCnctrRateService
+    service-key: ${TATS_CNCTR_RATE_KEY:${TOUR_API_KEY:}}
+    base-url: https://apis.data.go.kr/B551011/TatsCnctrRateService
