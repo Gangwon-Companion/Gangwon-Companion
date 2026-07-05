@@ -10,13 +10,13 @@ import com.gangwon.companion.domain.touristcongestion.repository.TouristCongesti
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,28 +24,38 @@ public class HotplaceService {
 
     private static final int HOTPLACE_LIMIT = 5;
 
+    private static final Comparator<TouristCongestionRate> PEAK_ORDER = Comparator
+            .comparing(TouristCongestionRate::getCongestionRate, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(TouristCongestionRate::getBaseDate, Comparator.nullsFirst(Comparator.naturalOrder()))
+            .thenComparing(TouristCongestionRate::getId, Comparator.naturalOrder());
+
     private final TouristCongestionRateRepository repository;
 
     @Transactional(readOnly = true)
     public HotplaceListResponse searchHotplaces(HotplaceSearchCriteria criteria) {
-        Page<TouristCongestionRate> result = repository.findAll(
-                TouristCongestionRateSpecifications.from(criteria),
-                PageRequest.of(
-                        0,
-                        HOTPLACE_LIMIT,
-                        Sort.by(
-                                Sort.Order.desc("congestionRate"),
-                                Sort.Order.desc("baseDate"),
-                                Sort.Order.desc("id")
-                        )
-                )
-        );
+        List<TouristCongestionRate> rows = repository.findAll(TouristCongestionRateSpecifications.from(criteria));
 
-        List<HotplaceItemResponse> items = result.getContent().stream()
+        // 같은 장소가 기간 내 여러 날 최고 혼잡도를 기록할 수 있으므로, 장소별 최고 기록 1건만 남긴다.
+        List<TouristCongestionRate> peakPerPlace = rows.stream()
+                .collect(Collectors.groupingBy(this::placeKey, Collectors.maxBy(PEAK_ORDER)))
+                .values().stream()
+                .flatMap(Optional::stream)
+                .toList();
+
+        List<TouristCongestionRate> topPlaces = peakPerPlace.stream()
+                .sorted(PEAK_ORDER.reversed())
+                .limit(HOTPLACE_LIMIT)
+                .toList();
+
+        List<HotplaceItemResponse> items = topPlaces.stream()
                 .map(HotplaceItemResponse::new)
                 .toList();
 
-        return new HotplaceListResponse(result.getTotalElements(), items);
+        return new HotplaceListResponse(peakPerPlace.size(), items);
+    }
+
+    private String placeKey(TouristCongestionRate rate) {
+        return rate.getSignguCode() + ":" + rate.getAttractionName();
     }
 
     @Transactional(readOnly = true)

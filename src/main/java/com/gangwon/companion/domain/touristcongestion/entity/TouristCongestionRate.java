@@ -64,8 +64,8 @@ public class TouristCongestionRate {
 
     @Builder
     public TouristCongestionRate(String areaCode, String signguCode, String areaName, String signguName,
-                                 String attractionName, Double congestionRate, String baseDate, String rawPayload,
-                                 String externalKey) {
+                                 String attractionName, Double congestionRate, String baseDate,
+                                 String rawPayload, String externalKey) {
         this.areaCode = areaCode;
         this.signguCode = signguCode;
         this.areaName = areaName;
