@@ -14,3 +14,12 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET:gangwon_jwt_secret_key_2024_very_long_string}
+
+activity:
+  sync:
+    enabled: ${ACTIVITY_SYNC_ENABLED:true}
+    initial-delay-ms: 5000
+    interval-ms: 86400000
+    rows-per-page: 200
+    max-pages: 3
+  detail-refresh-days: 7
