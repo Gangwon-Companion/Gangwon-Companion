@@ -54,4 +54,5 @@ jobs:
           POSTGRES_DB: gangwon_test
           POSTGRES_USER: gangwon_user
           POSTGRES_PASSWORD: test_password
-          JWT_SECRET: test_jwt_secret_for_ci
+          JWT_SECRET: gangwon_test_jwt_secret_key_2026_at_least_32_bytes_long
+          TOUR_API_SERVICE_KEY: test_tour_api_service_key_for_ci

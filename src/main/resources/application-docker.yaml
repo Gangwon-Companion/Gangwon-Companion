@@ -11,6 +11,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+activity:
+  sync:
+    enabled: ${ACTIVITY_SYNC_ENABLED:true}
+    initial-delay-ms: 5000
+    interval-ms: 86400000
+    rows-per-page: 200
+    max-pages: 3
+  detail-refresh-days: 7
 external:
   tour-api:
     service-key: ${TOUR_API_KEY}

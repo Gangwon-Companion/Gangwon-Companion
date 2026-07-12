@@ -58,6 +58,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/webjars/**"
                         ).permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/banners", "/api/promotions/hotplace", "/api/activities/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/promotions/hotplace", "/api/v1/promotions/hotplace/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/promotions/hotplace/sync").permitAll()
