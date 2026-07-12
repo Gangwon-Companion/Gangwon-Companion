@@ -1,8 +1,11 @@
 package com.gangwon.companion.domain.user.controller;
 
 import com.gangwon.companion.domain.user.service.UserService;
+import com.gangwon.companion.global.exception.BusinessException;
+import com.gangwon.companion.global.exception.ErrorCode;
 import com.gangwon.companion.global.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +20,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -39,59 +44,66 @@ class UserControllerTest {
     }
 
     @Test
-    void 회원가입_성공() throws Exception {
+    @DisplayName("POST /api/v1/auth/signup -> HTTP 200")
+    void signUp_returnsOk_whenRequestValid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "test@test.com",
-                  "nickname": "테스터"
+                  "nickname": "tester"
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."));
+                .andExpect(status().isOk());
     }
 
     @Test
-    void 회원가입_유효성_검사_실패_비밀번호() throws Exception {
+    @DisplayName("POST /api/v1/auth/signup invalid password -> HTTP 400 VALIDATION_FAILED")
+    void signUp_returnsBadRequest_whenPasswordInvalid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "1234",
                   "email": "test@test.com",
-                  "nickname": "테스터"
+                  "nickname": "tester"
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_FAILED.getCode()))
+                .andExpect(jsonPath("$.errors[0].field").value("password"))
+                .andExpect(jsonPath("$.errors[0].rejectedValue").doesNotExist());
     }
 
     @Test
-    void 회원가입_유효성_검사_실패_이메일형식() throws Exception {
+    @DisplayName("POST /api/v1/auth/signup invalid email -> HTTP 400 VALIDATION_FAILED")
+    void signUp_returnsBadRequest_whenEmailInvalid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "invalid-email",
-                  "nickname": "테스터"
+                  "nickname": "tester"
                 }
                 """;
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_FAILED.getCode()));
     }
 
     @Test
-    void 로그인_성공() throws Exception {
+    @DisplayName("POST /api/v1/auth/login -> HTTP 200 token")
+    void login_returnsToken_whenCredentialsValid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
@@ -101,7 +113,7 @@ class UserControllerTest {
 
         given(userService.login(any())).willReturn("mock.jwt.token");
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isOk())
@@ -109,7 +121,8 @@ class UserControllerTest {
     }
 
     @Test
-    void 로그인_실패_잘못된_비밀번호() throws Exception {
+    @DisplayName("POST /api/v1/auth/login invalid credentials -> HTTP 401 BAD_CREDENTIALS")
+    void login_returnsUnauthorized_whenCredentialsInvalid() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
@@ -119,65 +132,72 @@ class UserControllerTest {
 
         given(userService.login(any())).willThrow(new BadCredentialsException(""));
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("아이디 또는 비밀번호가 올바르지 않습니다."));
+                .andExpect(jsonPath("$.code").value(ErrorCode.BAD_CREDENTIALS.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BAD_CREDENTIALS.getMessage()));
     }
 
     @Test
-    void 회원가입_중복_아이디_400반환() throws Exception {
+    @DisplayName("POST /api/v1/auth/signup duplicate username -> HTTP 400 DUPLICATE_USERNAME")
+    void signUp_returnsBadRequest_whenUsernameDuplicated() throws Exception {
         String body = """
                 {
                   "username": "testuser1",
                   "password": "Test1234!",
                   "email": "test@test.com",
-                  "nickname": "테스터"
+                  "nickname": "tester"
                 }
                 """;
 
-        willThrow(new IllegalArgumentException("이미 사용 중인 아이디입니다.")).given(userService).signUp(any());
+        willThrow(new BusinessException(ErrorCode.DUPLICATE_USERNAME)).given(userService).signUp(any());
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("이미 사용 중인 아이디입니다."));
+                .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_USERNAME.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.DUPLICATE_USERNAME.getMessage()));
     }
 
     @Test
-    void 아이디_중복확인_사용가능() throws Exception {
+    @DisplayName("GET /api/v1/auth/check/username/{username} available -> HTTP 200 available=true")
+    void checkUsername_returnsAvailable_whenUsernameNotExists() throws Exception {
         given(userService.existsByUsername("newuser")).willReturn(false);
 
-        mockMvc.perform(get("/api/auth/check/username/newuser"))
+        mockMvc.perform(get("/api/v1/auth/check/username/newuser"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(true));
     }
 
     @Test
-    void 아이디_중복확인_사용불가() throws Exception {
+    @DisplayName("GET /api/v1/auth/check/username/{username} exists -> HTTP 200 available=false")
+    void checkUsername_returnsUnavailable_whenUsernameExists() throws Exception {
         given(userService.existsByUsername("existinguser")).willReturn(true);
 
-        mockMvc.perform(get("/api/auth/check/username/existinguser"))
+        mockMvc.perform(get("/api/v1/auth/check/username/existinguser"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(false));
     }
 
     @Test
-    void 닉네임_중복확인_사용가능() throws Exception {
-        given(userService.existsByNickname("새닉")).willReturn(false);
+    @DisplayName("GET /api/v1/auth/check/nickname/{nickname} available -> HTTP 200 available=true")
+    void checkNickname_returnsAvailable_whenNicknameNotExists() throws Exception {
+        given(userService.existsByNickname("newnick")).willReturn(false);
 
-        mockMvc.perform(get("/api/auth/check/nickname/새닉"))
+        mockMvc.perform(get("/api/v1/auth/check/nickname/newnick"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(true));
     }
 
     @Test
-    void 닉네임_중복확인_사용불가() throws Exception {
-        given(userService.existsByNickname("기존닉")).willReturn(true);
+    @DisplayName("GET /api/v1/auth/check/nickname/{nickname} exists -> HTTP 200 available=false")
+    void checkNickname_returnsUnavailable_whenNicknameExists() throws Exception {
+        given(userService.existsByNickname("oldnick")).willReturn(true);
 
-        mockMvc.perform(get("/api/auth/check/nickname/기존닉"))
+        mockMvc.perform(get("/api/v1/auth/check/nickname/oldnick"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(false));
     }

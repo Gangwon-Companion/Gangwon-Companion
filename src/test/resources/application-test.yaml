@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:gangwon-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+jwt:
+  secret: gangwon_test_jwt_secret_key_2024_very_long_string

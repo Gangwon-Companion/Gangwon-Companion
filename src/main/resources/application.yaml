@@ -2,7 +2,7 @@ spring:
   application:
     name: gangwon-companion
   profiles:
-    active: local
+    default: local
 
 jwt:
   secret: ${JWT_SECRET}

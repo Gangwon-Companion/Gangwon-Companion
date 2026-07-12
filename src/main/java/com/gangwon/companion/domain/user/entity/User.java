@@ -1,7 +1,16 @@
 package com.gangwon.companion.domain.user.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -19,10 +28,10 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 20)
-    private String username; // 아이디 (영문 소문자 + 숫자)
+    private String username;
 
     @Column(nullable = false)
-    private String password; // 암호화 저장
+    private String password;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -39,6 +48,14 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.nickname = nickname;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
 }
