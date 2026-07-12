@@ -30,6 +30,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -64,7 +65,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/restaurants", "/api/v1/restaurants/*").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService, tokenBlacklistService),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

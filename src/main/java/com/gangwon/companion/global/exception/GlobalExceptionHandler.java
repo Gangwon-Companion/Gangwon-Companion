@@ -114,8 +114,12 @@ public class GlobalExceptionHandler {
         return new FieldErrorResponse(
                 fieldError.getField(),
                 fieldError.getDefaultMessage(),
-                fieldError.getRejectedValue()
+                isSensitiveField(fieldError.getField()) ? null : fieldError.getRejectedValue()
         );
+    }
+
+    private boolean isSensitiveField(String fieldName) {
+        return fieldName != null && fieldName.toLowerCase().contains("password");
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(ErrorCode errorCode, HttpServletRequest request) {
