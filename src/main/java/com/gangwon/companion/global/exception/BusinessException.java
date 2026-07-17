@@ -1,8 +1,5 @@
 package com.gangwon.companion.global.exception;
 
-import lombok.Getter;
-
-@Getter
 public class BusinessException extends RuntimeException {
     private final ErrorCode errorCode;
 
@@ -14,5 +11,9 @@ public class BusinessException extends RuntimeException {
     public BusinessException(ErrorCode errorCode, String detailMessage) {
         super(detailMessage);
         this.errorCode = errorCode;
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }

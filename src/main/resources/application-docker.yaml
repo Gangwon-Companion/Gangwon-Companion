@@ -28,3 +28,19 @@ destination-detail-sync:
   cron: "0 0 3 * * *"
   zone: Asia/Seoul
   limit: 50
+
+activity:
+  sync:
+    enabled: ${ACTIVITY_SYNC_ENABLED:true}
+    initial-delay-ms: 5000
+    interval-ms: 86400000
+    rows-per-page: 200
+    max-pages: 3
+  detail-refresh-days: 7
+external:
+  tour-api:
+    service-key: ${TOUR_API_KEY}
+    base-url: https://apis.data.go.kr/B551011/KorService2
+  tats-cnctr-rate:
+    service-key: ${TATS_CNCTR_RATE_KEY:${TOUR_API_KEY:}}
+    base-url: https://apis.data.go.kr/B551011/TatsCnctrRateService
