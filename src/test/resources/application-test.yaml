@@ -14,3 +14,18 @@ spring:
 
 jwt:
   secret: gangwon_test_jwt_secret_key_2024_very_long_string
+
+tour-api:
+  service-key: test-tour-api-key
+  base-url: https://apis.data.go.kr
+  mobile-os: ETC
+  mobile-app: GangwonCompanion
+  area-code: 32
+
+external:
+  tour-api:
+    service-key: test-tour-api-key
+    base-url: https://apis.data.go.kr/B551011/KorService2
+  tats-cnctr-rate:
+    service-key: test-tour-api-key
+    base-url: https://apis.data.go.kr/B551011/TatsCnctrRateService

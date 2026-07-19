@@ -3,6 +3,10 @@ package com.gangwon.companion.global.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
+    THEME_NOT_FOUND(HttpStatus.NOT_FOUND, "THEME_NOT_FOUND", "테마를 찾을 수 없습니다."),
+    DESTINATION_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "DESTINATION_DETAIL_NOT_FOUND", "장소 상세정보를 찾을 수 없습니다."),
+    EXTERNAL_API_RATE_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "EXTERNAL_API_RATE_LIMIT", "외부 API 호출 한도를 초과했습니다."),
+    EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, "EXTERNAL_API_ERROR", "외부 API 호출 중 오류가 발생했습니다."),
 
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "DUPLICATE_USERNAME", "이미 사용 중인 아이디입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "DUPLICATE_EMAIL", "이미 사용 중인 이메일입니다."),
