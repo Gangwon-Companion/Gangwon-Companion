@@ -26,7 +26,7 @@ public class PetTourApiClient {
 
     public PetTourApiResponse fetchDestinations(int pageNo, int numOfRows) {
         if (serviceKey == null || serviceKey.isBlank()) {
-            throw new IllegalStateException("TOUR_API_SERVICE_KEY is required.");
+            throw new IllegalStateException("TOUR_API_KEY is required.");
         }
 
         return tourApiRestClient.get()

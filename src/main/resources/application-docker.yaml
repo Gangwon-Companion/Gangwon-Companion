@@ -13,7 +13,7 @@ spring:
 
 tour-api:
   base-url: https://apis.data.go.kr
-  service-key: ${TOUR_API_SERVICE_KEY:}
+  service-key: ${TOUR_API_KEY:}
   mobile-os: ETC
   mobile-app: GangwonCompanion
   area-code: 32

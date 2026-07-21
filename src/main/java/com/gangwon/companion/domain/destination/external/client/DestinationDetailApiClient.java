@@ -154,7 +154,7 @@ public class DestinationDetailApiClient {
 
     private void validateServiceKey() {
         if (serviceKey == null || serviceKey.isBlank()) {
-            throw new IllegalStateException("TOUR_API_SERVICE_KEY is required.");
+            throw new IllegalStateException("TOUR_API_KEY is required.");
         }
     }
 
