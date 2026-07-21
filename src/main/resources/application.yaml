@@ -8,5 +8,5 @@ jwt:
   secret: ${JWT_SECRET}
 
 tour-api:
-  service-key: ${TOUR_API_SERVICE_KEY}
+  service-key: ${TOUR_API_KEY}
   base-url: https://apis.data.go.kr
