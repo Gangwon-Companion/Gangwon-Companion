@@ -17,7 +17,7 @@ public class SearchHistoryController {
 
     private final SearchHistoryService searchHistoryService;
 
-    @PostMapping("/api/search-history")
+    @PostMapping("/api/v1/search-history")
     public ResponseEntity<SearchHistoryResponse> saveSearchHistory(
             @Valid @RequestBody SearchHistoryRequest request,
             Authentication authentication

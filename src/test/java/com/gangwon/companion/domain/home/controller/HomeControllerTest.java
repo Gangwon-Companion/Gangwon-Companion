@@ -47,7 +47,7 @@ class HomeControllerTest {
 
     @Test
     void getPromotionDetailsUsesAuthenticatedUserContext() throws Exception {
-        mockMvc.perform(get("/api/promotions/details")
+        mockMvc.perform(get("/api/v1/promotions/details")
                         .param("keyword", "stay")
                         .param("region", "gangneung")
                         .principal(new TestingAuthenticationToken("testuser1", null)))
@@ -57,14 +57,14 @@ class HomeControllerTest {
 
     @Test
     void getPromotionBannersFiltersByCategory() throws Exception {
-        mockMvc.perform(get("/api/banners")
+        mockMvc.perform(get("/api/v1/banners")
                         .param("category", "spot"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getHotPlacesAppliesLimit() throws Exception {
-        mockMvc.perform(get("/api/promotions/hotplace")
+        mockMvc.perform(get("/api/v1/home/promotions/hotplace")
                         .param("limit", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
