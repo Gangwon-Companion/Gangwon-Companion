@@ -20,7 +20,7 @@ public class HomeController {
 
     private final HomeService homeService;
 
-    @GetMapping("/api/banners")
+    @GetMapping("/api/v1/banners")
     public ResponseEntity<PromotionBannerListResponse> getPromotionBanners(
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "5") int limit
@@ -28,7 +28,7 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getPromotionBanners(category, limit));
     }
 
-    @GetMapping("/api/promotions/hotplace")
+    @GetMapping("/api/v1/home/promotions/hotplace")
 
     public ResponseEntity<List<HotPlaceResponse>> getHotPlaces(
             @RequestParam(defaultValue = "5") int limit
@@ -36,7 +36,7 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getHotPlaces(limit));
     }
 
-    @GetMapping("/api/promotions/details")
+    @GetMapping("/api/v1/promotions/details")
     public ResponseEntity<List<SpecialOfferResponse>> getSpecialOffers(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String region,

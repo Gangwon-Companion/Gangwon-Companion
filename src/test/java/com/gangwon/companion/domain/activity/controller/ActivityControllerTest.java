@@ -47,7 +47,7 @@ class ActivityControllerTest {
         when(activityService.getActivities(ActivityCategory.LEISURE, "양양", "서핑", 0, 10))
                 .thenReturn(new ActivityListResponse(List.of(item), 0, 10, 1, 1));
 
-        mockMvc.perform(get("/api/activities")
+        mockMvc.perform(get("/api/v1/activities")
                         .param("category", "LEISURE")
                         .param("region", "양양")
                         .param("keyword", "서핑")
@@ -82,7 +82,7 @@ class ActivityControllerTest {
                 128.0
         ));
 
-        mockMvc.perform(get("/api/activities/1"))
+        mockMvc.perform(get("/api/v1/activities/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.overview").value("서핑 체험"));
