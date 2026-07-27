@@ -32,15 +32,11 @@ destination-sync:
 
 destination-detail-sync:
   enabled: true
-  cron: "0 0 3 * * *"
-  zone: Asia/Seoul
   limit: 50
 
 activity:
   sync:
     enabled: ${ACTIVITY_SYNC_ENABLED:true}
-    initial-delay-ms: 5000
-    interval-ms: 86400000
     rows-per-page: 200
     max-pages: 3
   detail-refresh-days: 7

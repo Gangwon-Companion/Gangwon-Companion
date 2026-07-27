@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -65,45 +67,53 @@ public class TourApiActivityClient {
     }
 
     private JsonNode requestAreaBasedList(int contentTypeId, int rows, int page) {
+        URI uri = commonUri("/B551011/KorService2/areaBasedList2")
+                .queryParam("areaCode", "32")
+                .queryParam("contentTypeId", contentTypeId)
+                .queryParam("arrange", "O")
+                .queryParam("numOfRows", rows)
+                .queryParam("pageNo", page)
+                .build(true)
+                .toUri();
+
         return restClient.get()
-                .uri(uriBuilder -> commonUri(uriBuilder.path("/B551011/KorService2/areaBasedList2"))
-                        .queryParam("areaCode", "32")
-                        .queryParam("contentTypeId", contentTypeId)
-                        .queryParam("arrange", "O")
-                        .queryParam("numOfRows", rows)
-                        .queryParam("pageNo", page)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(JsonNode.class);
     }
 
     private JsonNode requestDetailCommon(Long contentId) {
+        URI uri = commonUri("/B551011/KorService2/detailCommon2")
+                .queryParam("contentId", contentId)
+                .queryParam("numOfRows", 10)
+                .queryParam("pageNo", 1)
+                .build(true)
+                .toUri();
+
         return restClient.get()
-                .uri(uriBuilder -> commonUri(uriBuilder.path("/B551011/KorService2/detailCommon2"))
-                        .queryParam("contentId", contentId)
-                        .queryParam("numOfRows", 10)
-                        .queryParam("pageNo", 1)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(JsonNode.class);
     }
 
     private JsonNode requestDetailIntro(Long contentId, int contentTypeId) {
+        URI uri = commonUri("/B551011/KorService2/detailIntro2")
+                .queryParam("contentId", contentId)
+                .queryParam("contentTypeId", contentTypeId)
+                .queryParam("numOfRows", 10)
+                .queryParam("pageNo", 1)
+                .build(true)
+                .toUri();
+
         return restClient.get()
-                .uri(uriBuilder -> commonUri(uriBuilder.path("/B551011/KorService2/detailIntro2"))
-                        .queryParam("contentId", contentId)
-                        .queryParam("contentTypeId", contentTypeId)
-                        .queryParam("numOfRows", 10)
-                        .queryParam("pageNo", 1)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(JsonNode.class);
     }
 
-    private org.springframework.web.util.UriBuilder commonUri(org.springframework.web.util.UriBuilder uriBuilder) {
-        return uriBuilder
-                .scheme("https")
-                .host(baseUrl.replace("https://", "").replace("http://", ""))
+    private UriComponentsBuilder commonUri(String path) {
+        return UriComponentsBuilder.fromUriString(baseUrl)
+                .path(path)
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("MobileOS", "ETC")
                 .queryParam("MobileApp", "GangwonCompanion")

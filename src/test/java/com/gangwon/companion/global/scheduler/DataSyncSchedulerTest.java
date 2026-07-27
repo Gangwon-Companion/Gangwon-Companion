@@ -1,5 +1,7 @@
 package com.gangwon.companion.global.scheduler;
 
+import com.gangwon.companion.domain.activity.service.ActivitySyncService;
+import com.gangwon.companion.domain.destination.dto.DestinationDetailSyncResponseDto;
 import com.gangwon.companion.domain.destination.service.DestinationDetailSyncService;
 import com.gangwon.companion.domain.destination.service.DestinationSyncService;
 import com.gangwon.companion.domain.lodging.service.LodgingSyncService;
@@ -18,6 +20,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DataSyncSchedulerTest {
+
+    @Mock
+    ActivitySyncService activitySyncService;
 
     @Mock
     DestinationSyncService destinationSyncService;
@@ -39,6 +44,7 @@ class DataSyncSchedulerTest {
     @BeforeEach
     void setUp() {
         dataSyncScheduler = new DataSyncScheduler(
+                activitySyncService,
                 destinationSyncService,
                 destinationDetailSyncService,
                 restaurantSyncService,
@@ -48,6 +54,7 @@ class DataSyncSchedulerTest {
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationSyncEnabled", true);
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationDetailSyncEnabled", true);
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationDetailSyncLimit", 50);
+        ReflectionTestUtils.setField(dataSyncScheduler, "activitySyncEnabled", true);
     }
 
     @Test
@@ -55,6 +62,13 @@ class DataSyncSchedulerTest {
         given(destinationSyncService.syncKoreanDestinations()).willReturn(1);
         given(destinationSyncService.syncPetDestinations()).willReturn(2);
         given(destinationSyncService.syncAccessibilityDestinations()).willReturn(3);
+        given(destinationDetailSyncService.syncKoreanDestinationDetails(50))
+                .willReturn(detailSyncResult(4, 1));
+        given(destinationDetailSyncService.syncPetDestinationDetails(50))
+                .willReturn(detailSyncResult(5, 2));
+        given(destinationDetailSyncService.syncAccessibilityDestinationDetails(50))
+                .willReturn(detailSyncResult(6, 3));
+        given(activitySyncService.syncGangwonActivities()).willReturn(7);
 
         dataSyncScheduler.syncAll();
 
@@ -64,6 +78,7 @@ class DataSyncSchedulerTest {
         verify(destinationDetailSyncService).syncKoreanDestinationDetails(50);
         verify(destinationDetailSyncService).syncPetDestinationDetails(50);
         verify(destinationDetailSyncService).syncAccessibilityDestinationDetails(50);
+        verify(activitySyncService).syncGangwonActivities();
         verify(restaurantSyncService).sync();
         verify(lodgingSyncService).sync();
         verify(touristCongestionRateSyncService).sync();
@@ -74,6 +89,7 @@ class DataSyncSchedulerTest {
     void syncAllSkipsDestinationSyncsWhenDisabled() {
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationSyncEnabled", false);
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationDetailSyncEnabled", false);
+        ReflectionTestUtils.setField(dataSyncScheduler, "activitySyncEnabled", false);
 
         dataSyncScheduler.syncAll();
 
@@ -83,9 +99,17 @@ class DataSyncSchedulerTest {
         verify(destinationDetailSyncService, never()).syncKoreanDestinationDetails(50);
         verify(destinationDetailSyncService, never()).syncPetDestinationDetails(50);
         verify(destinationDetailSyncService, never()).syncAccessibilityDestinationDetails(50);
+        verify(activitySyncService, never()).syncGangwonActivities();
         verify(restaurantSyncService).sync();
         verify(lodgingSyncService).sync();
         verify(touristCongestionRateSyncService).sync();
         verify(lodgingSyncService).enrichDetails();
+    }
+
+    private DestinationDetailSyncResponseDto detailSyncResult(int processedCount, int savedCount) {
+        return DestinationDetailSyncResponseDto.builder()
+                .processedCount(processedCount)
+                .savedCount(savedCount)
+                .build();
     }
 }

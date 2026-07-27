@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
@@ -13,6 +16,9 @@ public class AccessibilityTourApiClient {
 
     @Value("${tour-api.service-key}")
     private String serviceKey;
+
+    @Value("${tour-api.base-url}")
+    private String baseUrl;
 
     @Value("${tour-api.mobile-os:ETC}")
     private String mobileOs;
@@ -28,17 +34,20 @@ public class AccessibilityTourApiClient {
             throw new IllegalStateException("TOUR_API_KEY is required.");
         }
 
+        URI uri = UriComponentsBuilder.fromUriString(baseUrl)
+                .path("/B551011/KorWithService2/areaBasedList2")
+                .queryParam("serviceKey", serviceKey)
+                .queryParam("MobileOS", mobileOs)
+                .queryParam("MobileApp", mobileApp)
+                .queryParam("_type", "json")
+                .queryParam("areaCode", areaCode)
+                .queryParam("pageNo", pageNo)
+                .queryParam("numOfRows", numOfRows)
+                .build(true)
+                .toUri();
+
         return tourApiRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/B551011/KorWithService2/areaBasedList2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", mobileOs)
-                        .queryParam("MobileApp", mobileApp)
-                        .queryParam("_type", "json")
-                        .queryParam("areaCode", areaCode)
-                        .queryParam("pageNo", pageNo)
-                        .queryParam("numOfRows", numOfRows)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(AccessibilityTourApiResponse.class);
     }
