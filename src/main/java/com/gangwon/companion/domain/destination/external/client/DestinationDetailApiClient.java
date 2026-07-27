@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +28,9 @@ public class DestinationDetailApiClient {
     @Value("${tour-api.service-key}")
     private String serviceKey;
 
+    @Value("${tour-api.base-url}")
+    private String baseUrl;
+
     @Value("${tour-api.mobile-os:ETC}")
     private String mobileOs;
 
@@ -34,15 +40,13 @@ public class DestinationDetailApiClient {
     public DetailApiResponse<DetailCommonItem> fetchDetailCommon(SourceType sourceType, Long contentId) {
         validateServiceKey();
 
+        URI uri = commonUri(sourceType, "/detailCommon2")
+                .queryParam("contentId", contentId)
+                .build(true)
+                .toUri();
+
         String responseBody = tourApiRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(servicePath(sourceType) + "/detailCommon2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", mobileOs)
-                        .queryParam("MobileApp", mobileApp)
-                        .queryParam("_type", "json")
-                        .queryParam("contentId", contentId)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(String.class);
 
@@ -57,16 +61,14 @@ public class DestinationDetailApiClient {
     ) {
         validateServiceKey();
 
+        URI uri = commonUri(sourceType, "/detailIntro2")
+                .queryParam("contentId", contentId)
+                .queryParam("contentTypeId", contentTypeId)
+                .build(true)
+                .toUri();
+
         String responseBody = tourApiRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(servicePath(sourceType) + "/detailIntro2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", mobileOs)
-                        .queryParam("MobileApp", mobileApp)
-                        .queryParam("_type", "json")
-                        .queryParam("contentId", contentId)
-                        .queryParam("contentTypeId", contentTypeId)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(String.class);
 
@@ -77,15 +79,13 @@ public class DestinationDetailApiClient {
     public DetailApiResponse<DetailImageItem> fetchDetailImages(SourceType sourceType, Long contentId) {
         validateServiceKey();
 
+        URI uri = commonUri(sourceType, "/detailImage2")
+                .queryParam("contentId", contentId)
+                .build(true)
+                .toUri();
+
         String responseBody = tourApiRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(servicePath(sourceType) + "/detailImage2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", mobileOs)
-                        .queryParam("MobileApp", mobileApp)
-                        .queryParam("_type", "json")
-                        .queryParam("contentId", contentId)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(String.class);
 
@@ -96,15 +96,13 @@ public class DestinationDetailApiClient {
     public DetailApiResponse<DetailPetTourItem> fetchDetailPetTour(Long contentId) {
         validateServiceKey();
 
+        URI uri = commonUri(SourceType.PET, "/detailPetTour2")
+                .queryParam("contentId", contentId)
+                .build(true)
+                .toUri();
+
         String responseBody = tourApiRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(servicePath(SourceType.PET) + "/detailPetTour2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", mobileOs)
-                        .queryParam("MobileApp", mobileApp)
-                        .queryParam("_type", "json")
-                        .queryParam("contentId", contentId)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(String.class);
 
@@ -115,15 +113,13 @@ public class DestinationDetailApiClient {
     public DetailApiResponse<DetailWithTourItem> fetchDetailWithTour(Long contentId) {
         validateServiceKey();
 
+        URI uri = commonUri(SourceType.ACCESSIBILITY, "/detailWithTour2")
+                .queryParam("contentId", contentId)
+                .build(true)
+                .toUri();
+
         String responseBody = tourApiRestClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(servicePath(SourceType.ACCESSIBILITY) + "/detailWithTour2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", mobileOs)
-                        .queryParam("MobileApp", mobileApp)
-                        .queryParam("_type", "json")
-                        .queryParam("contentId", contentId)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(String.class);
 
@@ -164,5 +160,14 @@ public class DestinationDetailApiClient {
             case PET -> "/B551011/KorPetTourService2";
             case ACCESSIBILITY -> "/B551011/KorWithService2";
         };
+    }
+
+    private UriComponentsBuilder commonUri(SourceType sourceType, String path) {
+        return UriComponentsBuilder.fromUriString(baseUrl)
+                .path(servicePath(sourceType) + path)
+                .queryParam("serviceKey", serviceKey)
+                .queryParam("MobileOS", mobileOs)
+                .queryParam("MobileApp", mobileApp)
+                .queryParam("_type", "json");
     }
 }

@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,21 +43,17 @@ public class TourApiClient {
     }
 
     public List<PromotionBannerResponse> getGangwonSpotBanners(int limit) {
+        URI uri = commonUri("/B551011/KorService2/areaBasedList2")
+                .queryParam("areaCode", "32")
+                .queryParam("contentTypeId", "12")
+                .queryParam("arrange", "Q")
+                .queryParam("numOfRows", limit)
+                .queryParam("pageNo", 1)
+                .build(true)
+                .toUri();
+
         JsonNode response = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .scheme("https")
-                        .host(baseUrl.replace("https://", "").replace("http://", ""))
-                        .path("/B551011/KorService2/areaBasedList2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", "ETC")
-                        .queryParam("MobileApp", "GangwonCompanion")
-                        .queryParam("_type", "json")
-                        .queryParam("areaCode", "32")
-                        .queryParam("contentTypeId", "12")
-                        .queryParam("arrange", "Q")
-                        .queryParam("numOfRows", limit)
-                        .queryParam("pageNo", 1)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(JsonNode.class);
 
@@ -69,21 +67,17 @@ public class TourApiClient {
     ) {
         int requestRows = Math.max(limit * 5, 20);
 
+        URI uri = commonUri("/B551011/KorService2/searchFestival2")
+                .queryParam("areaCode", "32")
+                .queryParam("eventStartDate", eventStartDate.format(TOUR_API_DATE))
+                .queryParam("arrange", "O")
+                .queryParam("numOfRows", requestRows)
+                .queryParam("pageNo", 1)
+                .build(true)
+                .toUri();
+
         JsonNode response = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .scheme("https")
-                        .host(baseUrl.replace("https://", "").replace("http://", ""))
-                        .path("/B551011/KorService2/searchFestival2")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("MobileOS", "ETC")
-                        .queryParam("MobileApp", "GangwonCompanion")
-                        .queryParam("_type", "json")
-                        .queryParam("areaCode", "32")
-                        .queryParam("eventStartDate", eventStartDate.format(TOUR_API_DATE))
-                        .queryParam("arrange", "O")
-                        .queryParam("numOfRows", requestRows)
-                        .queryParam("pageNo", 1)
-                        .build())
+                .uri(uri)
                 .retrieve()
                 .body(JsonNode.class);
 
@@ -226,5 +220,14 @@ public class TourApiClient {
             return null;
         }
         return LocalDate.parse(value, TOUR_API_DATE);
+    }
+
+    private UriComponentsBuilder commonUri(String path) {
+        return UriComponentsBuilder.fromUriString(baseUrl)
+                .path(path)
+                .queryParam("serviceKey", serviceKey)
+                .queryParam("MobileOS", "ETC")
+                .queryParam("MobileApp", "GangwonCompanion")
+                .queryParam("_type", "json");
     }
 }
