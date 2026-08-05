@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public class LoginRequest {
 
+    private String captchaToken;
+
     @Schema(description = "아이디", example = "testuser1")
     @NotBlank
     private String username;
