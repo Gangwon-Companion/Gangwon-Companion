@@ -18,6 +18,14 @@ server:
 jwt:
   secret: ${JWT_SECRET:gangwon_jwt_secret_key_2024_very_long_string}
 
+personal-data:
+  encryption-key: ${PERSONAL_DATA_ENCRYPTION_KEY:gangwon_companion_aes_key_32byte}
+
+captcha:
+  enabled: ${CAPTCHA_ENABLED:false}
+  secret: ${CAPTCHA_SECRET:}
+  min-score: ${CAPTCHA_MIN_SCORE:0.5}
+
 external:
   tour-api:
     service-key: ${TOUR_API_KEY}
