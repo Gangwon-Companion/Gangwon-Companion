@@ -6,3 +6,11 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
+
+personal-data:
+  encryption-key: ${PERSONAL_DATA_ENCRYPTION_KEY}
+
+captcha:
+  enabled: ${CAPTCHA_ENABLED:false}
+  secret: ${CAPTCHA_SECRET:}
+  min-score: ${CAPTCHA_MIN_SCORE:0.5}
