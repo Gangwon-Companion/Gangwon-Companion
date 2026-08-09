@@ -18,6 +18,28 @@ server:
 jwt:
   secret: ${JWT_SECRET:gangwon_jwt_secret_key_2024_very_long_string}
 
+tour-api:
+  base-url: https://apis.data.go.kr
+  service-key: ${TOUR_API_KEY:}
+  mobile-os: ETC
+  mobile-app: GangwonCompanion
+  area-code: 32
+
+destination-sync:
+  enabled: true
+  cron: "0 0 2 * * *"
+  zone: Asia/Seoul
+
+destination-detail-sync:
+  enabled: true
+  limit: 50
+
+activity:
+  sync:
+    enabled: ${ACTIVITY_SYNC_ENABLED:true}
+    rows-per-page: 200
+    max-pages: 3
+  detail-refresh-days: 7
 personal-data:
   encryption-key: ${PERSONAL_DATA_ENCRYPTION_KEY:gangwon_companion_aes_key_32byte}
 

@@ -39,3 +39,6 @@ out/
 # 환경변수
 .env
 
+# Local performance benchmarks
+benchmarks/
+

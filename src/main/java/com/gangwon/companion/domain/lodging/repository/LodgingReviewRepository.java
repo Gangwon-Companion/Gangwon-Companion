@@ -11,4 +11,6 @@ public interface LodgingReviewRepository extends JpaRepository<LodgingReview, Lo
     List<LodgingReview> findByLodgingId(Long lodgingId);
 
     Optional<LodgingReview> findByIdAndLodgingId(Long id, Long lodgingId);
+
+    long countByUserUsername(String username);
 }

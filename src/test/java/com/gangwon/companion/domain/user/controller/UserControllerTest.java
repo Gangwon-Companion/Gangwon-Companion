@@ -77,7 +77,9 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_FAILED.getCode()));
+                .andExpect(jsonPath("$.code").value(ErrorCode.VALIDATION_FAILED.getCode()))
+                .andExpect(jsonPath("$.errors[0].field").value("password"))
+                .andExpect(jsonPath("$.errors[0].rejectedValue").doesNotExist());
     }
 
     @Test

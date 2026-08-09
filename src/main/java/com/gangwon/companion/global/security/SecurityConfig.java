@@ -30,6 +30,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -58,13 +59,17 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/banners", "/api/v1/home/promotions/hotplace").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/activities", "/api/v1/activities/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/themes", "/api/v1/themes/*/destinations").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/destinations/*/detail").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/promotions/hotplace", "/api/v1/promotions/hotplace/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/promotions/hotplace/sync").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/lodgings", "/api/v1/lodgings/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/restaurants", "/api/v1/restaurants/*").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService, tokenBlacklistService),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

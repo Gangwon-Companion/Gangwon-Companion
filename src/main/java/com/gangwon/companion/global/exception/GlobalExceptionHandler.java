@@ -15,6 +15,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
@@ -99,6 +101,22 @@ public class GlobalExceptionHandler {
         return buildResponse(ErrorCode.METHOD_NOT_ALLOWED, request);
     }
 
+    @ExceptionHandler(HttpClientErrorException.TooManyRequests.class)
+    public ResponseEntity<ErrorResponse> handleExternalApiRateLimit(
+            HttpClientErrorException.TooManyRequests e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(ErrorCode.EXTERNAL_API_RATE_LIMIT, request);
+    }
+
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<ErrorResponse> handleExternalApiException(
+            RestClientException e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(ErrorCode.EXTERNAL_API_ERROR, request);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException e,
                                                                      HttpServletRequest request) {
@@ -114,8 +132,12 @@ public class GlobalExceptionHandler {
         return new FieldErrorResponse(
                 fieldError.getField(),
                 fieldError.getDefaultMessage(),
-                fieldError.getRejectedValue()
+                isSensitiveField(fieldError.getField()) ? null : fieldError.getRejectedValue()
         );
+    }
+
+    private boolean isSensitiveField(String fieldName) {
+        return fieldName != null && fieldName.toLowerCase().contains("password");
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(ErrorCode errorCode, HttpServletRequest request) {

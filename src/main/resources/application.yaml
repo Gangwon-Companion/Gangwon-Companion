@@ -14,3 +14,7 @@ captcha:
   enabled: ${CAPTCHA_ENABLED:false}
   secret: ${CAPTCHA_SECRET:}
   min-score: ${CAPTCHA_MIN_SCORE:0.5}
+
+tour-api:
+  service-key: ${TOUR_API_KEY}
+  base-url: https://apis.data.go.kr
