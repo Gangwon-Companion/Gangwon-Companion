@@ -6,9 +6,19 @@ services:
     container_name: spring_gangwon
     restart: always
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      POSTGRES_DB: ${POSTGRES_DB:-gangwon}
+      POSTGRES_USER: ${POSTGRES_USER:-gangwon_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-qwer1234}
+      JWT_SECRET: ${JWT_SECRET:-gangwon_docker_jwt_secret_key_2024_very_long_string}
+      PERSONAL_DATA_ENCRYPTION_KEY: ${PERSONAL_DATA_ENCRYPTION_KEY:-gangwon_companion_aes_key_32byte}
+      TOUR_API_KEY: ${TOUR_API_KEY:-}
+      TATS_CNCTR_RATE_KEY: ${TATS_CNCTR_RATE_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
     ports:
       - "8080:8080"
     depends_on:
@@ -22,11 +32,12 @@ services:
     container_name: postgres_gangwon
     restart: always
     env_file:
-      - .env
+      - path: .env
+        required: false
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-gangwon}
+      POSTGRES_USER: ${POSTGRES_USER:-gangwon_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-qwer1234}
     ports:
       - "5432:5432"
     volumes:
@@ -34,7 +45,7 @@ services:
     networks:
       - networks_gangwon
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-gangwon_user} -d $${POSTGRES_DB:-gangwon}"]
       interval: 10s
       timeout: 5s
       retries: 5
