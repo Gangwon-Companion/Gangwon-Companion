@@ -43,6 +43,23 @@ public class CommunityController {
     @DeleteMapping("/posts/{postId}/likes")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unlike(@PathVariable Long postId, Authentication authentication) { communityService.unlike(authentication.getName(), postId); }
+    @PostMapping("/posts/{postId}/saves")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void save(@PathVariable Long postId, Authentication authentication) { communityService.save(authentication.getName(), postId); }
+    @DeleteMapping("/posts/{postId}/saves")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void unsave(@PathVariable Long postId, Authentication authentication) { communityService.unsave(authentication.getName(), postId); }
+    @PutMapping("/comments/{commentId}")
+    public CommentResponse updateComment(@PathVariable Long commentId, @Valid @RequestBody CreateCommentRequest request, Authentication authentication) { return communityService.updateComment(authentication.getName(), commentId, request); }
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@PathVariable Long commentId, Authentication authentication) { communityService.deleteComment(authentication.getName(), commentId); }
+    @PostMapping("/comments/{commentId}/likes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void likeComment(@PathVariable Long commentId, Authentication authentication) { communityService.likeComment(authentication.getName(), commentId); }
+    @DeleteMapping("/comments/{commentId}/likes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void unlikeComment(@PathVariable Long commentId, Authentication authentication) { communityService.unlikeComment(authentication.getName(), commentId); }
     @PostMapping("/files/presigned-url")
     public PresignedUploadResponse presigned(@Valid @RequestBody PresignedUploadRequest request) {
         S3FileService.UploadUrl upload = s3FileService.createUploadUrl(request.originalFileName(), request.contentType());
