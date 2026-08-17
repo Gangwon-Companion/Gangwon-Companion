@@ -18,3 +18,8 @@ captcha:
 tour-api:
   service-key: ${TOUR_API_KEY}
   base-url: https://apis.data.go.kr
+
+aws:
+  region: ${AWS_REGION:ap-northeast-2}
+  s3:
+    bucket: ${AWS_S3_BUCKET:}

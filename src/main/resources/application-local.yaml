@@ -48,6 +48,11 @@ captcha:
   secret: ${CAPTCHA_SECRET:}
   min-score: ${CAPTCHA_MIN_SCORE:0.5}
 
+aws:
+  region: ${AWS_REGION:ap-northeast-2}
+  s3:
+    bucket: ${AWS_S3_BUCKET:}
+
 external:
   tour-api:
     service-key: ${TOUR_API_KEY}
