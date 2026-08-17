@@ -20,6 +20,8 @@ public class CommunityService {
     private final CommunityPostRepository postRepository;
     private final CommunityCommentRepository commentRepository;
     private final CommunityPostLikeRepository likeRepository;
+    private final CommunityPostSaveRepository saveRepository;
+    private final CommunityCommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
     private final SavedCourseRepository courseRepository;
 
@@ -66,9 +68,19 @@ public class CommunityService {
     private User user(String username) { return userRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); }
     private CommunityPost post(Long id) { return postRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); }
     private void owner(CommunityPost p, String username) { if (!p.getUser().getUsername().equals(username)) throw new BusinessException(ErrorCode.ACCESS_DENIED); }
-    private PostSummary summary(CommunityPost p, String username) { return new PostSummary(p.getId(), p.getTitle(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), p.getViewCount(), p.getLikeCount(), p.getImages().size(), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt()); }
-    private PostDetail detail(CommunityPost p, String username) { List<ImageResponse> images = p.getImages().stream().map(i -> new ImageResponse(i.getS3Key(), i.getUrl(), i.getSortOrder())).toList(); List<CommentResponse> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(p.getId()).stream().map(this::commentResponse).toList(); return new PostDetail(p.getId(), p.getTitle(), p.getContent(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), p.getViewCount(), p.getLikeCount(), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt(), p.getUpdatedAt(), images, comments); }
+    private PostSummary summary(CommunityPost p, String username) { return new PostSummary(p.getId(), p.getTitle(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), isSaved(p, username), p.getViewCount(), p.getLikeCount(), saveRepository.countByPostId(p.getId()), p.getImages().size(), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt()); }
+    private PostDetail detail(CommunityPost p, String username) { List<ImageResponse> images = p.getImages().stream().map(i -> new ImageResponse(i.getS3Key(), i.getUrl(), i.getSortOrder())).toList(); List<CommentResponse> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(p.getId()).stream().map(c -> commentResponse(c, username)).toList(); return new PostDetail(p.getId(), p.getTitle(), p.getContent(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), isSaved(p, username), p.getViewCount(), p.getLikeCount(), saveRepository.countByPostId(p.getId()), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt(), p.getUpdatedAt(), images, comments); }
     private boolean isMine(CommunityPost p, String username) { return username != null && p.getUser().getUsername().equals(username); }
     private boolean isLiked(CommunityPost p, String username) { return username != null && likeRepository.existsByPostIdAndUserId(p.getId(), user(username).getId()); }
-    private CommentResponse commentResponse(CommunityComment c) { return new CommentResponse(c.getId(), c.getUser().getNickname(), c.getContent(), c.getCreatedAt()); }
+    private boolean isSaved(CommunityPost p, String username) { return username != null && saveRepository.existsByPostIdAndUserId(p.getId(), user(username).getId()); }
+    @Transactional public void save(String username, Long id) { CommunityPost post = post(id); User user = user(username); if (!saveRepository.existsByPostIdAndUserId(id, user.getId())) saveRepository.save(CommunityPostSave.builder().post(post).user(user).build()); }
+    @Transactional public void unsave(String username, Long id) { User user = user(username); if (saveRepository.existsByPostIdAndUserId(id, user.getId())) saveRepository.deleteByPostIdAndUserId(id, user.getId()); }
+    @Transactional public CommentResponse updateComment(String username, Long id, CreateCommentRequest request) { CommunityComment comment = comment(id); owner(comment, username); comment.update(request.content()); return commentResponse(comment, username); }
+    @Transactional public void deleteComment(String username, Long id) { CommunityComment comment = comment(id); owner(comment, username); commentRepository.delete(comment); }
+    @Transactional public void likeComment(String username, Long id) { CommunityComment comment = comment(id); User user = user(username); if (!commentLikeRepository.existsByCommentIdAndUserId(id, user.getId())) { commentLikeRepository.save(CommunityCommentLike.builder().comment(comment).user(user).build()); comment.increaseLikeCount(); } }
+    @Transactional public void unlikeComment(String username, Long id) { CommunityComment comment = comment(id); User user = user(username); if (commentLikeRepository.existsByCommentIdAndUserId(id, user.getId())) { commentLikeRepository.deleteByCommentIdAndUserId(id, user.getId()); comment.decreaseLikeCount(); } }
+    private CommunityComment comment(Long id) { return commentRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); }
+    private void owner(CommunityComment c, String username) { if (!c.getUser().getUsername().equals(username)) throw new BusinessException(ErrorCode.ACCESS_DENIED); }
+    private CommentResponse commentResponse(CommunityComment c) { return commentResponse(c, null); }
+    private CommentResponse commentResponse(CommunityComment c, String username) { return new CommentResponse(c.getId(), c.getUser().getNickname(), c.getContent(), c.getLikeCount(), username != null && commentLikeRepository.existsByCommentIdAndUserId(c.getId(), user(username).getId()), username != null && c.getUser().getUsername().equals(username), c.getCreatedAt()); }
 }
