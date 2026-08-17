@@ -15,6 +15,10 @@ public class CommunityComment {
     @ManyToOne(fetch = FetchType.LAZY, optional = false) @JoinColumn(name = "post_id", nullable = false) private CommunityPost post;
     @ManyToOne(fetch = FetchType.LAZY, optional = false) @JoinColumn(name = "user_id", nullable = false) private User user;
     @Column(nullable = false, columnDefinition = "TEXT") private String content;
+    @Column(nullable = false) private int likeCount;
     @CreatedDate @Column(nullable = false, updatable = false) private LocalDateTime createdAt;
     @Builder public CommunityComment(CommunityPost post, User user, String content) { this.post = post; this.user = user; this.content = content; }
+    public void update(String content) { this.content = content; }
+    public void increaseLikeCount() { likeCount++; }
+    public void decreaseLikeCount() { if (likeCount > 0) likeCount--; }
 }
