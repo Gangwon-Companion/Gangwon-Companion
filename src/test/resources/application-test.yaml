@@ -15,6 +15,9 @@ spring:
 jwt:
   secret: gangwon_test_jwt_secret_key_2024_very_long_string
 
+personal-data:
+  encryption-key: gangwon_companion_aes_key_32byte
+
 tour-api:
   service-key: test-tour-api-key
   base-url: https://apis.data.go.kr

@@ -33,8 +33,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @jakarta.persistence.Convert(converter = com.gangwon.companion.global.security.AesGcmAttributeConverter.class)
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(name = "email_hash", unique = true, length = 64)
+    private String emailHash;
 
     @Column(nullable = false, unique = true, length = 6)
     private String nickname;
@@ -44,10 +48,11 @@ public class User {
     private LocalDateTime createdAt;
 
     @Builder
-    public User(String username, String password, String email, String nickname) {
+    public User(String username, String password, String email, String emailHash, String nickname) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.emailHash = emailHash;
         this.nickname = nickname;
     }
 

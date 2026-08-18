@@ -10,6 +10,8 @@ import lombok.Getter;
 @Getter
 public class SignUpRequest {
 
+    private String captchaToken;
+
     @Schema(description = "아이디 (영문 소문자·숫자, 최대 20자)", example = "testuser1")
     @NotBlank
     @Size(max = 20, message = "아이디는 최대 20자까지 입력 가능합니다.")

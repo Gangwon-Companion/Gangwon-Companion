@@ -20,6 +20,8 @@ public enum ErrorCode {
     MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "MISSING_PARAMETER", "필수 요청 파라미터가 누락되었습니다."),
     MALFORMED_JSON(HttpStatus.BAD_REQUEST, "MALFORMED_JSON", "요청 본문을 읽을 수 없습니다."),
     BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED, "BAD_CREDENTIALS", "아이디 또는 비밀번호가 올바르지 않습니다."),
+    CAPTCHA_REQUIRED(HttpStatus.BAD_REQUEST, "CAPTCHA_REQUIRED", "CAPTCHA 검증 토큰이 필요합니다."),
+    CAPTCHA_FAILED(HttpStatus.FORBIDDEN, "CAPTCHA_FAILED", "CAPTCHA 검증에 실패했습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "인증이 필요합니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "접근 권한이 없습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", "지원하지 않는 HTTP 메서드입니다."),

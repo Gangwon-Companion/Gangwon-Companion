@@ -14,6 +14,8 @@ import com.gangwon.companion.domain.visit.repository.VisitRecordRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
 import com.gangwon.companion.global.security.JwtTokenProvider;
+import com.gangwon.companion.global.security.PersonalDataCrypto;
+import com.gangwon.companion.global.security.CaptchaVerifier;
 import com.gangwon.companion.global.security.TokenBlacklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +33,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final PersonalDataCrypto personalDataCrypto;
+    private final CaptchaVerifier captchaVerifier;
     private final RestaurantReviewRepository restaurantReviewRepository;
     private final LodgingReviewRepository lodgingReviewRepository;
     private final TokenBlacklistService tokenBlacklistService;
@@ -39,12 +43,14 @@ public class UserService {
 
     @Transactional
     public void signUp(SignUpRequest request) {
+        if (captchaVerifier != null) captchaVerifier.verify(request.getCaptchaToken(), null);
         validateDuplicatedUser(request);
 
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
+                .emailHash(emailHash(request.getEmail()))
                 .nickname(request.getNickname())
                 .build();
 
@@ -52,6 +58,7 @@ public class UserService {
     }
 
     public String login(LoginRequest request) {
+        if (captchaVerifier != null) captchaVerifier.verify(request.getCaptchaToken(), null);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
@@ -110,11 +117,16 @@ public class UserService {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())
+                || userRepository.existsByEmailHash(emailHash(request.getEmail()))) {
             throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
         if (userRepository.existsByNickname(request.getNickname())) {
             throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
         }
+    }
+
+    private String emailHash(String email) {
+        return personalDataCrypto == null ? null : personalDataCrypto.hash(email);
     }
 }

@@ -40,6 +40,19 @@ activity:
     rows-per-page: 200
     max-pages: 3
   detail-refresh-days: 7
+personal-data:
+  encryption-key: ${PERSONAL_DATA_ENCRYPTION_KEY:gangwon_companion_aes_key_32byte}
+
+captcha:
+  enabled: ${CAPTCHA_ENABLED:false}
+  secret: ${CAPTCHA_SECRET:}
+  min-score: ${CAPTCHA_MIN_SCORE:0.5}
+
+aws:
+  region: ${AWS_REGION:ap-northeast-2}
+  s3:
+    bucket: ${AWS_S3_BUCKET:}
+
 external:
   tour-api:
     service-key: ${TOUR_API_KEY}
