@@ -39,6 +39,7 @@ public class DestinationDetailSyncService {
     private final DestinationImageRepository destinationImageRepository;
     private final PetInfoRepository petInfoRepository;
     private final AccessibilityInfoRepository accessibilityInfoRepository;
+    private final DestinationSearchDataNormalizer searchDataNormalizer;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
@@ -211,7 +212,7 @@ public class DestinationDetailSyncService {
             return false;
         }
 
-        petInfoRepository.save(PetInfo.builder()
+        PetInfo petInfo = PetInfo.builder()
                 .destination(destinationSource.getDestination())
                 .contentId(contentId)
                 .accompanyType(petItem.getAccompanyType())
@@ -220,7 +221,9 @@ public class DestinationDetailSyncService {
                 .caution(petItem.getCaution())
                 .accidentRisk(petItem.getAccidentRisk())
                 .rawPetJson(toJson(petResponse.getItems()))
-                .build());
+                .build();
+        searchDataNormalizer.normalize(petInfo);
+        petInfoRepository.save(petInfo);
 
         return true;
     }
@@ -241,7 +244,7 @@ public class DestinationDetailSyncService {
             return false;
         }
 
-        accessibilityInfoRepository.save(AccessibilityInfo.builder()
+        AccessibilityInfo accessibilityInfo = AccessibilityInfo.builder()
                 .destination(destinationSource.getDestination())
                 .contentId(contentId)
                 .parking(accessibilityItem.getParking())
@@ -254,7 +257,9 @@ public class DestinationDetailSyncService {
                 .helpDog(accessibilityItem.getHelpDog())
                 .guideHuman(accessibilityItem.getGuideHuman())
                 .rawAccessibilityJson(toJson(accessibilityResponse.getItems()))
-                .build());
+                .build();
+        searchDataNormalizer.normalize(accessibilityInfo);
+        accessibilityInfoRepository.save(accessibilityInfo);
 
         return true;
     }
