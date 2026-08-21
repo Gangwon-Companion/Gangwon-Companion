@@ -4,9 +4,12 @@ import com.gangwon.companion.domain.destination.entity.AccessibilityInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.List;
 
 public interface AccessibilityInfoRepository extends JpaRepository<AccessibilityInfo, Long> {
     Optional<AccessibilityInfo> findByDestinationId(Long destinationId);
 
     boolean existsByDestinationIdAndContentId(Long destinationId, Long contentId);
+
+    List<AccessibilityInfo> findAllByDestinationIdIn(List<Long> destinationIds);
 }
