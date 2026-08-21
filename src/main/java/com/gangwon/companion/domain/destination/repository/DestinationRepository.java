@@ -3,6 +3,7 @@ package com.gangwon.companion.domain.destination.repository;
 import com.gangwon.companion.domain.destination.entity.Destination;
 import com.gangwon.companion.domain.destination.entity.SourceType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DestinationRepository extends JpaRepository<Destination, Long> {
+public interface DestinationRepository extends JpaRepository<Destination, Long>, JpaSpecificationExecutor<Destination> {
     List<Destination> findByThemeId(Long themeId);
 
     Optional<Destination> findByTitleAndAddr1(String title, String addr1);
