@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @Service
+@ConditionalOnProperty(name = "search.engine", havingValue = "rdb", matchIfMissing = true)
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RdbPlaceSearchEngine implements PlaceSearchEngine {
