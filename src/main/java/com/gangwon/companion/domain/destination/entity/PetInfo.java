@@ -52,6 +52,19 @@ public class PetInfo {
     @Column(columnDefinition = "text")
     private String rawPetJson;
 
+    private Boolean petAllowed;
+
+    private Boolean smallPetAllowed;
+
+    private Boolean mediumPetAllowed;
+
+    private Boolean largePetAllowed;
+
+    @Column(length = 20)
+    private String normalizationVersion;
+
+    private LocalDateTime normalizedAt;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -79,5 +92,29 @@ public class PetInfo {
         this.caution = caution;
         this.accidentRisk = accidentRisk;
         this.rawPetJson = rawPetJson;
+    }
+
+    public boolean applySearchNormalization(
+            Boolean petAllowed,
+            Boolean smallPetAllowed,
+            Boolean mediumPetAllowed,
+            Boolean largePetAllowed,
+            String normalizationVersion
+    ) {
+        boolean unchanged = java.util.Objects.equals(this.petAllowed, petAllowed)
+                && java.util.Objects.equals(this.smallPetAllowed, smallPetAllowed)
+                && java.util.Objects.equals(this.mediumPetAllowed, mediumPetAllowed)
+                && java.util.Objects.equals(this.largePetAllowed, largePetAllowed)
+                && java.util.Objects.equals(this.normalizationVersion, normalizationVersion);
+        if (unchanged) {
+            return false;
+        }
+        this.petAllowed = petAllowed;
+        this.smallPetAllowed = smallPetAllowed;
+        this.mediumPetAllowed = mediumPetAllowed;
+        this.largePetAllowed = largePetAllowed;
+        this.normalizationVersion = normalizationVersion;
+        this.normalizedAt = LocalDateTime.now();
+        return true;
     }
 }
