@@ -29,7 +29,10 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
-        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request));
+        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false));
+        if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
+            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true));
+        }
         List<PlaceSearchResponse.Candidate> candidates = new ArrayList<>();
         for (JsonNode hit : response.path("hits").path("hits")) candidates.add(candidate(hit, request));
         return new PlaceSearchResponse(candidates.stream()
@@ -38,7 +41,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
                 .limit(request.limit()).toList());
     }
 
-    private Map<String, Object> searchBody(PlaceSearchRequest request) {
+    private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed) {
         List<Object> filters = new ArrayList<>();
         filters.add(Map.of("term", Map.of("domain", request.domain().name())));
         if (!request.regionCodes().isEmpty()) {
@@ -48,30 +51,57 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
             filters.add(Map.of("geo_distance", Map.of("distance", request.geo().radiusKm() + "km",
                     "location", Map.of("lat", request.geo().center().lat(), "lon", request.geo().center().lon()))));
         }
-        addNullableTrueFilter(filters, "petAllowed", Boolean.TRUE.equals(request.hardFilters().petAllowed()));
+        addRequiredTrueFilter(filters, "petAllowed", Boolean.TRUE.equals(request.hardFilters().petAllowed()));
         if (request.hardFilters().petSize() != null) {
-            addNullableTrueFilter(filters, switch (request.hardFilters().petSize()) {
+            addRequiredTrueFilter(filters, switch (request.hardFilters().petSize()) {
                 case SMALL -> "smallPetAllowed"; case MEDIUM -> "mediumPetAllowed"; case LARGE -> "largePetAllowed";
             }, true);
         }
-        addNullableTrueFilter(filters, "wheelchairAccessible", Boolean.TRUE.equals(request.hardFilters().wheelchairAccessible()));
+        addRequiredTrueFilter(filters, "wheelchairAccessible", Boolean.TRUE.equals(request.hardFilters().wheelchairAccessible()));
 
         Map<String, Object> bool = new LinkedHashMap<>();
         bool.put("filter", filters);
         if (!request.queryText().isBlank()) {
-            bool.put("must", List.of(Map.of("multi_match", Map.of("query", request.queryText(), "operator", "or",
-                    "fields", List.of("name^3", "name.english^2", "searchText", "searchText.english", "address")))));
+            Map<String, Object> multiMatch = new LinkedHashMap<>();
+            multiMatch.put("query", request.queryText());
+            multiMatch.put("operator", relaxed ? "or" : "and");
+            if (relaxed) multiMatch.put("minimum_should_match", "70%");
+            multiMatch.put("type", "cross_fields");
+            multiMatch.put("fields", List.of(
+                    "name^5", "name.english^3", "searchText^2", "searchText.english^1.5", "address"));
+            bool.put("must", List.of(Map.of("multi_match", multiMatch)));
+            bool.put("should", keywordBoosts(request));
+        } else if (!request.softPreferences().isEmpty()) {
+            bool.put("should", preferenceBoosts(request));
         }
         int fetchSize = Math.min(500, Math.max(50, request.limit() * 10));
         return Map.of("size", fetchSize, "track_scores", true, "query", Map.of("bool", bool),
                 "sort", List.of(Map.of("_score", "desc"), Map.of("placeId", "asc")));
     }
 
-    private void addNullableTrueFilter(List<Object> filters, String field, boolean requested) {
+    private void addRequiredTrueFilter(List<Object> filters, String field, boolean requested) {
         if (!requested) return;
-        filters.add(Map.of("bool", Map.of("minimum_should_match", 1, "should", List.of(
-                Map.of("term", Map.of(field, true)),
-                Map.of("bool", Map.of("must_not", Map.of("exists", Map.of("field", field))))))));
+        filters.add(Map.of("term", Map.of(field, true)));
+    }
+
+    private List<Object> keywordBoosts(PlaceSearchRequest request) {
+        List<Object> boosts = new ArrayList<>();
+        boosts.add(Map.of("term", Map.of("name.raw", Map.of("value", request.queryText(), "boost", 12.0))));
+        boosts.add(Map.of("match_phrase", Map.of("name", Map.of("query", request.queryText(), "boost", 7.0))));
+        boosts.addAll(preferenceBoosts(request));
+        return boosts;
+    }
+
+    private List<Object> preferenceBoosts(PlaceSearchRequest request) {
+        List<Object> boosts = new ArrayList<>();
+        request.softPreferences().entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
+            List<String> terms = PREFERENCE_TERMS.getOrDefault(entry.getKey(), List.of(entry.getKey()));
+            for (String term : terms) {
+                boosts.add(Map.of("match", Map.of("searchText", Map.of(
+                        "query", term, "boost", Math.max(0.0, entry.getValue())))));
+            }
+        });
+        return boosts;
     }
 
     private PlaceSearchResponse.Candidate candidate(JsonNode hit, PlaceSearchRequest request) {
@@ -82,8 +112,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
             List<String> matched = matchedPreferences(doc.searchText(), request.softPreferences());
             double baseScore = hit.path("_score").isNumber() ? hit.path("_score").asDouble() : 0;
             Double distance = distance(request, doc.location());
-            double score = Math.round((baseScore + preferenceScore(matched, request.softPreferences())
-                    + distanceScore(distance, request)) * 1000.0) / 1000.0;
+            double score = Math.round((baseScore + distanceScore(distance, request)) * 1000.0) / 1000.0;
             return new PlaceSearchResponse.Candidate(doc.placeId(), PlaceSearchRequest.Domain.valueOf(doc.domain()),
                     doc.name(), doc.address(), doc.location() == null ? null
                     : new PlaceSearchResponse.Location(doc.location().lat(), doc.location().lon()), distance, score,
@@ -126,10 +155,6 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
         if (text == null || preferences == null) return List.of();
         return preferences.keySet().stream().filter(key -> PREFERENCE_TERMS.getOrDefault(key, List.of(key))
                 .stream().anyMatch(text.toLowerCase()::contains)).sorted().toList();
-    }
-
-    private double preferenceScore(List<String> matched, Map<String, Double> preferences) {
-        return matched.stream().mapToDouble(key -> preferences.getOrDefault(key, 0.0) * 0.2).sum();
     }
 
     private Double distance(PlaceSearchRequest request, PlaceSearchDocument.Location location) {

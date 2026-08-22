@@ -49,11 +49,10 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
 
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
-        List<PlaceSearchResponse.Candidate> candidates = switch (request.domain()) {
-            case DESTINATION -> destinations(request);
-            case RESTAURANT -> restaurants(request);
-            case LODGING -> lodgings(request);
-        };
+        List<PlaceSearchResponse.Candidate> candidates = searchCandidates(request, false);
+        if (candidates.isEmpty() && request.queryText() != null && !request.queryText().isBlank()) {
+            candidates = searchCandidates(request, true);
+        }
         int limit = request.limit() == null ? 5 : Math.max(1, Math.min(request.limit(), 100));
         return new PlaceSearchResponse(candidates.stream()
                 .sorted(Comparator.comparingDouble(PlaceSearchResponse.Candidate::score).reversed()
@@ -62,9 +61,17 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
                 .toList());
     }
 
-    private List<PlaceSearchResponse.Candidate> destinations(PlaceSearchRequest request) {
+    private List<PlaceSearchResponse.Candidate> searchCandidates(PlaceSearchRequest request, boolean relaxed) {
+        return switch (request.domain()) {
+            case DESTINATION -> destinations(request, relaxed);
+            case RESTAURANT -> restaurants(request, relaxed);
+            case LODGING -> lodgings(request, relaxed);
+        };
+    }
+
+    private List<PlaceSearchResponse.Candidate> destinations(PlaceSearchRequest request, boolean relaxed) {
         List<Destination> rows = destinationRepository.findAll(
-                destinationSpec(request), fetchPage(request)).getContent();
+                destinationSpec(request, relaxed), fetchPage(request)).getContent();
         List<Long> ids = rows.stream().map(Destination::getId).toList();
         Map<Long, PetInfo> pets = new HashMap<>();
         petInfoRepository.findAllByDestinationIdIn(ids)
@@ -91,66 +98,66 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         return result;
     }
 
-    private List<PlaceSearchResponse.Candidate> restaurants(PlaceSearchRequest request) {
-        List<Restaurant> rows = restaurantRepository.findAll(restaurantSpec(request), fetchPage(request)).getContent();
+    private List<PlaceSearchResponse.Candidate> restaurants(PlaceSearchRequest request, boolean relaxed) {
+        if (hasRequiredPolicy(request)) return List.of();
+        List<Restaurant> rows = restaurantRepository.findAll(restaurantSpec(request, relaxed), fetchPage(request)).getContent();
         List<PlaceSearchResponse.Candidate> result = new ArrayList<>();
         for (Restaurant row : rows) {
             Double distance = distance(request, row.getLatitude(), row.getLongitude());
             if (outsideRadius(request, distance)) continue;
-            List<String> missing = missingUnsupportedPolicies(request);
             result.add(candidate("RESTAURANT:" + row.getId(), request.domain(), row.getName(), row.getAddress(),
                     row.getLatitude(), row.getLongitude(), distance,
                     join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
-                    request, missing, List.of()));
+                    request, List.of(), List.of()));
         }
         return result;
     }
 
-    private List<PlaceSearchResponse.Candidate> lodgings(PlaceSearchRequest request) {
-        List<Lodging> rows = lodgingRepository.findAll(lodgingSpec(request), fetchPage(request)).getContent();
+    private List<PlaceSearchResponse.Candidate> lodgings(PlaceSearchRequest request, boolean relaxed) {
+        if (hasRequiredPolicy(request)) return List.of();
+        List<Lodging> rows = lodgingRepository.findAll(lodgingSpec(request, relaxed), fetchPage(request)).getContent();
         List<PlaceSearchResponse.Candidate> result = new ArrayList<>();
         for (Lodging row : rows) {
             Double distance = distance(request, row.getLatitude(), row.getLongitude());
             if (outsideRadius(request, distance)) continue;
-            List<String> missing = missingUnsupportedPolicies(request);
             result.add(candidate("LODGING:" + row.getId(), request.domain(), row.getName(), row.getAddress(),
                     row.getLatitude(), row.getLongitude(), distance,
                     join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
-                    request, missing, List.of()));
+                    request, List.of(), List.of()));
         }
         return result;
     }
 
-    private Specification<Destination> destinationSpec(PlaceSearchRequest request) {
+    private Specification<Destination> destinationSpec(PlaceSearchRequest request, boolean relaxed) {
         return (root, query, cb) -> {
             List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
             if (request.regionCodes() != null && !request.regionCodes().isEmpty()) {
                 predicates.add(root.get("sigunguCode").in(request.regionCodes().stream()
                         .map(code -> GangwonRegion.valueOf(code.name()).tourApiSigunguCode()).toList()));
             }
-            addTextPredicates(predicates, request.queryText(), cb,
+            addTextPredicates(predicates, request.queryText(), relaxed, cb,
                     root.get("title"), root.get("addr1"), root.get("addr2"));
             addGeoPredicates(predicates, request, cb, root.get("mapY"), root.get("mapX"));
             return cb.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
         };
     }
 
-    private Specification<Restaurant> restaurantSpec(PlaceSearchRequest request) {
+    private Specification<Restaurant> restaurantSpec(PlaceSearchRequest request, boolean relaxed) {
         return (root, query, cb) -> {
             List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
             addKoreanRegions(predicates, request, root.get("region"));
-            addTextPredicates(predicates, request.queryText(), cb,
+            addTextPredicates(predicates, request.queryText(), relaxed, cb,
                     root.get("name"), root.get("menuType"), root.get("address"));
             addGeoPredicates(predicates, request, cb, root.get("latitude"), root.get("longitude"));
             return cb.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
         };
     }
 
-    private Specification<Lodging> lodgingSpec(PlaceSearchRequest request) {
+    private Specification<Lodging> lodgingSpec(PlaceSearchRequest request, boolean relaxed) {
         return (root, query, cb) -> {
             List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
             addKoreanRegions(predicates, request, root.get("region"));
-            addTextPredicates(predicates, request.queryText(), cb,
+            addTextPredicates(predicates, request.queryText(), relaxed, cb,
                     root.get("name"), root.get("description"), root.get("address"));
             addGeoPredicates(predicates, request, cb, root.get("latitude"), root.get("longitude"));
             return cb.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
@@ -168,16 +175,28 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
 
     @SafeVarargs
     private void addTextPredicates(List<jakarta.persistence.criteria.Predicate> predicates, String queryText,
+                                   boolean relaxed,
                                    jakarta.persistence.criteria.CriteriaBuilder cb,
                                    jakarta.persistence.criteria.Expression<String>... fields) {
         if (queryText == null || queryText.isBlank()) return;
-        List<jakarta.persistence.criteria.Predicate> keywordMatches = new ArrayList<>();
+        List<jakarta.persistence.criteria.Predicate> terms = new ArrayList<>();
         for (String term : queryText.toLowerCase(Locale.ROOT).trim().split("\\s+")) {
+            List<jakarta.persistence.criteria.Predicate> termMatches = new ArrayList<>();
             for (jakarta.persistence.criteria.Expression<String> field : fields) {
-                keywordMatches.add(cb.like(cb.lower(field), "%" + term + "%"));
+                termMatches.add(cb.like(cb.lower(field), "%" + term + "%"));
             }
+            terms.add(cb.or(termMatches.toArray(jakarta.persistence.criteria.Predicate[]::new)));
         }
-        predicates.add(cb.or(keywordMatches.toArray(jakarta.persistence.criteria.Predicate[]::new)));
+        if (!relaxed) {
+            predicates.addAll(terms);
+            return;
+        }
+        jakarta.persistence.criteria.Expression<Integer> matchedCount = cb.literal(0);
+        for (jakarta.persistence.criteria.Predicate term : terms) {
+            matchedCount = cb.sum(matchedCount, cb.<Integer>selectCase().when(term, 1).otherwise(0));
+        }
+        int required = Math.max(1, (int) Math.floor(terms.size() * 0.7));
+        predicates.add(cb.ge(matchedCount, required));
     }
 
     private void addGeoPredicates(List<jakarta.persistence.criteria.Predicate> predicates,
@@ -201,7 +220,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         if (filters == null) return true;
         if (Boolean.TRUE.equals(filters.petAllowed())) {
             Boolean value = pet == null ? null : pet.getPetAllowed();
-            if (Boolean.FALSE.equals(value)) return false;
+            if (!Boolean.TRUE.equals(value)) return false;
             addPolicy("pet_allowed", value, missing, evidence);
         }
         if (filters.petSize() != null) {
@@ -210,12 +229,12 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
                 case MEDIUM -> pet == null ? null : pet.getMediumPetAllowed();
                 case LARGE -> pet == null ? null : pet.getLargePetAllowed();
             };
-            if (Boolean.FALSE.equals(value)) return false;
+            if (!Boolean.TRUE.equals(value)) return false;
             addPolicy("pet_size", value, missing, evidence);
         }
         if (Boolean.TRUE.equals(filters.wheelchairAccessible())) {
             Boolean value = access == null ? null : access.getWheelchairAccessible();
-            if (Boolean.FALSE.equals(value)) return false;
+            if (!Boolean.TRUE.equals(value)) return false;
             addPolicy("wheelchair_accessible", value, missing, evidence);
         }
         return true;
@@ -227,14 +246,11 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         else evidence.add(new PlaceSearchResponse.Evidence(field, value, "TOUR_API"));
     }
 
-    private List<String> missingUnsupportedPolicies(PlaceSearchRequest request) {
-        List<String> missing = new ArrayList<>();
+    private boolean hasRequiredPolicy(PlaceSearchRequest request) {
         PlaceSearchRequest.HardFilters filters = request.hardFilters();
-        if (filters == null) return missing;
-        if (Boolean.TRUE.equals(filters.petAllowed())) missing.add("pet_allowed");
-        if (filters.petSize() != null) missing.add("pet_size");
-        if (Boolean.TRUE.equals(filters.wheelchairAccessible())) missing.add("wheelchair_accessible");
-        return missing;
+        return filters != null && (Boolean.TRUE.equals(filters.petAllowed())
+                || filters.petSize() != null
+                || Boolean.TRUE.equals(filters.wheelchairAccessible()));
     }
 
     private PlaceSearchResponse.Candidate candidate(String id, PlaceSearchRequest.Domain domain,

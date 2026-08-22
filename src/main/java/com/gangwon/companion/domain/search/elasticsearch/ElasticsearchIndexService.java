@@ -77,7 +77,9 @@ public class ElasticsearchIndexService {
 
     private Map<String, Object> indexDefinition() {
         Map<String, Object> text = Map.of("type", "text", "analyzer", "gangwon_korean",
-                "fields", Map.of("english", Map.of("type", "text", "analyzer", "standard")));
+                "fields", Map.of(
+                        "raw", Map.of("type", "keyword", "normalizer", "lowercase_normalizer"),
+                        "english", Map.of("type", "text", "analyzer", "standard")));
         Map<String, Object> propertiesMap = new LinkedHashMap<>();
         propertiesMap.put("placeId", Map.of("type", "keyword"));
         propertiesMap.put("domain", Map.of("type", "keyword"));
@@ -92,8 +94,11 @@ public class ElasticsearchIndexService {
         propertiesMap.put("source", Map.of("type", "keyword"));
         propertiesMap.put("evidenceFields", Map.of("type", "keyword"));
         propertiesMap.put("embedding", Map.of("type", "dense_vector", "similarity", "cosine"));
-        Map<String, Object> analysis = Map.of("analyzer", Map.of("gangwon_korean",
-                Map.of("type", "custom", "tokenizer", "nori_tokenizer", "filter", List.of("lowercase", "nori_readingform"))));
+        Map<String, Object> analysis = Map.of(
+                "analyzer", Map.of("gangwon_korean",
+                        Map.of("type", "custom", "tokenizer", "nori_tokenizer", "filter", List.of("lowercase", "nori_readingform"))),
+                "normalizer", Map.of("lowercase_normalizer",
+                        Map.of("type", "custom", "filter", List.of("lowercase"))));
         return Map.of("settings", Map.of("number_of_shards", 1, "number_of_replicas", 0, "analysis", analysis),
                 "mappings", Map.of("dynamic", "strict", "properties", propertiesMap));
     }
