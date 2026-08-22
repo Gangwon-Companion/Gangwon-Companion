@@ -99,7 +99,6 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
     }
 
     private List<PlaceSearchResponse.Candidate> restaurants(PlaceSearchRequest request, boolean relaxed) {
-        if (hasRequiredPolicy(request)) return List.of();
         List<Restaurant> rows = restaurantRepository.findAll(restaurantSpec(request, relaxed), fetchPage(request)).getContent();
         List<PlaceSearchResponse.Candidate> result = new ArrayList<>();
         for (Restaurant row : rows) {
@@ -108,13 +107,12 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
             result.add(candidate("RESTAURANT:" + row.getId(), request.domain(), row.getName(), row.getAddress(),
                     row.getLatitude(), row.getLongitude(), distance,
                     join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
-                    request, List.of(), List.of()));
+                    request, missingPolicyFields(request), List.of()));
         }
         return result;
     }
 
     private List<PlaceSearchResponse.Candidate> lodgings(PlaceSearchRequest request, boolean relaxed) {
-        if (hasRequiredPolicy(request)) return List.of();
         List<Lodging> rows = lodgingRepository.findAll(lodgingSpec(request, relaxed), fetchPage(request)).getContent();
         List<PlaceSearchResponse.Candidate> result = new ArrayList<>();
         for (Lodging row : rows) {
@@ -123,7 +121,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
             result.add(candidate("LODGING:" + row.getId(), request.domain(), row.getName(), row.getAddress(),
                     row.getLatitude(), row.getLongitude(), distance,
                     join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
-                    request, List.of(), List.of()));
+                    request, missingPolicyFields(request), List.of()));
         }
         return result;
     }
@@ -220,7 +218,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         if (filters == null) return true;
         if (Boolean.TRUE.equals(filters.petAllowed())) {
             Boolean value = pet == null ? null : pet.getPetAllowed();
-            if (!Boolean.TRUE.equals(value)) return false;
+            if (Boolean.FALSE.equals(value)) return false;
             addPolicy("pet_allowed", value, missing, evidence);
         }
         if (filters.petSize() != null) {
@@ -229,12 +227,12 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
                 case MEDIUM -> pet == null ? null : pet.getMediumPetAllowed();
                 case LARGE -> pet == null ? null : pet.getLargePetAllowed();
             };
-            if (!Boolean.TRUE.equals(value)) return false;
+            if (Boolean.FALSE.equals(value)) return false;
             addPolicy("pet_size", value, missing, evidence);
         }
         if (Boolean.TRUE.equals(filters.wheelchairAccessible())) {
             Boolean value = access == null ? null : access.getWheelchairAccessible();
-            if (!Boolean.TRUE.equals(value)) return false;
+            if (Boolean.FALSE.equals(value)) return false;
             addPolicy("wheelchair_accessible", value, missing, evidence);
         }
         return true;
@@ -246,11 +244,14 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         else evidence.add(new PlaceSearchResponse.Evidence(field, value, "TOUR_API"));
     }
 
-    private boolean hasRequiredPolicy(PlaceSearchRequest request) {
+    private List<String> missingPolicyFields(PlaceSearchRequest request) {
+        List<String> missing = new ArrayList<>();
         PlaceSearchRequest.HardFilters filters = request.hardFilters();
-        return filters != null && (Boolean.TRUE.equals(filters.petAllowed())
-                || filters.petSize() != null
-                || Boolean.TRUE.equals(filters.wheelchairAccessible()));
+        if (filters == null) return missing;
+        if (Boolean.TRUE.equals(filters.petAllowed())) missing.add("pet_allowed");
+        if (filters.petSize() != null) missing.add("pet_size");
+        if (Boolean.TRUE.equals(filters.wheelchairAccessible())) missing.add("wheelchair_accessible");
+        return missing;
     }
 
     private PlaceSearchResponse.Candidate candidate(String id, PlaceSearchRequest.Domain domain,
