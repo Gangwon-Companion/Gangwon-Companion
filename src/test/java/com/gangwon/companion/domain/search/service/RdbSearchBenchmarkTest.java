@@ -3,6 +3,7 @@ package com.gangwon.companion.domain.search.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gangwon.companion.domain.destination.repository.AccessibilityInfoRepository;
 import com.gangwon.companion.domain.destination.repository.DestinationRepository;
+import com.gangwon.companion.domain.destination.repository.DestinationDetailRepository;
 import com.gangwon.companion.domain.destination.repository.PetInfoRepository;
 import com.gangwon.companion.domain.lodging.entity.Lodging;
 import com.gangwon.companion.domain.lodging.repository.LodgingRepository;
@@ -53,6 +54,7 @@ class RdbSearchBenchmarkTest {
     }
 
     @Autowired DestinationRepository destinationRepository;
+    @Autowired DestinationDetailRepository destinationDetailRepository;
     @Autowired PetInfoRepository petInfoRepository;
     @Autowired AccessibilityInfoRepository accessibilityInfoRepository;
     @Autowired RestaurantRepository restaurantRepository;
@@ -64,7 +66,7 @@ class RdbSearchBenchmarkTest {
 
     @BeforeEach
     void setUp() {
-        engine = new RdbPlaceSearchEngine(destinationRepository, petInfoRepository,
+        engine = new RdbPlaceSearchEngine(destinationRepository, destinationDetailRepository, petInfoRepository,
                 accessibilityInfoRepository, restaurantRepository, lodgingRepository);
         statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
         statistics.setStatisticsEnabled(true);
