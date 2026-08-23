@@ -5,6 +5,7 @@ import com.gangwon.companion.domain.destination.entity.PetInfo;
 import com.gangwon.companion.domain.destination.entity.SourceType;
 import com.gangwon.companion.domain.destination.repository.AccessibilityInfoRepository;
 import com.gangwon.companion.domain.destination.repository.DestinationRepository;
+import com.gangwon.companion.domain.destination.repository.DestinationDetailRepository;
 import com.gangwon.companion.domain.destination.repository.PetInfoRepository;
 import com.gangwon.companion.domain.lodging.repository.LodgingRepository;
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
@@ -33,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 })
 class RdbPlaceSearchEngineTest {
     @Autowired DestinationRepository destinationRepository;
+    @Autowired DestinationDetailRepository destinationDetailRepository;
     @Autowired PetInfoRepository petInfoRepository;
     @Autowired AccessibilityInfoRepository accessibilityInfoRepository;
     @Autowired RestaurantRepository restaurantRepository;
@@ -41,7 +43,7 @@ class RdbPlaceSearchEngineTest {
 
     @BeforeEach
     void setUp() {
-        engine = new RdbPlaceSearchEngine(destinationRepository, petInfoRepository,
+        engine = new RdbPlaceSearchEngine(destinationRepository, destinationDetailRepository, petInfoRepository,
                 accessibilityInfoRepository, restaurantRepository, lodgingRepository);
     }
 

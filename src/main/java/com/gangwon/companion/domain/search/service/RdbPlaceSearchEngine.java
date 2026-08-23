@@ -2,9 +2,11 @@ package com.gangwon.companion.domain.search.service;
 
 import com.gangwon.companion.domain.destination.entity.AccessibilityInfo;
 import com.gangwon.companion.domain.destination.entity.Destination;
+import com.gangwon.companion.domain.destination.entity.DestinationDetail;
 import com.gangwon.companion.domain.destination.entity.PetInfo;
 import com.gangwon.companion.domain.destination.repository.AccessibilityInfoRepository;
 import com.gangwon.companion.domain.destination.repository.DestinationRepository;
+import com.gangwon.companion.domain.destination.repository.DestinationDetailRepository;
 import com.gangwon.companion.domain.destination.repository.PetInfoRepository;
 import com.gangwon.companion.domain.lodging.entity.Lodging;
 import com.gangwon.companion.domain.lodging.repository.LodgingRepository;
@@ -42,6 +44,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
     );
 
     private final DestinationRepository destinationRepository;
+    private final DestinationDetailRepository destinationDetailRepository;
     private final PetInfoRepository petInfoRepository;
     private final AccessibilityInfoRepository accessibilityInfoRepository;
     private final RestaurantRepository restaurantRepository;
@@ -79,6 +82,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         Map<Long, AccessibilityInfo> accessibility = new HashMap<>();
         accessibilityInfoRepository.findAllByDestinationIdIn(ids)
                 .forEach(info -> accessibility.putIfAbsent(info.getDestination().getId(), info));
+        Map<Long, String> overviews = overviewsByDestination(ids);
 
         List<PlaceSearchResponse.Candidate> result = new ArrayList<>();
         for (Destination row : rows) {
@@ -90,7 +94,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
             Double distance = distance(request, decimal(row.getMapY()), decimal(row.getMapX()));
             if (outsideRadius(request, distance)) continue;
             String text = join(row.getTitle(), row.getAddr1(), row.getAddr2(),
-                    row.getTheme() == null ? null : row.getTheme().getName());
+                    row.getTheme() == null ? null : row.getTheme().getName(), overviews.get(row.getId()));
             result.add(candidate("DESTINATION:" + row.getId(), request.domain(), row.getTitle(),
                     join(row.getAddr1(), row.getAddr2()), decimal(row.getMapY()), decimal(row.getMapX()),
                     distance, text, request, missing, evidence));
@@ -133,11 +137,58 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
                 predicates.add(root.get("sigunguCode").in(request.regionCodes().stream()
                         .map(code -> GangwonRegion.valueOf(code.name()).tourApiSigunguCode()).toList()));
             }
-            addTextPredicates(predicates, request.queryText(), relaxed, cb,
-                    root.get("title"), root.get("addr1"), root.get("addr2"));
+            addDestinationTextPredicates(predicates, request.queryText(), relaxed, root, query, cb);
             addGeoPredicates(predicates, request, cb, root.get("mapY"), root.get("mapX"));
             return cb.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
         };
+    }
+
+    private void addDestinationTextPredicates(
+            List<jakarta.persistence.criteria.Predicate> predicates,
+            String queryText,
+            boolean relaxed,
+            jakarta.persistence.criteria.Root<Destination> root,
+            jakarta.persistence.criteria.CriteriaQuery<?> query,
+            jakarta.persistence.criteria.CriteriaBuilder cb
+    ) {
+        if (queryText == null || queryText.isBlank()) return;
+        List<jakarta.persistence.criteria.Predicate> terms = new ArrayList<>();
+        for (String term : queryText.toLowerCase(Locale.ROOT).trim().split("\\s+")) {
+            String pattern = "%" + term + "%";
+            jakarta.persistence.criteria.Subquery<Long> detailMatch = query.subquery(Long.class);
+            jakarta.persistence.criteria.Root<DestinationDetail> detail = detailMatch.from(DestinationDetail.class);
+            detailMatch.select(cb.literal(1L)).where(
+                    cb.equal(detail.get("destination").get("id"), root.get("id")),
+                    cb.like(cb.lower(detail.get("overview")), pattern));
+            terms.add(cb.or(
+                    cb.like(cb.lower(root.get("title")), pattern),
+                    cb.like(cb.lower(root.get("addr1")), pattern),
+                    cb.like(cb.lower(root.get("addr2")), pattern),
+                    cb.exists(detailMatch)));
+        }
+        if (!relaxed) {
+            predicates.addAll(terms);
+            return;
+        }
+        jakarta.persistence.criteria.Expression<Integer> matchedCount = cb.literal(0);
+        for (jakarta.persistence.criteria.Predicate term : terms) {
+            matchedCount = cb.sum(matchedCount, cb.<Integer>selectCase().when(term, 1).otherwise(0));
+        }
+        predicates.add(cb.ge(matchedCount, Math.max(1, (int) Math.floor(terms.size() * 0.7))));
+    }
+
+    private Map<Long, String> overviewsByDestination(List<Long> ids) {
+        Map<Long, List<String>> grouped = new HashMap<>();
+        if (ids.isEmpty()) return Map.of();
+        destinationDetailRepository.findAllByDestinationIdIn(ids).forEach(detail -> {
+            if (detail.getOverview() != null && !detail.getOverview().isBlank()) {
+                grouped.computeIfAbsent(detail.getDestination().getId(), ignored -> new ArrayList<>())
+                        .add(detail.getOverview());
+            }
+        });
+        Map<Long, String> result = new HashMap<>();
+        grouped.forEach((id, values) -> result.put(id, String.join(" ", values)));
+        return result;
     }
 
     private Specification<Restaurant> restaurantSpec(PlaceSearchRequest request, boolean relaxed) {

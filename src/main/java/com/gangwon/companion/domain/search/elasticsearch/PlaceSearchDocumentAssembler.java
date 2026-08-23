@@ -2,9 +2,11 @@ package com.gangwon.companion.domain.search.elasticsearch;
 
 import com.gangwon.companion.domain.destination.entity.AccessibilityInfo;
 import com.gangwon.companion.domain.destination.entity.Destination;
+import com.gangwon.companion.domain.destination.entity.DestinationDetail;
 import com.gangwon.companion.domain.destination.entity.PetInfo;
 import com.gangwon.companion.domain.destination.repository.AccessibilityInfoRepository;
 import com.gangwon.companion.domain.destination.repository.DestinationRepository;
+import com.gangwon.companion.domain.destination.repository.DestinationDetailRepository;
 import com.gangwon.companion.domain.destination.repository.PetInfoRepository;
 import com.gangwon.companion.domain.lodging.repository.LodgingRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;
@@ -23,6 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PlaceSearchDocumentAssembler {
     private final DestinationRepository destinationRepository;
+    private final DestinationDetailRepository destinationDetailRepository;
     private final PetInfoRepository petInfoRepository;
     private final AccessibilityInfoRepository accessibilityInfoRepository;
     private final RestaurantRepository restaurantRepository;
@@ -50,6 +53,7 @@ public class PlaceSearchDocumentAssembler {
         List<Long> ids = rows.stream().map(Destination::getId).toList();
         Map<Long, PetInfo> pets = firstPetByDestination(ids);
         Map<Long, AccessibilityInfo> access = firstAccessByDestination(ids);
+        Map<Long, String> overviews = overviewsByDestination(ids);
         return rows.stream().map(row -> {
             PetInfo pet = pets.get(row.getId());
             AccessibilityInfo accessibility = access.get(row.getId());
@@ -60,11 +64,25 @@ public class PlaceSearchDocumentAssembler {
             String theme = row.getTheme() == null ? null : row.getTheme().getName();
             return new PlaceSearchDocument("DESTINATION:" + row.getId(), "DESTINATION", row.getTitle(),
                     join(row.getAddr1(), row.getAddr2()), regionCodeFromTour(row.getSigunguCode()),
-                    join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme), location(row),
+                    join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme, overviews.get(row.getId())), location(row),
                     pet == null ? null : pet.getPetAllowed(), pet == null ? null : pet.getSmallPetAllowed(),
                     pet == null ? null : pet.getMediumPetAllowed(), pet == null ? null : pet.getLargePetAllowed(),
                     accessibility == null ? null : accessibility.getWheelchairAccessible(), "TOUR_API", evidence);
         }).toList();
+    }
+
+    private Map<Long, String> overviewsByDestination(List<Long> ids) {
+        Map<Long, List<String>> grouped = new HashMap<>();
+        if (ids.isEmpty()) return Map.of();
+        for (DestinationDetail detail : destinationDetailRepository.findAllByDestinationIdIn(ids)) {
+            if (detail.getOverview() != null && !detail.getOverview().isBlank()) {
+                grouped.computeIfAbsent(detail.getDestination().getId(), ignored -> new ArrayList<>())
+                        .add(detail.getOverview());
+            }
+        }
+        Map<Long, String> result = new HashMap<>();
+        grouped.forEach((id, values) -> result.put(id, String.join(" ", values)));
+        return result;
     }
 
     private Map<Long, PetInfo> firstPetByDestination(List<Long> ids) {
