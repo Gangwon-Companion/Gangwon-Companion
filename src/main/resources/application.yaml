@@ -4,6 +4,18 @@ spring:
   profiles:
     default: local
 
+search:
+  engine: ${SEARCH_ENGINE:rdb}
+  elasticsearch:
+    url: ${ELASTICSEARCH_URL:http://localhost:9200}
+    api-key: ${ELASTICSEARCH_API_KEY:}
+    alias: gangwon-places
+    index-prefix: gangwon-places-v1
+    connect-timeout: 2s
+    request-timeout: 3s
+    bulk-size: 500
+    reindex-key: ${ELASTICSEARCH_REINDEX_KEY:}
+
 jwt:
   secret: ${JWT_SECRET}
 

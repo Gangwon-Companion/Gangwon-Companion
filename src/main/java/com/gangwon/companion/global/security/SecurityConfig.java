@@ -67,6 +67,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/promotions/hotplace/sync").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/lodgings", "/api/v1/lodgings/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/restaurants", "/api/v1/restaurants/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/internal/search/places").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/internal/search/index/rebuild").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/posts", "/api/v1/community/posts/*").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())

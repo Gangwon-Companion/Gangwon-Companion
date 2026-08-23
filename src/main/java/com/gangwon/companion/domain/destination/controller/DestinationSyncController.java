@@ -3,6 +3,7 @@ package com.gangwon.companion.domain.destination.controller;
 import com.gangwon.companion.domain.destination.dto.DestinationDetailSyncResponseDto;
 import com.gangwon.companion.domain.destination.service.DestinationSyncService;
 import com.gangwon.companion.domain.destination.service.DestinationDetailSyncService;
+import com.gangwon.companion.domain.destination.service.DestinationSearchDataBackfillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +24,7 @@ public class DestinationSyncController {
 
     private final DestinationSyncService destinationSyncService;
     private final DestinationDetailSyncService destinationDetailSyncService;
+    private final DestinationSearchDataBackfillService destinationSearchDataBackfillService;
 
     @Operation(summary = "국문 여행지 목록 동기화")
     @PostMapping("/sync/korean")
@@ -70,5 +72,11 @@ public class DestinationSyncController {
     ) {
         DestinationDetailSyncResponseDto response = destinationDetailSyncService.syncAccessibilityDestinationDetails(limit);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "여행지 검색용 파생 데이터 재정규화")
+    @PostMapping("/search-data/backfill")
+    public ResponseEntity<DestinationSearchDataBackfillService.BackfillResult> backfillSearchData() {
+        return ResponseEntity.ok(destinationSearchDataBackfillService.backfill());
     }
 }

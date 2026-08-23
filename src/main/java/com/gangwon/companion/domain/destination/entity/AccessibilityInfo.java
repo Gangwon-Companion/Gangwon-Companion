@@ -64,6 +64,13 @@ public class AccessibilityInfo {
     @Column(columnDefinition = "text")
     private String rawAccessibilityJson;
 
+    private Boolean wheelchairAccessible;
+
+    @Column(length = 20)
+    private String normalizationVersion;
+
+    private LocalDateTime normalizedAt;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -99,5 +106,20 @@ public class AccessibilityInfo {
         this.helpDog = helpDog;
         this.guideHuman = guideHuman;
         this.rawAccessibilityJson = rawAccessibilityJson;
+    }
+
+    public boolean applySearchNormalization(
+            Boolean wheelchairAccessible,
+            String normalizationVersion
+    ) {
+        boolean unchanged = java.util.Objects.equals(this.wheelchairAccessible, wheelchairAccessible)
+                && java.util.Objects.equals(this.normalizationVersion, normalizationVersion);
+        if (unchanged) {
+            return false;
+        }
+        this.wheelchairAccessible = wheelchairAccessible;
+        this.normalizationVersion = normalizationVersion;
+        this.normalizedAt = LocalDateTime.now();
+        return true;
     }
 }
