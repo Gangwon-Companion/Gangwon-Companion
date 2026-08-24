@@ -1,0 +1,21 @@
+{
+  "name": "gangwon-postgres-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "gangwon_user",
+    "database.password": "qwer1234",
+    "database.dbname": "gangwon",
+    "topic.prefix": "gangwon",
+    "plugin.name": "pgoutput",
+    "slot.name": "gangwon_search_slot",
+    "publication.name": "gangwon_search_publication",
+    "publication.autocreate.mode": "filtered",
+    "table.include.list": "public.destinations,public.destination_details,public.pet_infos,public.accessibility_infos,public.restaurants,public.lodgings",
+    "tombstones.on.delete": "false",
+    "decimal.handling.mode": "double",
+    "snapshot.mode": "initial",
+    "include.schema.changes": "false"
+  }
+}
