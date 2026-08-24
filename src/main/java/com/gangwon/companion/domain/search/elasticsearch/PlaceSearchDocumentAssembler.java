@@ -24,6 +24,8 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class PlaceSearchDocumentAssembler {
+    private static final int DOCUMENT_VERSION = 2;
+
     private final DestinationRepository destinationRepository;
     private final DestinationDetailRepository destinationDetailRepository;
     private final PetInfoRepository petInfoRepository;
@@ -37,14 +39,16 @@ public class PlaceSearchDocumentAssembler {
         documents.addAll(destinations());
         restaurantRepository.findAll().stream().map(row -> new PlaceSearchDocument(
                 "RESTAURANT:" + row.getId(), "RESTAURANT", row.getName(), row.getAddress(),
-                regionCode(row.getRegion()), join(row.getName(), row.getMenuType(), row.getAddress()),
+                regionCode(row.getRegion()), join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
                 new PlaceSearchDocument.Location(row.getLatitude(), row.getLongitude()),
-                null, null, null, null, null, "TOUR_API", List.of())).forEach(documents::add);
+                null, null, null, null, null, null, row.getMenuType(), row.getRating(), null, null,
+                null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of())).forEach(documents::add);
         lodgingRepository.findAll().stream().map(row -> new PlaceSearchDocument(
                 "LODGING:" + row.getId(), "LODGING", row.getName(), row.getAddress(),
-                regionCode(row.getRegion()), join(row.getName(), row.getDescription(), row.getAddress()),
+                regionCode(row.getRegion()), join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
                 new PlaceSearchDocument.Location(row.getLatitude(), row.getLongitude()),
-                null, null, null, null, null, "TOUR_API", List.of())).forEach(documents::add);
+                null, null, null, null, null, null, null, row.getRating(), row.getPrice(), null,
+                null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of())).forEach(documents::add);
         return documents;
     }
 
@@ -62,12 +66,17 @@ public class PlaceSearchDocumentAssembler {
             if (pet != null && anyPetSize(pet)) evidence.add("pet_size");
             if (accessibility != null && accessibility.getWheelchairAccessible() != null) evidence.add("wheelchair_accessible");
             String theme = row.getTheme() == null ? null : row.getTheme().getName();
+            String petInfoText = petInfoText(pet);
+            String accessibilityInfoText = accessibilityInfoText(accessibility);
             return new PlaceSearchDocument("DESTINATION:" + row.getId(), "DESTINATION", row.getTitle(),
                     join(row.getAddr1(), row.getAddr2()), regionCodeFromTour(row.getSigunguCode()),
-                    join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme, overviews.get(row.getId())), location(row),
+                    join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme, overviews.get(row.getId()),
+                            petInfoText, accessibilityInfoText), location(row),
                     pet == null ? null : pet.getPetAllowed(), pet == null ? null : pet.getSmallPetAllowed(),
                     pet == null ? null : pet.getMediumPetAllowed(), pet == null ? null : pet.getLargePetAllowed(),
-                    accessibility == null ? null : accessibility.getWheelchairAccessible(), "TOUR_API", evidence);
+                    accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, null, null,
+                    petInfoText, accessibilityInfoText, timestamp(row.getUpdatedAt()), DOCUMENT_VERSION,
+                    "TOUR_API", evidence);
         }).toList();
     }
 
@@ -105,6 +114,18 @@ public class PlaceSearchDocumentAssembler {
         return pet.getSmallPetAllowed() != null || pet.getMediumPetAllowed() != null || pet.getLargePetAllowed() != null;
     }
 
+    private String petInfoText(PetInfo pet) {
+        if (pet == null) return null;
+        return join(pet.getAccompanyType(), pet.getNeedItems(), pet.getPetFacilities(), pet.getCaution(), pet.getAccidentRisk());
+    }
+
+    private String accessibilityInfoText(AccessibilityInfo accessibility) {
+        if (accessibility == null) return null;
+        return join(accessibility.getParking(), accessibility.getRoute(), accessibility.getEntrance(), accessibility.getElevator(),
+                accessibility.getRestroom(), accessibility.getWheelchair(), accessibility.getBraileBlock(),
+                accessibility.getHelpDog(), accessibility.getGuideHuman());
+    }
+
     private PlaceSearchDocument.Location location(Destination row) {
         return row.getMapY() == null || row.getMapX() == null ? null
                 : new PlaceSearchDocument.Location(row.getMapY().doubleValue(), row.getMapX().doubleValue());
@@ -123,5 +144,9 @@ public class PlaceSearchDocumentAssembler {
 
     private String join(String... values) {
         return String.join(" ", java.util.Arrays.stream(values).filter(v -> v != null && !v.isBlank()).toList());
+    }
+
+    private String timestamp(java.time.LocalDateTime value) {
+        return value == null ? null : value.toString();
     }
 }

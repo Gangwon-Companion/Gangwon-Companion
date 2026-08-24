@@ -91,6 +91,14 @@ public class ElasticsearchIndexService {
         for (String field : List.of("petAllowed", "smallPetAllowed", "mediumPetAllowed", "largePetAllowed", "wheelchairAccessible")) {
             propertiesMap.put(field, Map.of("type", "boolean"));
         }
+        propertiesMap.put("themeName", text);
+        propertiesMap.put("menuType", text);
+        propertiesMap.put("rating", Map.of("type", "double"));
+        propertiesMap.put("price", Map.of("type", "long"));
+        propertiesMap.put("petInfoText", text);
+        propertiesMap.put("accessibilityInfoText", text);
+        propertiesMap.put("updatedAt", Map.of("type", "date"));
+        propertiesMap.put("documentVersion", Map.of("type", "integer"));
         propertiesMap.put("source", Map.of("type", "keyword"));
         propertiesMap.put("evidenceFields", Map.of("type", "keyword"));
         propertiesMap.put("embedding", Map.of("type", "dense_vector", "similarity", "cosine"));
