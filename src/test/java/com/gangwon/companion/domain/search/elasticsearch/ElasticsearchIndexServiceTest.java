@@ -25,7 +25,8 @@ class ElasticsearchIndexServiceTest {
     void createsVersionedIndexBulkIndexesAndSwitchesAlias() throws Exception {
         PlaceSearchDocument document = new PlaceSearchDocument("RESTAURANT:1", "RESTAURANT", "강릉 카페", "강릉",
                 "GANGNEUNG", "강릉 카페", new PlaceSearchDocument.Location(37.75, 128.90),
-                null, null, null, null, null, "TOUR_API", List.of());
+                null, null, null, null, null, null, "카페", 4.5, null, null, null,
+                "2026-08-24T17:00:00", 2, "TOUR_API", List.of());
         when(assembler.loadAll()).thenReturn(List.of(document));
         when(client.postNdjson(startsWith("/gangwon-places-v1-"), any())).thenReturn(mapper.readTree("{\"errors\":false}"));
         when(client.post(startsWith("/gangwon-places-v1-"))).thenReturn(mapper.createObjectNode());
@@ -40,7 +41,9 @@ class ElasticsearchIndexServiceTest {
         ArgumentCaptor<Object> definition = ArgumentCaptor.forClass(Object.class);
         verify(client).put(startsWith("/gangwon-places-v1-"), definition.capture());
         assertThat(mapper.writeValueAsString(definition.getValue()))
-                .contains("nori_tokenizer", "geo_point", "dense_vector", "dynamic");
+                .contains("nori_tokenizer", "geo_point", "dense_vector", "dynamic",
+                        "themeName", "menuType", "rating", "price", "petInfoText",
+                        "accessibilityInfoText", "updatedAt", "documentVersion");
         verify(client).post("/_aliases", Map.of("actions", List.of(Map.of("add", Map.of(
                 "index", report.index(), "alias", "gangwon-places", "is_write_index", true)))));
     }
