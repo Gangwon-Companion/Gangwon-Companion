@@ -37,7 +37,8 @@ public class TouristCongestionRateSyncService {
             new SignguTarget("51790"),
             new SignguTarget("51800"),
             new SignguTarget("51810"),
-            new SignguTarget("51820")
+            new SignguTarget("51820"),
+            new SignguTarget("51830")
     );
 
     private final TouristCongestionRateRepository repository;
