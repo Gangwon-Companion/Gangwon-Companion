@@ -8,6 +8,7 @@ import com.gangwon.companion.domain.course.repository.SavedCourseRepository;
 import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.*;
+import com.gangwon.companion.global.storage.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class CommunityService {
     private final CommunityCommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
     private final SavedCourseRepository courseRepository;
+    private final S3FileService s3FileService;
 
     @Transactional(readOnly = true)
     public Page<PostSummary> list(String username, String keyword, Pageable pageable) {
@@ -69,7 +71,7 @@ public class CommunityService {
     private CommunityPost post(Long id) { return postRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); }
     private void owner(CommunityPost p, String username) { if (!p.getUser().getUsername().equals(username)) throw new BusinessException(ErrorCode.ACCESS_DENIED); }
     private PostSummary summary(CommunityPost p, String username) { return new PostSummary(p.getId(), p.getTitle(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), isSaved(p, username), p.getViewCount(), p.getLikeCount(), saveRepository.countByPostId(p.getId()), p.getImages().size(), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt()); }
-    private PostDetail detail(CommunityPost p, String username) { List<ImageResponse> images = p.getImages().stream().map(i -> new ImageResponse(i.getS3Key(), i.getUrl(), i.getSortOrder())).toList(); List<CommentResponse> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(p.getId()).stream().map(c -> commentResponse(c, username)).toList(); return new PostDetail(p.getId(), p.getTitle(), p.getContent(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), isSaved(p, username), p.getViewCount(), p.getLikeCount(), saveRepository.countByPostId(p.getId()), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt(), p.getUpdatedAt(), images, comments); }
+    private PostDetail detail(CommunityPost p, String username) { List<ImageResponse> images = p.getImages().stream().map(i -> new ImageResponse(i.getS3Key(), s3FileService.createDownloadUrl(i.getS3Key()), i.getSortOrder())).toList(); List<CommentResponse> comments = commentRepository.findAllByPostIdOrderByCreatedAtAsc(p.getId()).stream().map(c -> commentResponse(c, username)).toList(); return new PostDetail(p.getId(), p.getTitle(), p.getContent(), p.getUser().getNickname(), isMine(p, username), isLiked(p, username), isSaved(p, username), p.getViewCount(), p.getLikeCount(), saveRepository.countByPostId(p.getId()), p.getCourse() == null ? null : p.getCourse().getId(), p.getHashtags(), p.getCreatedAt(), p.getUpdatedAt(), images, comments); }
     private boolean isMine(CommunityPost p, String username) { return username != null && p.getUser().getUsername().equals(username); }
     private boolean isLiked(CommunityPost p, String username) { return username != null && likeRepository.existsByPostIdAndUserId(p.getId(), user(username).getId()); }
     private boolean isSaved(CommunityPost p, String username) { return username != null && saveRepository.existsByPostIdAndUserId(p.getId(), user(username).getId()); }
