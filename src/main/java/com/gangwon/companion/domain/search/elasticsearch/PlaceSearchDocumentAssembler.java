@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -40,16 +41,36 @@ public class PlaceSearchDocumentAssembler {
         restaurantRepository.findAll().stream().map(row -> new PlaceSearchDocument(
                 "RESTAURANT:" + row.getId(), "RESTAURANT", row.getName(), row.getAddress(),
                 regionCode(row.getRegion()), join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
-                new PlaceSearchDocument.Location(row.getLatitude(), row.getLongitude()),
+                location(row.getLatitude(), row.getLongitude()),
                 null, null, null, null, null, null, row.getMenuType(), row.getRating(), null, null,
                 null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of())).forEach(documents::add);
         lodgingRepository.findAll().stream().map(row -> new PlaceSearchDocument(
                 "LODGING:" + row.getId(), "LODGING", row.getName(), row.getAddress(),
                 regionCode(row.getRegion()), join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
-                new PlaceSearchDocument.Location(row.getLatitude(), row.getLongitude()),
+                location(row.getLatitude(), row.getLongitude()),
                 null, null, null, null, null, null, null, row.getRating(), row.getPrice(), null,
                 null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of())).forEach(documents::add);
         return documents;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<PlaceSearchDocument> loadOne(String domain, long id) {
+        return switch (domain) {
+            case "DESTINATION" -> destinationRepository.findById(id).map(this::destination);
+            case "RESTAURANT" -> restaurantRepository.findById(id).map(row -> new PlaceSearchDocument(
+                    "RESTAURANT:" + row.getId(), "RESTAURANT", row.getName(), row.getAddress(),
+                    regionCode(row.getRegion()), join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
+                    location(row.getLatitude(), row.getLongitude()),
+                    null, null, null, null, null, null, row.getMenuType(), row.getRating(), null, null,
+                    null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of()));
+            case "LODGING" -> lodgingRepository.findById(id).map(row -> new PlaceSearchDocument(
+                    "LODGING:" + row.getId(), "LODGING", row.getName(), row.getAddress(),
+                    regionCode(row.getRegion()), join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
+                    location(row.getLatitude(), row.getLongitude()),
+                    null, null, null, null, null, null, null, row.getRating(), row.getPrice(), null,
+                    null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of()));
+            default -> throw new IllegalArgumentException("Unsupported place domain: " + domain);
+        };
     }
 
     private List<PlaceSearchDocument> destinations() {
@@ -78,6 +99,28 @@ public class PlaceSearchDocumentAssembler {
                     petInfoText, accessibilityInfoText, timestamp(row.getUpdatedAt()), DOCUMENT_VERSION,
                     "TOUR_API", evidence);
         }).toList();
+    }
+
+    private PlaceSearchDocument destination(Destination row) {
+        long id = row.getId();
+        PetInfo pet = firstPetByDestination(List.of(id)).get(id);
+        AccessibilityInfo accessibility = firstAccessByDestination(List.of(id)).get(id);
+        String overview = overviewsByDestination(List.of(id)).get(id);
+        List<String> evidence = new ArrayList<>();
+        if (pet != null && pet.getPetAllowed() != null) evidence.add("pet_allowed");
+        if (pet != null && anyPetSize(pet)) evidence.add("pet_size");
+        if (accessibility != null && accessibility.getWheelchairAccessible() != null) evidence.add("wheelchair_accessible");
+        String theme = row.getTheme() == null ? null : row.getTheme().getName();
+        String petInfoText = petInfoText(pet);
+        String accessibilityInfoText = accessibilityInfoText(accessibility);
+        return new PlaceSearchDocument("DESTINATION:" + id, "DESTINATION", row.getTitle(),
+                join(row.getAddr1(), row.getAddr2()), regionCodeFromTour(row.getSigunguCode()),
+                join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme, overview, petInfoText, accessibilityInfoText),
+                location(row), pet == null ? null : pet.getPetAllowed(),
+                pet == null ? null : pet.getSmallPetAllowed(), pet == null ? null : pet.getMediumPetAllowed(),
+                pet == null ? null : pet.getLargePetAllowed(),
+                accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, null, null,
+                petInfoText, accessibilityInfoText, timestamp(row.getUpdatedAt()), DOCUMENT_VERSION, "TOUR_API", evidence);
     }
 
     private Map<Long, String> overviewsByDestination(List<Long> ids) {
@@ -129,6 +172,10 @@ public class PlaceSearchDocumentAssembler {
     private PlaceSearchDocument.Location location(Destination row) {
         return row.getMapY() == null || row.getMapX() == null ? null
                 : new PlaceSearchDocument.Location(row.getMapY().doubleValue(), row.getMapX().doubleValue());
+    }
+
+    private PlaceSearchDocument.Location location(Double lat, Double lon) {
+        return lat == null || lon == null ? null : new PlaceSearchDocument.Location(lat, lon);
     }
 
     private String regionCode(String koreanRegion) {

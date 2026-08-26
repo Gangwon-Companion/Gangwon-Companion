@@ -285,3 +285,11 @@ database.user/database.password가 JSON 파일에 들어 있다.
 CDC 증분 색인:
 - 일반 insert/update/delete 반영
 ```
+
+## 10. 담당자 B 구현 연결
+
+Kafka topic 이후 Search Indexer와 Elasticsearch 증분 upsert/delete가 구현되었다.
+2026-08-26 로컬 Docker 환경에서 테스트 전용 restaurant의 INSERT 및 DELETE가
+Elasticsearch 문서의 `found=true` 및 `found=false`로 반영되는 것까지 검증했다.
+실행 설정, DELETE 정책, retry/DLT, 검색 랭킹 정책은
+[`SEARCH_INDEXER.md`](SEARCH_INDEXER.md)를 참고한다.

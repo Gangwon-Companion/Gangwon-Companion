@@ -44,7 +44,9 @@ class ElasticsearchPlaceSearchEngineTest {
         ArgumentCaptor<Object> body = ArgumentCaptor.forClass(Object.class);
         verify(client).post(eq("/gangwon-places/_search"), body.capture());
         String json = mapper.writeValueAsString(body.getValue());
-        assertThat(json).contains("GANGNEUNG", "petAllowed", "smallPetAllowed", "wheelchairAccessible", "multi_match");
+        assertThat(json).contains("GANGNEUNG", "petAllowed", "smallPetAllowed", "wheelchairAccessible",
+                "multi_match", "must_not", "function_score", "field_value_factor", "themeName^3");
+        assertThat(json).doesNotContain("\"petAllowed\":true", "\"smallPetAllowed\":true");
     }
 
     @Test

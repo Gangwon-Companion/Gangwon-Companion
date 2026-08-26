@@ -3,9 +3,23 @@ spring:
     name: gangwon-companion
   profiles:
     default: local
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: record
 
 search:
   engine: ${SEARCH_ENGINE:rdb}
+  indexer:
+    enabled: ${SEARCH_INDEXER_ENABLED:false}
+    group-id: ${SEARCH_INDEXER_GROUP_ID:gangwon-search-indexer}
+    topics: ${SEARCH_INDEXER_TOPICS:gangwon.public.destinations,gangwon.public.destination_details,gangwon.public.pet_infos,gangwon.public.accessibility_infos,gangwon.public.restaurants,gangwon.public.lodgings}
+    retry-attempts: ${SEARCH_INDEXER_RETRY_ATTEMPTS:3}
   elasticsearch:
     url: ${ELASTICSEARCH_URL:http://localhost:9200}
     api-key: ${ELASTICSEARCH_API_KEY:}
