@@ -25,4 +25,8 @@ public class CommunityPostImage {
     public CommunityPostImage(CommunityPost post, String s3Key, String url, int sortOrder) {
         this.post = post; this.s3Key = s3Key; this.url = url; this.sortOrder = sortOrder;
     }
+
+    public void update(String url, int sortOrder) {
+        this.url = url; this.sortOrder = sortOrder;
+    }
 }
