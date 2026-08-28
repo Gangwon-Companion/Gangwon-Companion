@@ -43,6 +43,16 @@ public class Restaurant {
     @Column(nullable = false)
     private Double longitude;
 
+    private String firstMenu;
+
+    @Column(columnDefinition = "TEXT")
+    private String treatMenu;
+
+    private String openTime;
+    private String restDate;
+    private String parking;
+    private String infoCenter;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -81,5 +91,15 @@ public class Restaurant {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public void updateIntro(String firstMenu, String treatMenu, String openTime,
+                            String restDate, String parking, String infoCenter) {
+        this.firstMenu = firstMenu;
+        this.treatMenu = treatMenu;
+        this.openTime = openTime;
+        this.restDate = restDate;
+        this.parking = parking;
+        this.infoCenter = infoCenter;
     }
 }

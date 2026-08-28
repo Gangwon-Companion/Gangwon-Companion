@@ -75,4 +75,15 @@ public class CommunityPost {
     public void decreaseLikeCount() { if (likeCount > 0) likeCount--; }
     public void addImage(CommunityPostImage image) { images.add(image); }
     public void clearImages() { images.clear(); }
+    public void replaceImages(List<CommunityPostImage> newImages) {
+        if (newImages == null) { images.clear(); return; }
+        Set<String> requestedKeys = newImages.stream().map(CommunityPostImage::getS3Key).collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+        images.removeIf(image -> !requestedKeys.contains(image.getS3Key()));
+        for (CommunityPostImage newImage : newImages) {
+            CommunityPostImage existing = findImage(newImage.getS3Key());
+            if (existing == null) images.add(newImage);
+            else existing.update(newImage.getUrl(), newImage.getSortOrder());
+        }
+    }
+    private CommunityPostImage findImage(String s3Key) { return images.stream().filter(image -> image.getS3Key().equals(s3Key)).findFirst().orElse(null); }
 }

@@ -124,6 +124,11 @@ public class DataSyncScheduler {
         } catch (Exception e) {
             log.error("숙소 상세 보완 중 오류 발생", e);
         }
+        try {
+            restaurantSyncService.enrichDetails();
+        } catch (Exception e) {
+            log.error("음식점 상세 보완 중 오류 발생", e);
+        }
         log.info("=== 전체 데이터 동기화 종료 ===");
     }
 }

@@ -26,4 +26,26 @@ public class TourApiItem {
     // detailCommon2 응답 필드
     private String overview;
 
+    // 음식점 detailIntro2 응답 필드
+    private String firstmenu;
+    private String treatmenu;
+    private String opentimefood;
+    private String restdatefood;
+    private String parkingfood;
+    private String infocenterfood;
+
+    // 숙소 detailIntro2 응답 필드
+    private String roomcount;
+    private String roomtype;
+    private String checkintime;
+    private String checkouttime;
+    private String parkinglodging;
+    private String subfacility;
+    private String infocenterlodging;
+
+    // detailImage2 응답 필드
+    private String originimgurl;
+    private String smallimageurl;
+    private String serialnum;
+
 }

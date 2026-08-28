@@ -84,7 +84,10 @@ class LodgingControllerTest {
         mockMvc.perform(get("/api/v1/lodgings/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ocean Hotel"))
-                .andExpect(jsonPath("$.location.address").value("Sokcho"));
+                .andExpect(jsonPath("$.location.address").value("Sokcho"))
+                .andExpect(jsonPath("$.roomType").value("Deluxe"))
+                .andExpect(jsonPath("$.checkInTime").value("15:00"))
+                .andExpect(jsonPath("$.price").doesNotExist());
     }
 
     @Test
@@ -164,7 +167,7 @@ class LodgingControllerTest {
     }
 
     private Lodging lodging() {
-        return Lodging.builder()
+        Lodging lodging = Lodging.builder()
                 .name("Ocean Hotel")
                 .description("description")
                 .region("Sokcho")
@@ -175,5 +178,7 @@ class LodgingControllerTest {
                 .latitude(38.2)
                 .longitude(128.5)
                 .build();
+        lodging.updateIntro("10 rooms", "Deluxe", "15:00", "11:00", "available", "pool", "033-000-0000");
+        return lodging;
     }
 }

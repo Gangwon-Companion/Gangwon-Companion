@@ -1,6 +1,7 @@
 package com.gangwon.companion.domain.lodging.repository;
 
 import com.gangwon.companion.domain.lodging.entity.Lodging;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,12 @@ public interface LodgingRepository extends JpaRepository<Lodging, Long>, JpaSpec
 
     boolean existsByExternalIdIsNotNull();
 
-    // description이 null인 항목 = 상세 보완이 필요한 항목
-    List<Lodging> findTop50ByExternalIdIsNotNullAndDescriptionIsNull();
+    @Query("""
+            SELECT DISTINCT l FROM Lodging l
+            LEFT JOIN l.photos p
+            WHERE l.externalId IS NOT NULL
+              AND (l.description IS NULL OR l.roomType IS NULL OR p.id IS NULL)
+            ORDER BY l.id
+            """)
+    List<Lodging> findNeedingDetails(Pageable pageable);
 }

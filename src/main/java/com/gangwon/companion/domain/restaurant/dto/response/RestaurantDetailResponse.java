@@ -17,6 +17,12 @@ public class RestaurantDetailResponse {
     private final String address;
     private final Double latitude;
     private final Double longitude;
+    private final String firstMenu;
+    private final String treatMenu;
+    private final String openTime;
+    private final String restDate;
+    private final String parking;
+    private final String infoCenter;
     private final List<String> photos;
     private final List<RestaurantReviewResponse> reviews;
 
@@ -29,9 +35,19 @@ public class RestaurantDetailResponse {
         this.address = restaurant.getAddress();
         this.latitude = restaurant.getLatitude();
         this.longitude = restaurant.getLongitude();
-        this.photos = restaurant.getPhotos().stream()
-                .map(p -> p.getUrl())
+        this.firstMenu = restaurant.getFirstMenu();
+        this.treatMenu = restaurant.getTreatMenu();
+        this.openTime = restaurant.getOpenTime();
+        this.restDate = restaurant.getRestDate();
+        this.parking = restaurant.getParking();
+        this.infoCenter = restaurant.getInfoCenter();
+        List<String> detailPhotos = restaurant.getPhotos().stream()
+                .map(p -> p.getOriginImgUrl() == null ? p.getUrl() : p.getOriginImgUrl())
+                .filter(url -> url != null && !url.isBlank())
                 .toList();
+        this.photos = detailPhotos.isEmpty() && restaurant.getThumbnailUrl() != null && !restaurant.getThumbnailUrl().isBlank()
+                ? List.of(restaurant.getThumbnailUrl())
+                : detailPhotos;
         this.reviews = reviews.stream()
                 .map(review -> new RestaurantReviewResponse(
                         review.getId(),

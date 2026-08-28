@@ -42,7 +42,7 @@ public class CommunityService {
     public PostDetail update(String username, Long id, UpdatePostRequest request) {
         CommunityPost post = post(id); owner(post, username);
         post.update(request.title(), request.content(), course(request.courseId(), username), request.hashtags());
-        post.clearImages(); addImages(post, request.images());
+        post.replaceImages(toImages(post, request.images()));
         return detail(post, username);
     }
     @Transactional
@@ -66,6 +66,7 @@ public class CommunityService {
         CommunityPost post = postRepository.save(CommunityPost.builder().user(user(username)).course(course(courseId, username)).title(title).content(content).hashtags(hashtags).build()); addImages(post, images); return post;
     }
     private void addImages(CommunityPost post, List<ImageRequest> images) { if (images != null) images.forEach(i -> post.addImage(CommunityPostImage.builder().post(post).s3Key(i.s3Key()).url(i.url()).sortOrder(i.sortOrder()).build())); }
+    private List<CommunityPostImage> toImages(CommunityPost post, List<ImageRequest> images) { return images == null ? null : images.stream().map(i -> CommunityPostImage.builder().post(post).s3Key(i.s3Key()).url(i.url()).sortOrder(i.sortOrder()).build()).toList(); }
     private SavedCourse course(Long id, String username) { if (id == null) return null; SavedCourse c = courseRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); if (!c.getUser().getUsername().equals(username)) throw new BusinessException(ErrorCode.ACCESS_DENIED); return c; }
     private User user(String username) { return userRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); }
     private CommunityPost post(Long id) { return postRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)); }

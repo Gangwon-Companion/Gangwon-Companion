@@ -84,7 +84,9 @@ class RestaurantControllerTest {
         mockMvc.perform(get("/api/v1/restaurants/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Sea Restaurant"))
-                .andExpect(jsonPath("$.address").value("Gangneung"));
+                .andExpect(jsonPath("$.address").value("Gangneung"))
+                .andExpect(jsonPath("$.firstMenu").value("grilled fish"))
+                .andExpect(jsonPath("$.openTime").value("10:00~20:00"));
     }
 
     @Test
@@ -164,7 +166,7 @@ class RestaurantControllerTest {
     }
 
     private Restaurant restaurant() {
-        return Restaurant.builder()
+        Restaurant restaurant = Restaurant.builder()
                 .name("Sea Restaurant")
                 .menuType("Korean")
                 .region("Gangneung")
@@ -174,5 +176,7 @@ class RestaurantControllerTest {
                 .latitude(37.7)
                 .longitude(128.9)
                 .build();
+        restaurant.updateIntro("grilled fish", "fish stew", "10:00~20:00", "Monday", "available", "033-000-0000");
+        return restaurant;
     }
 }

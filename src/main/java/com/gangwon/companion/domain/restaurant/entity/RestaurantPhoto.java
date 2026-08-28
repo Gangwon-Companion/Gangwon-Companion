@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "restaurant_photos")
+@Table(name = "restaurant_photos",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_restaurant_photo_restaurant_serial",
+                columnNames = {"restaurant_id", "serial_num"}
+        ))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RestaurantPhoto {
@@ -20,9 +24,21 @@ public class RestaurantPhoto {
     @Column(nullable = false)
     private String url;
 
+    @Column(columnDefinition = "text")
+    private String originImgUrl;
+
+    @Column(columnDefinition = "text")
+    private String smallImgUrl;
+
+    @Column(name = "serial_num", length = 100)
+    private String serialNum;
+
     @Builder
-    public RestaurantPhoto(Restaurant restaurant, String url) {
+    public RestaurantPhoto(Restaurant restaurant, String url, String originImgUrl, String smallImgUrl, String serialNum) {
         this.restaurant = restaurant;
-        this.url = url;
+        this.url = url == null ? originImgUrl : url;
+        this.originImgUrl = originImgUrl;
+        this.smallImgUrl = smallImgUrl;
+        this.serialNum = serialNum;
     }
 }
