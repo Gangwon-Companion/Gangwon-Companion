@@ -18,14 +18,15 @@ public class DebeziumPlaceChangeParser {
             if (event.has("payload") && !event.path("payload").isNull()) event = event.path("payload");
             String table = requiredText(event.path("source"), "table");
             String operation = requiredText(event, "op");
+            long sourceTimestampMillis = event.path("source").path("ts_ms").asLong(event.path("ts_ms").asLong(0));
             JsonNode row = "d".equals(operation) ? event.path("before") : event.path("after");
             if (row.isMissingNode() || row.isNull()) throw new IllegalArgumentException("Debezium row is missing");
             return switch (table) {
-                case "destinations" -> change("DESTINATION", row, "id", "d".equals(operation));
+                case "destinations" -> change("DESTINATION", row, "id", "d".equals(operation), sourceTimestampMillis);
                 case "destination_details", "pet_infos", "accessibility_infos" ->
-                        change("DESTINATION", row, "destination_id", false);
-                case "restaurants" -> change("RESTAURANT", row, "id", "d".equals(operation));
-                case "lodgings" -> change("LODGING", row, "id", "d".equals(operation));
+                        change("DESTINATION", row, "destination_id", false, sourceTimestampMillis);
+                case "restaurants" -> change("RESTAURANT", row, "id", "d".equals(operation), sourceTimestampMillis);
+                case "lodgings" -> change("LODGING", row, "id", "d".equals(operation), sourceTimestampMillis);
                 default -> throw new IllegalArgumentException("Unsupported Debezium table: " + table);
             };
         } catch (IllegalArgumentException exception) {
@@ -35,10 +36,11 @@ public class DebeziumPlaceChangeParser {
         }
     }
 
-    private DebeziumPlaceChange change(String domain, JsonNode row, String idField, boolean rootDeleted) {
+    private DebeziumPlaceChange change(String domain, JsonNode row, String idField, boolean rootDeleted,
+                                       long sourceTimestampMillis) {
         JsonNode id = row.path(idField);
         if (!id.canConvertToLong()) throw new IllegalArgumentException("Missing numeric field: " + idField);
-        return new DebeziumPlaceChange(domain, id.longValue(), rootDeleted);
+        return new DebeziumPlaceChange(domain, id.longValue(), rootDeleted, sourceTimestampMillis);
     }
 
     private String requiredText(JsonNode node, String field) {
