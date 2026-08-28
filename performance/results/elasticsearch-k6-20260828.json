@@ -1,0 +1,11 @@
+{
+  "runId": "elasticsearch-k6-20260828",
+  "generatedAt": "2026-08-28T05:07:47.417Z",
+  "p95Ms": 15.069369499999995,
+  "p99Ms": 21.776713559999976,
+  "requests": 11555,
+  "throughputRps": 164.6636816071174,
+  "errorRate": 0,
+  "checkRate": 1,
+  "durationMs": 70173.336872
+}
