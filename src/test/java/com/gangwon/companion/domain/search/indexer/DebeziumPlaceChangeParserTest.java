@@ -13,10 +13,10 @@ class DebeziumPlaceChangeParserTest {
     void mapsDestinationChildDeleteToAggregateRefresh() {
         DebeziumPlaceChange change = parser.parse("""
                 {"before":{"id":7,"destination_id":42},"after":null,
-                 "source":{"table":"pet_infos"},"op":"d"}
+                 "source":{"table":"pet_infos","ts_ms":1234},"op":"d"}
                 """);
 
-        assertThat(change).isEqualTo(new DebeziumPlaceChange("DESTINATION", 42, false));
+        assertThat(change).isEqualTo(new DebeziumPlaceChange("DESTINATION", 42, false, 1234));
     }
 
     @Test
