@@ -1,0 +1,157 @@
+services:
+  spring:
+    labels:
+      logging: "promtail"
+      logging_jobname: "spring"
+
+  postgres:
+    labels:
+      logging: "promtail"
+      logging_jobname: "postgres"
+
+  kafka:
+    labels:
+      logging: "promtail"
+      logging_jobname: "kafka"
+
+  kafka-connect:
+    labels:
+      logging: "promtail"
+      logging_jobname: "kafka-connect"
+
+  elasticsearch:
+    labels:
+      logging: "promtail"
+      logging_jobname: "elasticsearch"
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: prometheus_gangwon
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-remote-write-receiver
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - networks_gangwon
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    container_name: postgres_exporter_gangwon
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: postgresql://${POSTGRES_USER:-gangwon_user}:${POSTGRES_PASSWORD:-qwer1234}@postgres:5432/${POSTGRES_DB:-gangwon}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - networks_gangwon
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.9.0
+    container_name: kafka_exporter_gangwon
+    restart: unless-stopped
+    command:
+      - --kafka.server=kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - networks_gangwon
+
+  elasticsearch-exporter:
+    image: prometheuscommunity/elasticsearch-exporter:v1.9.0
+    container_name: elasticsearch_exporter_gangwon
+    restart: unless-stopped
+    command:
+      - --es.uri=http://elasticsearch:9200
+      - --es.all
+      - --es.indices
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - networks_gangwon
+
+  loki:
+    image: grafana/loki:3.5.3
+    container_name: loki_gangwon
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./observability/loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    networks:
+      - networks_gangwon
+
+  alloy:
+    image: grafana/alloy:v1.10.0
+    container_name: alloy_gangwon
+    restart: unless-stopped
+    command: run /etc/alloy/config.alloy --storage.path=/var/lib/alloy/data
+    volumes:
+      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+    networks:
+      - networks_gangwon
+
+  grafana:
+    image: grafana/grafana:12.1.0
+    container_name: grafana_gangwon
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - networks_gangwon
+
+  k6:
+    image: grafana/k6:0.57.0
+    profiles: ["loadtest"]
+    environment:
+      BASE_URL: ${K6_BASE_URL:-http://spring:8080}
+      TEST_RUN_ID: ${TEST_RUN_ID:-manual}
+      PEAK_VUS: ${PEAK_VUS:-100}
+      WARMUP: ${WARMUP:-30s}
+      RAMP: ${RAMP:-1m}
+      HOLD: ${HOLD:-3m}
+      COOLDOWN: ${COOLDOWN:-30s}
+      THINK_TIME: ${THINK_TIME:-0.2}
+      K6_PROMETHEUS_RW_SERVER_URL: http://prometheus:9090/api/v1/write
+      K6_PROMETHEUS_RW_TREND_STATS: p(90),p(95),p(99),min,max,avg
+    command: run -o experimental-prometheus-rw /scripts/search-load.js
+    volumes:
+      - ./performance/k6:/scripts:ro
+      - ./performance/results:/results
+    depends_on:
+      spring:
+        condition: service_healthy
+      prometheus:
+        condition: service_started
+    networks:
+      - networks_gangwon
+
+volumes:
+  prometheus_data:
+  loki_data:
+  grafana_data:
