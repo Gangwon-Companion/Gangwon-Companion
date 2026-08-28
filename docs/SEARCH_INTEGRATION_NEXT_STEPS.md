@@ -1,5 +1,38 @@
 # 검색·AI 통합 후속 작업
 
+## 2026-08-29 코드 기준 갱신
+
+이 문서 아래의 일부 항목은 최초 작성 당시의 상태를 설명한다. 현재 코드와 실행 결과를
+기준으로 한 최신 상태는 다음과 같다.
+
+완료:
+
+- Elasticsearch를 운영 검색 엔진으로 확정
+- Elasticsearch 검색, versioned index, alias 전환 구현
+- Kafka/Debezium 기반 문서 upsert/delete 구현 및 과거 로컬 검증
+- 영업시간 `opensAt`, `closesAt`, `operatingHoursRaw` 문서와 mapping 추가
+- RDB와 Elasticsearch 검색 응답에 영업시간 evidence 추가
+- 문서 버전 3 적용
+- 실제 DB 기반 비반려동물 1일 코스 `READY` 성공
+- JWT 인증을 포함한 Spring 사용자 API E2E 성공
+- 전체 Gradle 테스트 성공
+
+2026-08-29 현재 실행 상태:
+
+- `gangwon-places` alias 문서 수: 3,143
+- 문서 버전 3: 3,143건
+- 영업시간 필드 보유: 450건
+- 현재 Spring 컨테이너 `SEARCH_ENGINE=rdb`
+- 현재 Spring 컨테이너 `SEARCH_INDEXER_ENABLED=false`
+
+따라서 구현 방향은 Elasticsearch로 확정됐지만 현재 로컬 컨테이너 설정은 운영 구성과
+다르다. 다음 작업은 최신 영업시간 파서로 재색인하고 Spring을
+`SEARCH_ENGINE=elasticsearch`, `SEARCH_INDEXER_ENABLED=true`로 재기동한 뒤 같은
+코스추천 E2E를 `READY`로 통과시키는 것이다.
+
+최신 E2E 상세와 남은 작업은 [여행 코스추천 E2E 현황](course-recommendation-e2e-status.md)을
+기준 문서로 사용한다.
+
 현재까지 구현한 수동 데이터 동기화 API, Elasticsearch 검색, CDC 증분 색인 및 로컬 통합 테스트 환경을 기준으로 남은 작업을 정리한다.
 
 실행 및 장애 대응 절차는 [로컬 데이터 동기화 및 검색 통합 테스트 문제해결](LOCAL_DATA_SYNC_AND_SEARCH_TROUBLESHOOTING.md)을 참고한다.
