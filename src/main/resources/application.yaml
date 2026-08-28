@@ -54,9 +54,21 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,prometheus
   endpoint:
     health:
       probes:
         enabled: true
       show-details: never
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        search.indexer.processing: true
+        search.indexer.end.to.end: true
+      slo:
+        http.server.requests: 100ms,250ms,500ms,1s,2s,5s
+        search.indexer.processing: 100ms,500ms,1s,5s
+        search.indexer.end.to.end: 1s,5s,10s,30s,1m,5m
