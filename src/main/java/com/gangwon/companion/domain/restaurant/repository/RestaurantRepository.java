@@ -23,7 +23,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long>, J
             SELECT DISTINCT r FROM Restaurant r
             LEFT JOIN r.photos p
             WHERE r.externalId IS NOT NULL
-              AND (r.firstMenu IS NULL OR p.id IS NULL)
+              AND (r.firstMenu IS NULL OR r.openTime IS NULL OR r.openTime = '' OR p.id IS NULL)
             ORDER BY r.id
             """)
     List<Restaurant> findNeedingDetails(Pageable pageable);
