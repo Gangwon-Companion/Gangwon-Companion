@@ -27,6 +27,7 @@ class ElasticsearchPlaceSearchEngineTest {
                   "placeId":"RESTAURANT:1","domain":"RESTAURANT","name":"강릉 카페",
                   "address":"강원특별자치도 강릉시","regionCode":"GANGNEUNG",
                   "searchText":"강릉 카페 바다","location":{"lat":37.75,"lon":128.90},
+                  "opensAt":"09:00","closesAt":"22:00","operatingHoursRaw":"09:00~22:00",
                   "source":"TOUR_API","evidenceFields":[]
                 }}]}}
                 """));
@@ -45,7 +46,8 @@ class ElasticsearchPlaceSearchEngineTest {
         verify(client).post(eq("/gangwon-places/_search"), body.capture());
         String json = mapper.writeValueAsString(body.getValue());
         assertThat(json).contains("GANGNEUNG", "petAllowed", "smallPetAllowed", "wheelchairAccessible",
-                "multi_match", "must_not", "function_score", "field_value_factor", "themeName^3");
+                "multi_match", "must_not", "function_score", "field_value_factor", "themeName^3",
+                "opensAt", "closesAt");
         assertThat(json).doesNotContain("\"petAllowed\":true", "\"smallPetAllowed\":true");
     }
 
@@ -55,6 +57,7 @@ class ElasticsearchPlaceSearchEngineTest {
                 {"hits":{"hits":[{"_score":0.0,"_source":{
                   "placeId":"LODGING:1","domain":"LODGING","name":"숙소","address":"강릉",
                   "regionCode":"GANGNEUNG","searchText":"숙소","location":{"lat":37.76,"lon":128.90},
+                  "opensAt":"15:00","closesAt":"11:00","operatingHoursRaw":"15:00~11:00",
                   "source":"TOUR_API","evidenceFields":[]
                 }}]}}
                 """));

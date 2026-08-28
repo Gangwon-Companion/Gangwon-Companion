@@ -44,6 +44,8 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
     private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed) {
         List<Object> filters = new ArrayList<>();
         filters.add(Map.of("term", Map.of("domain", request.domain().name())));
+        filters.add(Map.of("exists", Map.of("field", "opensAt")));
+        filters.add(Map.of("exists", Map.of("field", "closesAt")));
         if (!request.regionCodes().isEmpty()) {
             filters.add(Map.of("terms", Map.of("regionCode", request.regionCodes().stream().map(Enum::name).toList())));
         }
@@ -144,6 +146,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     private List<String> missingFields(PlaceSearchDocument doc, PlaceSearchRequest request) {
         List<String> missing = new ArrayList<>();
+        if (doc.opensAt() == null || doc.closesAt() == null) missing.add("operating_hours");
         if (Boolean.TRUE.equals(request.hardFilters().petAllowed()) && doc.petAllowed() == null) missing.add("pet_allowed");
         if (request.hardFilters().petSize() != null && petSize(doc, request.hardFilters().petSize()) == null) missing.add("pet_size");
         if (Boolean.TRUE.equals(request.hardFilters().wheelchairAccessible()) && doc.wheelchairAccessible() == null) {
@@ -154,6 +157,10 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     private List<PlaceSearchResponse.Evidence> evidence(PlaceSearchDocument doc, PlaceSearchRequest request) {
         List<PlaceSearchResponse.Evidence> evidence = new ArrayList<>();
+        if (doc.opensAt() != null && doc.closesAt() != null) {
+            evidence.add(new PlaceSearchResponse.Evidence("opens_at", doc.opensAt(), doc.source()));
+            evidence.add(new PlaceSearchResponse.Evidence("closes_at", doc.closesAt(), doc.source()));
+        }
         if (Boolean.TRUE.equals(request.hardFilters().petAllowed()) && doc.petAllowed() != null) {
             evidence.add(new PlaceSearchResponse.Evidence("pet_allowed", doc.petAllowed(), doc.source()));
         }
