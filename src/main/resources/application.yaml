@@ -45,6 +45,9 @@ tour-api:
   service-key: ${TOUR_API_KEY}
   base-url: https://apis.data.go.kr
 
+ai:
+  base-url: ${AI_SERVER_URL:http://localhost:8000}
+
 aws:
   region: ${AWS_REGION:ap-northeast-2}
   s3:

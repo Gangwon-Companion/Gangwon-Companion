@@ -1,7 +1,11 @@
 package com.gangwon.companion.domain.course.controller;
 
 import com.gangwon.companion.domain.course.dto.CourseResponse;
+import com.gangwon.companion.domain.course.dto.CourseRecommendationRequest;
 import com.gangwon.companion.domain.course.repository.SavedCourseRepository;
+import com.gangwon.companion.domain.course.service.CourseRecommendationService;
+import tools.jackson.databind.JsonNode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +16,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CourseController {
     private final SavedCourseRepository repository;
+    private final CourseRecommendationService recommendationService;
+
+    @PostMapping("/recommendations")
+    public JsonNode recommend(@Valid @RequestBody CourseRecommendationRequest request) {
+        return recommendationService.recommend(request);
+    }
 
     @GetMapping
     public List<CourseResponse> getMyCourses(Authentication authentication) {
