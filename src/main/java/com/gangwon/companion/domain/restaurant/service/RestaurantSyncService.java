@@ -1,11 +1,14 @@
 package com.gangwon.companion.domain.restaurant.service;
 
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
+import com.gangwon.companion.domain.restaurant.entity.RestaurantPhoto;
+import com.gangwon.companion.domain.restaurant.repository.RestaurantPhotoRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;
 import com.gangwon.companion.global.external.tourapi.TourApiClient;
 import com.gangwon.companion.global.external.tourapi.dto.TourApiItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,8 @@ import java.util.Optional;
 public class RestaurantSyncService {
 
     private static final int PAGE_SIZE = 100;
+    private static final int ENRICH_DELAY_MS = 300;
+    private static final String RESTAURANT_CONTENT_TYPE_ID = "39";
 
     private static final Map<String, String> LCLSSYSTM3_MENU_TYPE_MAP = Map.ofEntries(
             Map.entry("FD020100", "중식"),
@@ -43,6 +48,7 @@ public class RestaurantSyncService {
     );
 
     private final RestaurantRepository restaurantRepository;
+    private final RestaurantPhotoRepository restaurantPhotoRepository;
     private final TourApiClient tourApiClient;
 
     @Transactional
@@ -74,6 +80,72 @@ public class RestaurantSyncService {
         }
 
         log.info("음식점 동기화 완료 - 신규: {}, 업데이트: {}", savedCount, updatedCount);
+    }
+
+    public int enrichDetails() {
+        List<Restaurant> targets = restaurantRepository.findNeedingDetails(PageRequest.of(0, 50));
+        if (targets.isEmpty()) {
+            log.info("음식점 상세 보완 대상 없음");
+            return 0;
+        }
+
+        log.info("음식점 상세 보완 시작 - 대상: {}건", targets.size());
+        int enriched = 0;
+
+        for (Restaurant restaurant : targets) {
+            try {
+                Thread.sleep(ENRICH_DELAY_MS);
+                enrichSingle(restaurant);
+                enriched++;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            } catch (Exception e) {
+                log.warn("음식점 상세 보완 실패: id={}, error={}", restaurant.getId(), e.getMessage());
+            }
+        }
+
+        log.info("음식점 상세 보완 완료 - {}건", enriched);
+        return enriched;
+    }
+
+    public void enrichSingle(Restaurant restaurant) {
+        tourApiClient.fetchDetailIntro(restaurant.getExternalId(), RESTAURANT_CONTENT_TYPE_ID)
+                .ifPresent(item -> restaurant.updateIntro(
+                        blankToNull(item.getFirstmenu()),
+                        blankToNull(item.getTreatmenu()),
+                        blankToNull(item.getOpentimefood()),
+                        blankToNull(item.getRestdatefood()),
+                        blankToNull(item.getParkingfood()),
+                        blankToNull(item.getInfocenterfood())
+                ));
+        syncImages(restaurant);
+        restaurantRepository.save(restaurant);
+    }
+
+    private void syncImages(Restaurant restaurant) {
+        for (TourApiItem imageItem : tourApiClient.fetchDetailImages(restaurant.getExternalId())) {
+            if (imageItem.getSerialnum() == null || imageItem.getSerialnum().isBlank()) {
+                continue;
+            }
+
+            String originImgUrl = blankToNull(imageItem.getOriginimgurl());
+            String smallImgUrl = blankToNull(imageItem.getSmallimageurl());
+            if (originImgUrl == null && smallImgUrl == null) {
+                continue;
+            }
+
+            if (restaurantPhotoRepository.existsByRestaurantIdAndSerialNum(restaurant.getId(), imageItem.getSerialnum())) {
+                continue;
+            }
+            restaurantPhotoRepository.save(RestaurantPhoto.builder()
+                    .restaurant(restaurant)
+                    .url(originImgUrl == null ? smallImgUrl : originImgUrl)
+                    .originImgUrl(originImgUrl)
+                    .smallImgUrl(smallImgUrl)
+                    .serialNum(imageItem.getSerialnum())
+                    .build());
+        }
     }
 
     private void createRestaurant(TourApiItem item) {
@@ -117,6 +189,10 @@ public class RestaurantSyncService {
         }
 
         return "기타";
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
     }
 
     private String extractRegion(String addr1) {

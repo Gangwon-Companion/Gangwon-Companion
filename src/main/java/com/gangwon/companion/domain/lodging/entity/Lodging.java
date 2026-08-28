@@ -46,6 +46,20 @@ public class Lodging {
     @Column(nullable = false)
     private Double longitude;
 
+    private String roomCount;
+
+    @Column(columnDefinition = "TEXT")
+    private String roomType;
+
+    private String checkInTime;
+    private String checkOutTime;
+    private String parking;
+
+    @Column(columnDefinition = "TEXT")
+    private String subFacility;
+
+    private String infoCenter;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -86,5 +100,17 @@ public class Lodging {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public void updateIntro(String roomCount, String roomType, String checkInTime,
+                            String checkOutTime, String parking, String subFacility,
+                            String infoCenter) {
+        this.roomCount = roomCount;
+        this.roomType = roomType;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
+        this.parking = parking;
+        this.subFacility = subFacility;
+        this.infoCenter = infoCenter;
     }
 }

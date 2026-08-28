@@ -14,8 +14,14 @@ public class LodgingDetailResponse {
     private final String name;
     private final String description;
     private final String region;
-    private final Long price;
     private final Double rating;
+    private final String roomCount;
+    private final String roomType;
+    private final String checkInTime;
+    private final String checkOutTime;
+    private final String parking;
+    private final String subFacility;
+    private final String infoCenter;
     private final List<String> photos;
     private final List<LodgingReviewResponse> reviews;
     private final LocationResponse location;
@@ -25,11 +31,21 @@ public class LodgingDetailResponse {
         this.name = lodging.getName();
         this.description = lodging.getDescription();
         this.region = lodging.getRegion();
-        this.price = lodging.getPrice();
         this.rating = lodging.getRating();
-        this.photos = lodging.getPhotos().stream()
-                .map(p -> p.getUrl())
+        this.roomCount = lodging.getRoomCount();
+        this.roomType = lodging.getRoomType();
+        this.checkInTime = lodging.getCheckInTime();
+        this.checkOutTime = lodging.getCheckOutTime();
+        this.parking = lodging.getParking();
+        this.subFacility = lodging.getSubFacility();
+        this.infoCenter = lodging.getInfoCenter();
+        List<String> detailPhotos = lodging.getPhotos().stream()
+                .map(p -> p.getOriginImgUrl() == null ? p.getUrl() : p.getOriginImgUrl())
+                .filter(url -> url != null && !url.isBlank())
                 .toList();
+        this.photos = detailPhotos.isEmpty() && lodging.getThumbnailUrl() != null && !lodging.getThumbnailUrl().isBlank()
+                ? List.of(lodging.getThumbnailUrl())
+                : detailPhotos;
         this.reviews = reviews.stream()
                 .map(review -> new LodgingReviewResponse(
                         review.getId(),

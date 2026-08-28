@@ -82,6 +82,37 @@ public class TourApiClient {
         return items.isEmpty() ? Optional.empty() : Optional.of(items.get(0));
     }
 
+    public Optional<TourApiItem> fetchDetailIntro(String contentId, String contentTypeId) {
+        URI uri = UriComponentsBuilder.fromUriString(properties.getBaseUrl())
+                .path("/detailIntro2")
+                .queryParam("serviceKey", properties.getServiceKey())
+                .queryParam("contentId", contentId)
+                .queryParam("contentTypeId", contentTypeId)
+                .queryParam("MobileOS", "ETC")
+                .queryParam("MobileApp", "GangwonCompanion")
+                .queryParam("_type", "json")
+                .build(true)
+                .toUri();
+
+        List<TourApiItem> items = fetchItems(uri);
+        return items.isEmpty() ? Optional.empty() : Optional.of(items.get(0));
+    }
+
+    public List<TourApiItem> fetchDetailImages(String contentId) {
+        URI uri = UriComponentsBuilder.fromUriString(properties.getBaseUrl())
+                .path("/detailImage2")
+                .queryParam("serviceKey", properties.getServiceKey())
+                .queryParam("contentId", contentId)
+                .queryParam("MobileOS", "ETC")
+                .queryParam("MobileApp", "GangwonCompanion")
+                .queryParam("_type", "json")
+                .queryParam("imageYN", "Y")
+                .build(true)
+                .toUri();
+
+        return fetchItems(uri);
+    }
+
     private List<TourApiItem> fetchItems(URI uri) {
         try {
             String body = restClient.get()

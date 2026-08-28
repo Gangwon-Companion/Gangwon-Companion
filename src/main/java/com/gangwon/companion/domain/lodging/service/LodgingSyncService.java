@@ -1,11 +1,14 @@
 package com.gangwon.companion.domain.lodging.service;
 
 import com.gangwon.companion.domain.lodging.entity.Lodging;
+import com.gangwon.companion.domain.lodging.entity.LodgingPhoto;
+import com.gangwon.companion.domain.lodging.repository.LodgingPhotoRepository;
 import com.gangwon.companion.domain.lodging.repository.LodgingRepository;
 import com.gangwon.companion.global.external.tourapi.TourApiClient;
 import com.gangwon.companion.global.external.tourapi.dto.TourApiItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +22,10 @@ public class LodgingSyncService {
 
     private static final int PAGE_SIZE = 100;
     private static final int ENRICH_DELAY_MS = 300;
+    private static final String LODGING_CONTENT_TYPE_ID = "32";
 
     private final LodgingRepository lodgingRepository;
+    private final LodgingPhotoRepository lodgingPhotoRepository;
     private final TourApiClient tourApiClient;
 
     @Transactional
@@ -54,12 +59,12 @@ public class LodgingSyncService {
         log.info("숙박 동기화 완료 - 신규: {}, 업데이트: {}", savedCount, updatedCount);
     }
 
-    // description이 없는 항목을 하루 50건씩 보완
-    public void enrichDetails() {
-        List<Lodging> targets = lodgingRepository.findTop50ByExternalIdIsNotNullAndDescriptionIsNull();
+    // description 또는 객실 기본 정보가 없는 항목을 하루 50건씩 보완
+    public int enrichDetails() {
+        List<Lodging> targets = lodgingRepository.findNeedingDetails(PageRequest.of(0, 50));
         if (targets.isEmpty()) {
             log.info("숙박 상세 보완 대상 없음");
-            return;
+            return 0;
         }
 
         log.info("숙박 상세 보완 시작 - 대상: {}건", targets.size());
@@ -79,6 +84,7 @@ public class LodgingSyncService {
         }
 
         log.info("숙박 상세 보완 완료 - {}건", enriched);
+        return enriched;
     }
 
     public void enrichSingle(Lodging lodging) {
@@ -87,7 +93,7 @@ public class LodgingSyncService {
         String description = tourApiClient.fetchDetailCommon(externalId)
                 .map(TourApiItem::getOverview)
                 .filter(o -> o != null && !o.isBlank())
-                .orElse("");
+                .orElse(lodging.getDescription());
 
         lodging.updateFromApi(
                 lodging.getName(),
@@ -99,7 +105,48 @@ public class LodgingSyncService {
                 lodging.getLatitude(),
                 lodging.getLongitude()
         );
+
+        tourApiClient.fetchDetailIntro(externalId, LODGING_CONTENT_TYPE_ID)
+                .ifPresent(item -> lodging.updateIntro(
+                        blankToNull(item.getRoomcount()),
+                        blankToNull(item.getRoomtype()),
+                        blankToNull(item.getCheckintime()),
+                        blankToNull(item.getCheckouttime()),
+                        blankToNull(item.getParkinglodging()),
+                        blankToNull(item.getSubfacility()),
+                        blankToNull(item.getInfocenterlodging())
+                ));
+        syncImages(lodging);
         lodgingRepository.save(lodging);
+    }
+
+    private void syncImages(Lodging lodging) {
+        for (TourApiItem imageItem : tourApiClient.fetchDetailImages(lodging.getExternalId())) {
+            if (imageItem.getSerialnum() == null || imageItem.getSerialnum().isBlank()) {
+                continue;
+            }
+
+            String originImgUrl = blankToNull(imageItem.getOriginimgurl());
+            String smallImgUrl = blankToNull(imageItem.getSmallimageurl());
+            if (originImgUrl == null && smallImgUrl == null) {
+                continue;
+            }
+
+            if (lodgingPhotoRepository.existsByLodgingIdAndSerialNum(lodging.getId(), imageItem.getSerialnum())) {
+                continue;
+            }
+            lodgingPhotoRepository.save(LodgingPhoto.builder()
+                    .lodging(lodging)
+                    .url(originImgUrl == null ? smallImgUrl : originImgUrl)
+                    .originImgUrl(originImgUrl)
+                    .smallImgUrl(smallImgUrl)
+                    .serialNum(imageItem.getSerialnum())
+                    .build());
+        }
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
     }
 
     private void createLodging(TourApiItem item) {

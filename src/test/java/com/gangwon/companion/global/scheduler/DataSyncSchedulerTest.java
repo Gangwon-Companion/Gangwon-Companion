@@ -83,6 +83,7 @@ class DataSyncSchedulerTest {
         verify(lodgingSyncService).sync();
         verify(touristCongestionRateSyncService).sync();
         verify(lodgingSyncService).enrichDetails();
+        verify(restaurantSyncService).enrichDetails();
     }
 
     @Test
@@ -104,6 +105,7 @@ class DataSyncSchedulerTest {
         verify(lodgingSyncService).sync();
         verify(touristCongestionRateSyncService).sync();
         verify(lodgingSyncService).enrichDetails();
+        verify(restaurantSyncService).enrichDetails();
     }
 
     private DestinationDetailSyncResponseDto detailSyncResult(int processedCount, int savedCount) {
