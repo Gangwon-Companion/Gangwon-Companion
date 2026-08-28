@@ -228,6 +228,16 @@ lodging_reviews
 
 담당자 B는 "Elasticsearch가 더 좋은 결과를 고르게 만들고, Kafka 이벤트를 Elasticsearch 증분 색인으로 반영하는 부분"을 맡는다.
 
+구현 상태: **완료**
+
+- Spring Kafka consumer, Debezium 파서, 최신 aggregate 재조회 구현
+- Elasticsearch 문서 단위 upsert/delete 구현
+- retry topic 및 `.DLT` 처리 구현
+- RDB/ES의 `false 제외, null 유지` hard filter 정책 통일
+- field boost, 평점 및 거리 기반 `function_score`, 0건 fallback 구현
+- Docker 통합 환경에서 CDC INSERT → ES upsert 및 CDC DELETE → ES delete 검증 완료
+- 상세 설계와 실행 방법: [`SEARCH_INDEXER.md`](SEARCH_INDEXER.md)
+
 ### B-1. 검색 쿼리/랭킹 개선
 
 주요 파일:

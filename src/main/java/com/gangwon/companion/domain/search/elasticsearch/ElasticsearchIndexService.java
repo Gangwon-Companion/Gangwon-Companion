@@ -44,6 +44,16 @@ public class ElasticsearchIndexService {
         return new ReindexReport(index, documents.size(), indexed, List.of(), retriedIds, true, retryCount);
     }
 
+    public void upsert(PlaceSearchDocument document) {
+        client.put("/" + properties.getAlias() + "/_doc/" + document.placeId(), document);
+    }
+
+    public void delete(String placeId) {
+        if (client.exists("/" + properties.getAlias() + "/_doc/" + placeId)) {
+            client.delete("/" + properties.getAlias() + "/_doc/" + placeId);
+        }
+    }
+
     private List<String> bulkIndex(String index, List<PlaceSearchDocument> documents) {
         List<String> failures = new ArrayList<>();
         for (int start = 0; start < documents.size(); start += properties.getBulkSize()) {

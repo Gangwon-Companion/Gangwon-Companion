@@ -1,0 +1,43 @@
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "gangwon" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_logging"]
+    regex = "promtail"
+    action = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex = "/(.*)"
+    target_label = "container"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_logging_jobname"]
+    target_label = "job"
+  }
+}
+
+loki.source.docker "gangwon" {
+  host = "unix:///var/run/docker.sock"
+  targets = discovery.relabel.gangwon.output
+  forward_to = [loki.process.gangwon.receiver]
+}
+
+loki.process "gangwon" {
+  stage.static_labels {
+    values = { application = "gangwon-companion" }
+  }
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
