@@ -35,6 +35,9 @@ public class Lodging {
     @Column(nullable = false)
     private Double rating;
 
+    @Column
+    private Long reviewCount;
+
     private String thumbnailUrl;
 
     @Column(nullable = false)
@@ -82,6 +85,7 @@ public class Lodging {
         this.region = region;
         this.price = price;
         this.rating = rating;
+        this.reviewCount = 0L;
         this.thumbnailUrl = thumbnailUrl;
         this.address = address;
         this.latitude = latitude;
@@ -112,5 +116,14 @@ public class Lodging {
         this.parking = parking;
         this.subFacility = subFacility;
         this.infoCenter = infoCenter;
+    }
+
+    public Long getReviewCount() {
+        return reviewCount == null ? 0L : reviewCount;
+    }
+
+    public void updateReviewStats(Double rating, Long reviewCount) {
+        this.rating = rating == null ? 0.0 : rating;
+        this.reviewCount = reviewCount == null ? 0L : reviewCount;
     }
 }

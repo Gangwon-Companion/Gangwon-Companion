@@ -32,6 +32,9 @@ public class Restaurant {
     @Column(nullable = false)
     private Double rating;
 
+    @Column
+    private Long reviewCount;
+
     private String thumbnailUrl;
 
     @Column(nullable = false)
@@ -74,6 +77,7 @@ public class Restaurant {
         this.menuType = menuType;
         this.region = region;
         this.rating = rating;
+        this.reviewCount = 0L;
         this.thumbnailUrl = thumbnailUrl;
         this.address = address;
         this.latitude = latitude;
@@ -101,5 +105,14 @@ public class Restaurant {
         this.restDate = restDate;
         this.parking = parking;
         this.infoCenter = infoCenter;
+    }
+
+    public Long getReviewCount() {
+        return reviewCount == null ? 0L : reviewCount;
+    }
+
+    public void updateReviewStats(Double rating, Long reviewCount) {
+        this.rating = rating == null ? 0.0 : rating;
+        this.reviewCount = reviewCount == null ? 0L : reviewCount;
     }
 }

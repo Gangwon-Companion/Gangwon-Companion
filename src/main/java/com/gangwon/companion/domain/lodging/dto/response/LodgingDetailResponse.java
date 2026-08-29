@@ -15,6 +15,7 @@ public class LodgingDetailResponse {
     private final String description;
     private final String region;
     private final Double rating;
+    private final Long reviewCount;
     private final String roomCount;
     private final String roomType;
     private final String checkInTime;
@@ -32,6 +33,7 @@ public class LodgingDetailResponse {
         this.description = lodging.getDescription();
         this.region = lodging.getRegion();
         this.rating = lodging.getRating();
+        this.reviewCount = lodging.getReviewCount();
         this.roomCount = lodging.getRoomCount();
         this.roomType = lodging.getRoomType();
         this.checkInTime = lodging.getCheckInTime();

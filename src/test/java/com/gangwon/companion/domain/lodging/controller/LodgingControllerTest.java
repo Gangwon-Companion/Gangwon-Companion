@@ -85,6 +85,8 @@ class LodgingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Ocean Hotel"))
                 .andExpect(jsonPath("$.location.address").value("Sokcho"))
+                .andExpect(jsonPath("$.rating").value(4.7))
+                .andExpect(jsonPath("$.reviewCount").value(0))
                 .andExpect(jsonPath("$.roomType").value("Deluxe"))
                 .andExpect(jsonPath("$.checkInTime").value("15:00"))
                 .andExpect(jsonPath("$.price").doesNotExist());

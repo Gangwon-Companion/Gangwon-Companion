@@ -7,6 +7,7 @@ import com.gangwon.companion.domain.user.dto.request.NicknameChangeRequest;
 import com.gangwon.companion.domain.user.dto.response.MyPageResponse;
 import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
+import com.gangwon.companion.domain.destination.repository.DestinationReviewRepository;
 import com.gangwon.companion.domain.lodging.repository.LodgingReviewRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantReviewRepository;
 import com.gangwon.companion.domain.course.repository.SavedCourseRepository;
@@ -37,6 +38,7 @@ public class UserService {
     private final CaptchaVerifier captchaVerifier;
     private final RestaurantReviewRepository restaurantReviewRepository;
     private final LodgingReviewRepository lodgingReviewRepository;
+    private final DestinationReviewRepository destinationReviewRepository;
     private final TokenBlacklistService tokenBlacklistService;
     private final SavedCourseRepository savedCourseRepository;
     private final VisitRecordRepository visitRecordRepository;
@@ -78,7 +80,8 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
         long reviewCount = restaurantReviewRepository.countByUserUsername(username)
-                + lodgingReviewRepository.countByUserUsername(username);
+                + lodgingReviewRepository.countByUserUsername(username)
+                + destinationReviewRepository.countByUserUsername(username);
         long savedCourseCount = savedCourseRepository.countByUserUsername(username);
         long visitedPlaceCount = visitRecordRepository.countByUserUsername(username);
 

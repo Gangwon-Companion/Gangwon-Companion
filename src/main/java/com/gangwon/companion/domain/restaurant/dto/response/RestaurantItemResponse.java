@@ -12,6 +12,7 @@ public class RestaurantItemResponse {
     private final String menuType;
     private final String region;
     private final Double rating;
+    private final Long reviewCount;
 
     public RestaurantItemResponse(Restaurant restaurant) {
         this.restaurantId = restaurant.getId();
@@ -20,5 +21,6 @@ public class RestaurantItemResponse {
         this.menuType = restaurant.getMenuType();
         this.region = restaurant.getRegion();
         this.rating = restaurant.getRating();
+        this.reviewCount = restaurant.getReviewCount();
     }
 }

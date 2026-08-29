@@ -21,15 +21,19 @@ public class DestinationDetailResponseDto {
     private String restDate;
     private String parking;
     private String inquiry;
+    private Double rating;
+    private Long reviewCount;
     private List<DestinationImageResponseDto> destinationImageList;
     private PetInfoResponseDto petInfo;
     private AccessibilityInfoResponseDto accessibilityInfo;
+    private List<DestinationReviewResponse> reviews;
 
     public static DestinationDetailResponseDto from(
             DestinationDetail destinationDetail,
             List<DestinationImageResponseDto> destinationImageList,
             PetInfoResponseDto petInfo,
-            AccessibilityInfoResponseDto accessibilityInfo
+            AccessibilityInfoResponseDto accessibilityInfo,
+            List<DestinationReviewResponse> reviews
     ) {
         return new DestinationDetailResponseDto(
                 destinationDetail.getId(),
@@ -44,9 +48,12 @@ public class DestinationDetailResponseDto {
                 destinationDetail.getRestDate(),
                 destinationDetail.getParking(),
                 destinationDetail.getInquiry(),
+                destinationDetail.getDestination().getRating(),
+                destinationDetail.getDestination().getReviewCount(),
                 destinationImageList,
                 petInfo,
-                accessibilityInfo
+                accessibilityInfo,
+                reviews
         );
     }
 

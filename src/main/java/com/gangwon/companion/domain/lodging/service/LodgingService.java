@@ -54,7 +54,7 @@ public class LodgingService {
 
     @Transactional
     public LodgingReviewResponse createReview(Long lodgingId, String username, LodgingReviewRequest request) {
-        Lodging lodging = lodgingRepository.findById(lodgingId)
+        Lodging lodging = lodgingRepository.findByIdForUpdate(lodgingId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
         User user = findUserByUsername(username);
 
@@ -66,6 +66,7 @@ public class LodgingService {
                 .build();
 
         LodgingReview saved = lodgingReviewRepository.save(review);
+        updateLodgingReviewStats(lodging);
         return toReviewResponse(saved);
     }
 
@@ -73,8 +74,11 @@ public class LodgingService {
     public LodgingReviewResponse updateReview(Long lodgingId, Long reviewId, String username, LodgingReviewRequest request) {
         LodgingReview review = findReviewByIdAndLodgingId(reviewId, lodgingId);
         checkOwnership(review.getUser().getUsername(), username);
+        Lodging lodging = lodgingRepository.findByIdForUpdate(lodgingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
 
         review.update(request.content(), request.rating());
+        updateLodgingReviewStats(lodging);
         return toReviewResponse(review);
     }
 
@@ -82,8 +86,11 @@ public class LodgingService {
     public void deleteReview(Long lodgingId, Long reviewId, String username) {
         LodgingReview review = findReviewByIdAndLodgingId(reviewId, lodgingId);
         checkOwnership(review.getUser().getUsername(), username);
+        Lodging lodging = lodgingRepository.findByIdForUpdate(lodgingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
 
         lodgingReviewRepository.delete(review);
+        updateLodgingReviewStats(lodging);
     }
 
     private Lodging findLodgingWithPhotos(Long lodgingId) {
@@ -105,6 +112,20 @@ public class LodgingService {
         if (!ownerUsername.equals(requestUsername)) {
             throw new BusinessException(ErrorCode.REVIEW_FORBIDDEN);
         }
+    }
+
+    private void updateLodgingReviewStats(Lodging lodging) {
+        Long lodgingId = lodging.getId();
+        Double averageRating = lodgingReviewRepository.calculateAverageRatingByLodgingId(lodgingId);
+        long reviewCount = lodgingReviewRepository.countByLodgingId(lodgingId);
+        lodging.updateReviewStats(roundToOneDecimal(averageRating), reviewCount);
+    }
+
+    private double roundToOneDecimal(Double value) {
+        if (value == null) {
+            return 0.0;
+        }
+        return Math.round(value * 10.0) / 10.0;
     }
 
     private LodgingReviewResponse toReviewResponse(LodgingReview review) {
