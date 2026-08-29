@@ -22,7 +22,7 @@ jobs:
     environment: prod
     steps:
       - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::919400227010:role/gangwon-companion-prod-github-be-deploy
           aws-region: ${{ env.AWS_REGION }}
