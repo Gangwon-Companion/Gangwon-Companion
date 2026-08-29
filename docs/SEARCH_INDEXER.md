@@ -1,5 +1,7 @@
 # Search Indexer 및 검색 랭킹 개선
 
+빈 DB 초기화부터 전체 재색인 및 AI E2E 검증까지의 절차는 [로컬 데이터 동기화 및 검색 통합 테스트 문제해결](LOCAL_DATA_SYNC_AND_SEARCH_TROUBLESHOOTING.md)을 참고한다.
+
 ## 1. 담당자 B 구현 범위
 
 담당자 B 범위인 Kafka 기반 증분 색인과 Elasticsearch 검색 랭킹 개선을 구현했다.

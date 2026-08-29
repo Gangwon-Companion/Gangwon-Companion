@@ -1,0 +1,13 @@
+﻿{
+    "connectorName":  "gangwon-postgres-connector",
+    "connector":  "RUNNING",
+    "tasks":  "RUNNING",
+    "consumerGroup":  "gangwon-search-indexer",
+    "lag":  0,
+    "document":  "RESTAURANT:64",
+    "oldRating":  0,
+    "testRating":  0.01,
+    "updated":  true,
+    "updateLatencyMs":  521.6,
+    "restored":  true
+}

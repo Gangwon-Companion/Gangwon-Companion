@@ -1,6 +1,7 @@
 package com.gangwon.companion.domain.lodging.controller;
 
 import com.gangwon.companion.domain.lodging.service.LodgingSyncService;
+import com.gangwon.companion.global.web.MessageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,13 @@ import java.util.Map;
 public class LodgingSyncController {
 
     private final LodgingSyncService lodgingSyncService;
+
+    @Operation(summary = "숙소 데이터 동기화")
+    @PostMapping("/sync")
+    public ResponseEntity<MessageResponse> sync() {
+        lodgingSyncService.sync();
+        return ResponseEntity.ok(new MessageResponse("숙소 데이터 동기화가 완료되었습니다."));
+    }
 
     @Operation(summary = "숙소 상세 정보 보완")
     @PostMapping("/details/sync")

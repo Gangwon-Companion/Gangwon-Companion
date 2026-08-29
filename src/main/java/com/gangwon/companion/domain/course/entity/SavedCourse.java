@@ -1,6 +1,7 @@
 package com.gangwon.companion.domain.course.entity;
 
 import com.gangwon.companion.domain.user.entity.User;
+import com.gangwon.companion.domain.travel.entity.PlaceType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,5 +54,19 @@ public class SavedCourse {
     public SavedCourse(User user, String name) {
         this.user = user;
         this.name = name;
+    }
+
+    public void addPlace(PlaceType placeType, Long placeId, Integer visitOrder,
+                         Integer day, String name, String visitTime, String address) {
+        places.add(CoursePlace.builder()
+                .course(this)
+                .placeType(placeType)
+                .placeId(placeId)
+                .visitOrder(visitOrder)
+                .day(day)
+                .name(name)
+                .visitTime(visitTime)
+                .address(address)
+                .build());
     }
 }

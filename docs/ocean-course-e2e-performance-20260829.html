@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>강원도 바다 2박 3일 코스 검증 결과</title>
+  <style>
+    :root { --navy:#102a43; --blue:#147d92; --sky:#e8f7fa; --green:#18794e; --amber:#9a6700; --red:#b42318; --line:#d9e2ec; --muted:#52606d; --bg:#f5f8fa; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--navy); background:var(--bg); font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR",sans-serif; line-height:1.6; }
+    header { padding:64px 24px 52px; color:white; background:linear-gradient(135deg,#0b3954,#087e8b 68%,#38a3a5); }
+    header .inner, main { max-width:1120px; margin:auto; }
+    h1 { margin:0 0 12px; font-size:clamp(2rem,5vw,3.5rem); line-height:1.15; }
+    h2 { margin:0 0 18px; font-size:1.55rem; }
+    p { margin:8px 0; }
+    .subtitle { font-size:1.08rem; opacity:.9; }
+    main { padding:28px 20px 60px; }
+    section { margin:20px 0; padding:26px; background:white; border:1px solid var(--line); border-radius:16px; box-shadow:0 6px 22px rgba(16,42,67,.05); }
+    .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .card { padding:18px; border-radius:12px; background:var(--sky); }
+    .card span { display:block; color:var(--muted); font-size:.84rem; }
+    .card strong { display:block; margin-top:3px; font-size:1.45rem; color:var(--blue); }
+    .ok { color:var(--green); font-weight:700; }
+    .warning { margin-top:18px; padding:15px 18px; border-left:5px solid #f0b429; border-radius:8px; background:#fff8e6; color:#6b4f00; }
+    table { width:100%; border-collapse:collapse; font-size:.94rem; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#334e68; background:#f0f4f8; }
+    tr:last-child td { border-bottom:0; }
+    .day { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; color:white; background:var(--blue); font-weight:700; }
+    .metric { display:grid; grid-template-columns:150px 1fr 1fr 120px; gap:8px; align-items:center; margin:12px 0; }
+    .bar { position:relative; height:34px; overflow:hidden; border-radius:7px; background:#edf2f7; }
+    .bar i { display:block; height:100%; }
+    .bar.rdb i { background:#829ab1; }
+    .bar.es i { background:#20a4b5; }
+    .bar b { position:absolute; left:9px; top:5px; color:#102a43; font-style:normal; font-size:.88rem; }
+    .change { color:var(--green); font-weight:700; text-align:right; }
+    code { padding:2px 6px; border-radius:5px; background:#edf2f7; }
+    ol { padding-left:22px; }
+    .links a { display:inline-block; margin:6px 10px 6px 0; color:var(--blue); font-weight:650; }
+    footer { color:var(--muted); text-align:center; padding:12px; }
+    @media (max-width:800px) { .grid { grid-template-columns:repeat(2,1fr); } .metric { grid-template-columns:100px 1fr; } .metric .change { grid-column:2; text-align:left; } table { display:block; overflow-x:auto; } }
+    @media (max-width:480px) { .grid { grid-template-columns:1fr; } section { padding:19px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>강원도 바다 2박 3일<br>코스 검증 결과</h1>
+      <p class="subtitle">Supervisor AI · Elasticsearch · Kafka CDC · k6 성능 검증</p>
+      <p>2026-08-29 / 요청: “강원도 바다를 둘러볼 수 있는 2박 3일 코스를 짜줘”</p>
+    </div>
+  </header>
+  <main>
+    <section>
+      <h2>검증 요약</h2>
+      <div class="grid">
+        <div class="card"><span>E2E 상태</span><strong>READY</strong></div>
+        <div class="card"><span>검증 결과</span><strong>VALID / PASS</strong></div>
+        <div class="card"><span>일정 슬롯</span><strong>3일 · 13개</strong></div>
+        <div class="card"><span>AI 테스트</span><strong>51 PASS</strong></div>
+        <div class="card"><span>ES 문서</span><strong>3,143개</strong></div>
+        <div class="card"><span>Kafka lag</span><strong>0</strong></div>
+        <div class="card"><span>CDC 반영</span><strong>521.6ms</strong></div>
+        <div class="card"><span>추천 재시도</span><strong>0회</strong></div>
+      </div>
+      <p class="warning"><strong>판정:</strong> 시스템 연결과 일정 생성은 정상입니다. 다만 동해안 음식점 영업시간 데이터 부족으로 식사 장소가 평창에 배치되어, 실제 해안 여행 동선 품질은 아직 운영 기준 미달입니다.</p>
+    </section>
+
+    <section>
+      <h2>생성된 일정</h2>
+      <table>
+        <thead><tr><th>일차</th><th>시간</th><th>종류</th><th>장소</th><th>추정 이동</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4"><span class="day">1</span></td><td>10:00–12:00</td><td>관광지</td><td><strong>외옹치해변</strong> · 속초</td><td>0분</td></tr>
+          <tr><td>12:30–13:30</td><td>식사</td><td>밥먹을시간 · 평창</td><td>69분</td></tr>
+          <tr><td>18:00–19:30</td><td>식사</td><td>시래기밥상 · 평창</td><td>5분</td></tr>
+          <tr><td>20:00–21:00</td><td>숙소</td><td>강릉강변스테이</td><td>24분</td></tr>
+          <tr><td rowspan="5"><span class="day">2</span></td><td>08:00–09:00</td><td>식사</td><td>봉평식당 · 평창</td><td>59분</td></tr>
+          <tr><td>10:00–12:00</td><td>관광지</td><td><strong>순포해변</strong> · 강릉</td><td>61분</td></tr>
+          <tr><td>12:30–13:30</td><td>식사</td><td>이선생 중화요리 · 평창</td><td>27분</td></tr>
+          <tr><td>18:00–19:30</td><td>식사</td><td>돈감자탕 · 평창</td><td>5분</td></tr>
+          <tr><td>20:00–21:00</td><td>숙소</td><td>강릉강변스테이</td><td>24분</td></tr>
+          <tr><td rowspan="4"><span class="day">3</span></td><td>08:00–09:00</td><td>식사</td><td>뜰안채 · 평창</td><td>66분</td></tr>
+          <tr><td>10:00–12:00</td><td>관광지</td><td><strong>동산포해변</strong> · 양양</td><td>70분</td></tr>
+          <tr><td>12:30–13:30</td><td>식사</td><td>오대산 정가네 순메밀막국수 · 평창</td><td>39분</td></tr>
+          <tr><td>18:00–19:30</td><td>식사</td><td>프렘식당 · 평창</td><td>20분</td></tr>
+        </tbody>
+      </table>
+      <p>관광지와 숙소는 고성·속초·양양·강릉·동해·삼척으로 검색 범위를 제한했습니다. 세 관광지는 모두 <code>oceanView</code> 조건과 일치합니다.</p>
+    </section>
+
+    <section>
+      <h2>RDB 대 Elasticsearch</h2>
+      <p>동일한 코스 후보 검색, 최대 20 VU, 총 50초, 오류율 0% 기준입니다.</p>
+      <div class="metric"><strong>p95 응답시간</strong><div class="bar rdb"><i style="width:100%"></i><b>RDB 123.82ms</b></div><div class="bar es"><i style="width:24.34%"></i><b>ES 30.14ms</b></div><span class="change">75.66% ↓</span></div>
+      <div class="metric"><strong>p99 응답시간</strong><div class="bar rdb"><i style="width:100%"></i><b>RDB 186.52ms</b></div><div class="bar es"><i style="width:30.24%"></i><b>ES 56.40ms</b></div><span class="change">69.76% ↓</span></div>
+      <div class="metric"><strong>처리량</strong><div class="bar rdb"><i style="width:79.73%"></i><b>RDB 107.41 rps</b></div><div class="bar es"><i style="width:100%"></i><b>ES 134.71 rps</b></div><span class="change">25.42% ↑</span></div>
+    </section>
+
+    <section>
+      <h2>Kafka CDC 검증</h2>
+      <table><tbody>
+        <tr><th>경로</th><td>PostgreSQL → Debezium → Kafka → Spring indexer → Elasticsearch</td></tr>
+        <tr><th>Connector / task</th><td><span class="ok">RUNNING / RUNNING</span></td></tr>
+        <tr><th>Consumer group</th><td><code>gangwon-search-indexer</code>, lag 0</td></tr>
+        <tr><th>검증 문서</th><td><code>RESTAURANT:64</code>, rating 0 → 0.01 → 0</td></tr>
+        <tr><th>ES 반영 시간</th><td>521.6ms</td></tr>
+        <tr><th>원복</th><td><span class="ok">DB와 ES 모두 성공</span></td></tr>
+      </tbody></table>
+    </section>
+
+    <section>
+      <h2>남은 우선 과제</h2>
+      <ol>
+        <li>동해안 음식점 영업시간 데이터를 보강한다.</li>
+        <li>관광지 선정 후 주변 음식점을 순차 재검색하도록 Supervisor 단계를 보완한다.</li>
+        <li>좌표 기반 추정 이동시간을 Naver Directions 등 실제 도로 시간으로 교체한다.</li>
+        <li><code>oceanView</code> 텍스트 파생 태그 대신 해변 유형·해안 시군 필드를 명시적으로 관리한다.</li>
+        <li>음식점·숙소의 반려동물 및 휠체어 정책 데이터를 보강한다.</li>
+      </ol>
+      <div class="links">
+        <a href="../performance/results/course-e2e-ocean-3d-coastal-20260829.json">최종 E2E JSON</a>
+        <a href="../performance/results/course-search-rdb-vs-es-20260829.md">성능 비교 원본</a>
+        <a href="../performance/results/kafka-cdc-es-20260829.json">Kafka CDC JSON</a>
+        <a href="ocean-course-e2e-performance-20260829.md">Markdown 문서</a>
+      </div>
+    </section>
+  </main>
+  <footer>Gangwon Companion · local Docker verification report</footer>
+</body>
+</html>
