@@ -41,6 +41,9 @@ captcha:
   secret: ${CAPTCHA_SECRET:}
   min-score: ${CAPTCHA_MIN_SCORE:0.5}
 
+cors:
+  allowed-origin-patterns: ${CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost:*,http://127.0.0.1:*,http://10.0.2.2:*}
+
 tour-api:
   service-key: ${TOUR_API_KEY}
   base-url: https://apis.data.go.kr
