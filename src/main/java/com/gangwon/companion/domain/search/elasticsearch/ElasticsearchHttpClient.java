@@ -27,6 +27,7 @@ public class ElasticsearchHttpClient {
     public JsonNode post(String path) { return request("POST", path, null, "application/json"); }
     public JsonNode post(String path, Object body) { return request("POST", path, json(body), "application/json"); }
     public JsonNode postNdjson(String path, String body) { return request("POST", path, body, "application/x-ndjson"); }
+    public JsonNode delete(String path) { return request("DELETE", path, null, "application/json"); }
 
     public boolean exists(String path) {
         HttpResponse<String> response = send("HEAD", path, null, "application/json");

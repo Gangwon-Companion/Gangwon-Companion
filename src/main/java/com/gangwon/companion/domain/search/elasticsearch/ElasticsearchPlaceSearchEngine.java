@@ -51,13 +51,13 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
             filters.add(Map.of("geo_distance", Map.of("distance", request.geo().radiusKm() + "km",
                     "location", Map.of("lat", request.geo().center().lat(), "lon", request.geo().center().lon()))));
         }
-        addRequiredTrueFilter(filters, "petAllowed", Boolean.TRUE.equals(request.hardFilters().petAllowed()));
+        addNotFalseFilter(filters, "petAllowed", Boolean.TRUE.equals(request.hardFilters().petAllowed()));
         if (request.hardFilters().petSize() != null) {
-            addRequiredTrueFilter(filters, switch (request.hardFilters().petSize()) {
+            addNotFalseFilter(filters, switch (request.hardFilters().petSize()) {
                 case SMALL -> "smallPetAllowed"; case MEDIUM -> "mediumPetAllowed"; case LARGE -> "largePetAllowed";
             }, true);
         }
-        addRequiredTrueFilter(filters, "wheelchairAccessible", Boolean.TRUE.equals(request.hardFilters().wheelchairAccessible()));
+        addNotFalseFilter(filters, "wheelchairAccessible", Boolean.TRUE.equals(request.hardFilters().wheelchairAccessible()));
 
         Map<String, Object> bool = new LinkedHashMap<>();
         bool.put("filter", filters);
@@ -68,20 +68,39 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
             if (relaxed) multiMatch.put("minimum_should_match", "70%");
             multiMatch.put("type", "cross_fields");
             multiMatch.put("fields", List.of(
-                    "name^5", "name.english^3", "searchText^2", "searchText.english^1.5", "address"));
+                    "name^6", "name.english^3", "themeName^3", "menuType^3", "address^2",
+                    "searchText^1.5", "searchText.english", "petInfoText^1.2", "accessibilityInfoText^1.2"));
             bool.put("must", List.of(Map.of("multi_match", multiMatch)));
             bool.put("should", keywordBoosts(request));
         } else if (!request.softPreferences().isEmpty()) {
             bool.put("should", preferenceBoosts(request));
         }
         int fetchSize = Math.min(500, Math.max(50, request.limit() * 10));
-        return Map.of("size", fetchSize, "track_scores", true, "query", Map.of("bool", bool),
+        Map<String, Object> functionScore = new LinkedHashMap<>();
+        functionScore.put("query", Map.of("bool", bool));
+        functionScore.put("functions", rankingFunctions(request));
+        functionScore.put("score_mode", "sum");
+        functionScore.put("boost_mode", "sum");
+        return Map.of("size", fetchSize, "track_scores", true, "query", Map.of("function_score", functionScore),
                 "sort", List.of(Map.of("_score", "desc"), Map.of("placeId", "asc")));
     }
 
-    private void addRequiredTrueFilter(List<Object> filters, String field, boolean requested) {
+    private void addNotFalseFilter(List<Object> filters, String field, boolean requested) {
         if (!requested) return;
-        filters.add(Map.of("term", Map.of(field, true)));
+        filters.add(Map.of("bool", Map.of("must_not", List.of(Map.of("term", Map.of(field, false))))));
+    }
+
+    private List<Object> rankingFunctions(PlaceSearchRequest request) {
+        List<Object> functions = new ArrayList<>();
+        functions.add(Map.of("field_value_factor", Map.of(
+                "field", "rating", "factor", 0.2, "modifier", "sqrt", "missing", 0)));
+        if (request.geo() != null) {
+            functions.add(Map.of("gauss", Map.of("location", Map.of(
+                    "origin", Map.of("lat", request.geo().center().lat(), "lon", request.geo().center().lon()),
+                    "scale", Math.max(1.0, request.geo().radiusKm() / 2.0) + "km", "decay", 0.5)),
+                    "weight", 0.5));
+        }
+        return functions;
     }
 
     private List<Object> keywordBoosts(PlaceSearchRequest request) {
