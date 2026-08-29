@@ -11,6 +11,7 @@ import com.gangwon.companion.domain.destination.repository.PetInfoRepository;
 import com.gangwon.companion.domain.lodging.repository.LodgingRepository;
 import com.gangwon.companion.domain.restaurant.repository.RestaurantRepository;
 import com.gangwon.companion.domain.search.dto.GangwonRegion;
+import com.gangwon.companion.domain.search.service.OperatingHours;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class PlaceSearchDocumentAssembler {
-    private static final int DOCUMENT_VERSION = 2;
+    private static final int DOCUMENT_VERSION = 3;
 
     private final DestinationRepository destinationRepository;
     private final DestinationDetailRepository destinationDetailRepository;
@@ -43,13 +44,17 @@ public class PlaceSearchDocumentAssembler {
                 regionCode(row.getRegion()), join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
                 location(row.getLatitude(), row.getLongitude()),
                 null, null, null, null, null, null, row.getMenuType(), row.getRating(), null, null,
-                null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of())).forEach(documents::add);
+                null, opens(row.getOpenTime()), closes(row.getOpenTime()), row.getOpenTime(),
+                timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", evidence(row.getOpenTime()))).forEach(documents::add);
         lodgingRepository.findAll().stream().map(row -> new PlaceSearchDocument(
                 "LODGING:" + row.getId(), "LODGING", row.getName(), row.getAddress(),
                 regionCode(row.getRegion()), join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
                 location(row.getLatitude(), row.getLongitude()),
                 null, null, null, null, null, null, null, row.getRating(), row.getPrice(), null,
-                null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of())).forEach(documents::add);
+                null, opens(hours(row.getCheckInTime(), row.getCheckOutTime())),
+                closes(hours(row.getCheckInTime(), row.getCheckOutTime())),
+                hours(row.getCheckInTime(), row.getCheckOutTime()), timestamp(row.getCreatedAt()),
+                DOCUMENT_VERSION, "TOUR_API", evidence(hours(row.getCheckInTime(), row.getCheckOutTime())))).forEach(documents::add);
         return documents;
     }
 
@@ -62,13 +67,17 @@ public class PlaceSearchDocumentAssembler {
                     regionCode(row.getRegion()), join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
                     location(row.getLatitude(), row.getLongitude()),
                     null, null, null, null, null, null, row.getMenuType(), row.getRating(), null, null,
-                    null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of()));
+                    null, opens(row.getOpenTime()), closes(row.getOpenTime()), row.getOpenTime(),
+                    timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", evidence(row.getOpenTime())));
             case "LODGING" -> lodgingRepository.findById(id).map(row -> new PlaceSearchDocument(
                     "LODGING:" + row.getId(), "LODGING", row.getName(), row.getAddress(),
                     regionCode(row.getRegion()), join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
                     location(row.getLatitude(), row.getLongitude()),
                     null, null, null, null, null, null, null, row.getRating(), row.getPrice(), null,
-                    null, timestamp(row.getCreatedAt()), DOCUMENT_VERSION, "TOUR_API", List.of()));
+                    null, opens(hours(row.getCheckInTime(), row.getCheckOutTime())),
+                    closes(hours(row.getCheckInTime(), row.getCheckOutTime())),
+                    hours(row.getCheckInTime(), row.getCheckOutTime()), timestamp(row.getCreatedAt()),
+                    DOCUMENT_VERSION, "TOUR_API", evidence(hours(row.getCheckInTime(), row.getCheckOutTime()))));
             default -> throw new IllegalArgumentException("Unsupported place domain: " + domain);
         };
     }
@@ -89,6 +98,11 @@ public class PlaceSearchDocumentAssembler {
             String theme = row.getTheme() == null ? null : row.getTheme().getName();
             String petInfoText = petInfoText(pet);
             String accessibilityInfoText = accessibilityInfoText(accessibility);
+            String operatingHours = operatingHoursByDestination(List.of(row.getId())).get(row.getId());
+            if (OperatingHours.parse(operatingHours).isPresent()) {
+                evidence.add("opens_at");
+                evidence.add("closes_at");
+            }
             return new PlaceSearchDocument("DESTINATION:" + row.getId(), "DESTINATION", row.getTitle(),
                     join(row.getAddr1(), row.getAddr2()), regionCodeFromTour(row.getSigunguCode()),
                     join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme, overviews.get(row.getId()),
@@ -96,7 +110,8 @@ public class PlaceSearchDocumentAssembler {
                     pet == null ? null : pet.getPetAllowed(), pet == null ? null : pet.getSmallPetAllowed(),
                     pet == null ? null : pet.getMediumPetAllowed(), pet == null ? null : pet.getLargePetAllowed(),
                     accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, null, null,
-                    petInfoText, accessibilityInfoText, timestamp(row.getUpdatedAt()), DOCUMENT_VERSION,
+                    petInfoText, accessibilityInfoText, opens(operatingHours), closes(operatingHours), operatingHours,
+                    timestamp(row.getUpdatedAt()), DOCUMENT_VERSION,
                     "TOUR_API", evidence);
         }).toList();
     }
@@ -113,6 +128,11 @@ public class PlaceSearchDocumentAssembler {
         String theme = row.getTheme() == null ? null : row.getTheme().getName();
         String petInfoText = petInfoText(pet);
         String accessibilityInfoText = accessibilityInfoText(accessibility);
+        String operatingHours = operatingHoursByDestination(List.of(id)).get(id);
+        if (OperatingHours.parse(operatingHours).isPresent()) {
+            evidence.add("opens_at");
+            evidence.add("closes_at");
+        }
         return new PlaceSearchDocument("DESTINATION:" + id, "DESTINATION", row.getTitle(),
                 join(row.getAddr1(), row.getAddr2()), regionCodeFromTour(row.getSigunguCode()),
                 join(row.getTitle(), row.getAddr1(), row.getAddr2(), theme, overview, petInfoText, accessibilityInfoText),
@@ -120,7 +140,8 @@ public class PlaceSearchDocumentAssembler {
                 pet == null ? null : pet.getSmallPetAllowed(), pet == null ? null : pet.getMediumPetAllowed(),
                 pet == null ? null : pet.getLargePetAllowed(),
                 accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, null, null,
-                petInfoText, accessibilityInfoText, timestamp(row.getUpdatedAt()), DOCUMENT_VERSION, "TOUR_API", evidence);
+                petInfoText, accessibilityInfoText, opens(operatingHours), closes(operatingHours), operatingHours,
+                timestamp(row.getUpdatedAt()), DOCUMENT_VERSION, "TOUR_API", evidence);
     }
 
     private Map<Long, String> overviewsByDestination(List<Long> ids) {
@@ -135,6 +156,31 @@ public class PlaceSearchDocumentAssembler {
         Map<Long, String> result = new HashMap<>();
         grouped.forEach((id, values) -> result.put(id, String.join(" ", values)));
         return result;
+    }
+
+    private Map<Long, String> operatingHoursByDestination(List<Long> ids) {
+        Map<Long, String> result = new HashMap<>();
+        if (ids.isEmpty()) return result;
+        destinationDetailRepository.findAllByDestinationIdIn(ids).stream()
+                .filter(detail -> detail.getUsageTime() != null && !detail.getUsageTime().isBlank())
+                .forEach(detail -> result.putIfAbsent(detail.getDestination().getId(), detail.getUsageTime()));
+        return result;
+    }
+
+    private String opens(String raw) {
+        return OperatingHours.parse(raw).map(OperatingHours.Range::opensAt).orElse(null);
+    }
+
+    private String closes(String raw) {
+        return OperatingHours.parse(raw).map(OperatingHours.Range::closesAt).orElse(null);
+    }
+
+    private String hours(String opens, String closes) {
+        return join(opens, closes);
+    }
+
+    private List<String> evidence(String raw) {
+        return OperatingHours.parse(raw).isPresent() ? List.of("opens_at", "closes_at") : List.of();
     }
 
     private Map<Long, PetInfo> firstPetByDestination(List<Long> ids) {

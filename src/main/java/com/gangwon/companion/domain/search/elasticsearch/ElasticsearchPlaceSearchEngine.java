@@ -29,9 +29,12 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
-        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false));
+        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false, false));
         if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
-            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true));
+            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true, false));
+        }
+        if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
+            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true, true));
         }
         List<PlaceSearchResponse.Candidate> candidates = new ArrayList<>();
         for (JsonNode hit : response.path("hits").path("hits")) candidates.add(candidate(hit, request));
@@ -41,9 +44,11 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
                 .limit(request.limit()).toList());
     }
 
-    private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed) {
+    private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed, boolean filterOnly) {
         List<Object> filters = new ArrayList<>();
         filters.add(Map.of("term", Map.of("domain", request.domain().name())));
+        filters.add(Map.of("exists", Map.of("field", "opensAt")));
+        filters.add(Map.of("exists", Map.of("field", "closesAt")));
         if (!request.regionCodes().isEmpty()) {
             filters.add(Map.of("terms", Map.of("regionCode", request.regionCodes().stream().map(Enum::name).toList())));
         }
@@ -61,7 +66,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
         Map<String, Object> bool = new LinkedHashMap<>();
         bool.put("filter", filters);
-        if (!request.queryText().isBlank()) {
+        if (!request.queryText().isBlank() && !filterOnly) {
             Map<String, Object> multiMatch = new LinkedHashMap<>();
             multiMatch.put("query", request.queryText());
             multiMatch.put("operator", relaxed ? "or" : "and");
@@ -144,6 +149,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     private List<String> missingFields(PlaceSearchDocument doc, PlaceSearchRequest request) {
         List<String> missing = new ArrayList<>();
+        if (doc.opensAt() == null || doc.closesAt() == null) missing.add("operating_hours");
         if (Boolean.TRUE.equals(request.hardFilters().petAllowed()) && doc.petAllowed() == null) missing.add("pet_allowed");
         if (request.hardFilters().petSize() != null && petSize(doc, request.hardFilters().petSize()) == null) missing.add("pet_size");
         if (Boolean.TRUE.equals(request.hardFilters().wheelchairAccessible()) && doc.wheelchairAccessible() == null) {
@@ -154,6 +160,10 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     private List<PlaceSearchResponse.Evidence> evidence(PlaceSearchDocument doc, PlaceSearchRequest request) {
         List<PlaceSearchResponse.Evidence> evidence = new ArrayList<>();
+        if (doc.opensAt() != null && doc.closesAt() != null) {
+            evidence.add(new PlaceSearchResponse.Evidence("opens_at", doc.opensAt(), doc.source()));
+            evidence.add(new PlaceSearchResponse.Evidence("closes_at", doc.closesAt(), doc.source()));
+        }
         if (Boolean.TRUE.equals(request.hardFilters().petAllowed()) && doc.petAllowed() != null) {
             evidence.add(new PlaceSearchResponse.Evidence("pet_allowed", doc.petAllowed(), doc.source()));
         }

@@ -1,0 +1,3105 @@
+﻿{
+    "status":  "completed",
+    "input_complete":  true,
+    "request":  {
+                    "region":  "강원도",
+                    "travel_days":  3,
+                    "nights":  2,
+                    "pet_allowed":  false,
+                    "pet_size":  null,
+                    "wheelchair_accessible":  false,
+                    "indoor_pet":  null,
+                    "max_price":  null,
+                    "preferences":  [
+                                        "바다"
+                                    ]
+                },
+    "slots":  [
+                  "D1_DESTINATION",
+                  "D1_LUNCH",
+                  "D1_DINNER",
+                  "D1_LODGING",
+                  "D2_BREAKFAST",
+                  "D2_DESTINATION",
+                  "D2_LUNCH",
+                  "D2_DINNER",
+                  "D2_LODGING",
+                  "D3_BREAKFAST",
+                  "D3_DESTINATION",
+                  "D3_LUNCH",
+                  "D3_DINNER"
+              ],
+    "selected_agents":  [
+                            "destination",
+                            "restaurant",
+                            "lodging"
+                        ],
+    "execution_plan":  [
+                           {
+                               "agent":  "destination",
+                               "mode":  "parallel",
+                               "depends_on":  [
+
+                                              ]
+                           },
+                           {
+                               "agent":  "restaurant",
+                               "mode":  "parallel",
+                               "depends_on":  [
+
+                                              ]
+                           },
+                           {
+                               "agent":  "lodging",
+                               "mode":  "parallel",
+                               "depends_on":  [
+
+                                              ]
+                           },
+                           {
+                               "agent":  "itinerary",
+                               "mode":  "sequential",
+                               "depends_on":  [
+                                                  "destination",
+                                                  "restaurant",
+                                                  "lodging"
+                                              ]
+                           },
+                           {
+                               "agent":  "validator",
+                               "mode":  "sequential",
+                               "depends_on":  [
+                                                  "itinerary"
+                                              ]
+                           }
+                       ],
+    "preference_profile":  {
+                               "keywords":  [
+                                                "바다"
+                                            ],
+                               "soft":  {
+                                            "oceanView":  0.9
+                                        }
+                           },
+    "retry_count":  0,
+    "messages":  [
+                     "PreferenceExtractor와 ConflictChecker를 완료했습니다.",
+                     "필수 정보가 모두 있어 Supervisor Agent로 전달합니다.",
+                     "강원도 3일 여행으로 분류했습니다.",
+                     "초기 후보 검색 Agent는 병렬 실행하고, 일정 구성 후 검증합니다.",
+                     "관광지 후보 15개를 찾았습니다.",
+                     "음식점 후보 24개를 찾았습니다.",
+                     "숙소 후보 10개를 찾았습니다.",
+                     "전문 Agent 후보 수집을 완료했습니다: destination 15개, lodging 10개, restaurant 24개",
+                     "13개 슬롯으로 일정을 구성했습니다. 최적화 점수는 3075.80점입니다.",
+                     "필수 조건 검증을 통과했습니다.",
+                     "일정 품질 평가 결과는 PASS이며 점수는 100점입니다."
+                 ],
+    "missing_fields":  [
+
+                       ],
+    "clarification_questions":  [
+
+                                ],
+    "conflicts":  [
+
+                  ],
+    "destination_candidates":  [
+                                   {
+                                       "destination_id":  606,
+                                       "title":  "외옹치해변",
+                                       "addr1":  "강원특별자치도 속초시 해오름로 83 (대포동)",
+                                       "map_x":  128.60767115,
+                                       "map_y":  38.18220478,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  14.041,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:606"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  971,
+                                       "title":  "화진포해양박물관",
+                                       "addr1":  "강원특별자치도 고성군 현내면 화진포길 412",
+                                       "map_x":  128.43574131,
+                                       "map_y":  38.48145265,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  12.16,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "09:00",
+                                       "closes_at":  "18:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:971"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  239,
+                                       "title":  "동산포해변",
+                                       "addr1":  "강원특별자치도 양양군 현남면 동산리",
+                                       "map_x":  128.75702774,
+                                       "map_y":  37.98215593,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  12.106,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:239"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  487,
+                                       "title":  "순포해변",
+                                       "addr1":  "강원특별자치도 강릉시 사천면 해안로 722",
+                                       "map_x":  128.89029854,
+                                       "map_y":  37.81931907,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  12.005,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:487"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  800,
+                                       "title":  "초도해변",
+                                       "addr1":  "강원특별자치도 고성군 현내면 초도항길",
+                                       "map_x":  128.43150533,
+                                       "map_y":  38.48970994,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  11.482,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:800"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  468,
+                                       "title":  "속초해안로",
+                                       "addr1":  "강원특별자치도 속초시 장사동 517-13",
+                                       "map_x":  128.5886827,
+                                       "map_y":  38.22349682,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  11.337,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:468"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  467,
+                                       "title":  "속초해수욕장 대관람차(속초아이)",
+                                       "addr1":  "강원특별자치도 속초시 청호해안길 2",
+                                       "map_x":  128.60274911,
+                                       "map_y":  38.1907759,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  11.228,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "10:00",
+                                       "closes_at":  "20:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:467"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  849,
+                                       "title":  "켄싱턴해변",
+                                       "addr1":  "강원특별자치도 고성군 토성면 동해대로 4800",
+                                       "map_x":  128.57242246,
+                                       "map_y":  38.24294702,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  11.071,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:849"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  205,
+                                       "title":  "대진 해수욕장",
+                                       "addr1":  "강원특별자치도 동해시 대진항길 46 (대진동)",
+                                       "map_x":  129.11256927,
+                                       "map_y":  37.58100095,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  11.069,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:205"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  930,
+                                       "title":  "해가사의 터",
+                                       "addr1":  "강원특별자치도 삼척시 수로부인길 401 (증산동)",
+                                       "map_x":  129.16285697,
+                                       "map_y":  37.47343655,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  10.991,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:930"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  795,
+                                       "title":  "청호해변",
+                                       "addr1":  "강원특별자치도 속초시 아바이마을1길 6 (청호동)",
+                                       "map_x":  128.59395508,
+                                       "map_y":  38.20300764,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  10.893,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:795"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  605,
+                                       "title":  "외옹치항",
+                                       "addr1":  "강원특별자치도 속초시 대포동",
+                                       "map_x":  128.61092651,
+                                       "map_y":  38.17929962,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  10.491,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:605"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  746,
+                                       "title":  "죽도해수욕장",
+                                       "addr1":  "강원특별자치도 양양군 현남면 인구중앙길",
+                                       "map_x":  128.75958615,
+                                       "map_y":  37.97235156,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  10.106,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:746"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  806,
+                                       "title":  "추암 출렁다리",
+                                       "addr1":  "강원특별자치도 동해시 촛대바위길 28 (추암동)",
+                                       "map_x":  129.15894054,
+                                       "map_y":  37.47701662,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  10.054,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "06:00",
+                                       "closes_at":  "22:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:806"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  477,
+                                       "title":  "수산항",
+                                       "addr1":  "강원특별자치도 양양군 손양면 수산1길 26-41",
+                                       "map_x":  128.67339337,
+                                       "map_y":  38.08034568,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  9.997,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+                                                                  "oceanView"
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:477"
+                                                      ]
+                                   }
+                               ],
+    "destination_search_request":  {
+                                       "domain":  "DESTINATION",
+                                       "slot":  "D1_DESTINATION",
+                                       "region_codes":  [
+                                                            "GOSEONG",
+                                                            "SOKCHO",
+                                                            "YANGYANG",
+                                                            "GANGNEUNG",
+                                                            "DONGHAE",
+                                                            "SAMCHEOK"
+                                                        ],
+                                       "query_text":  "바다",
+                                       "hard_filters":  {
+                                                            "pet_allowed":  false,
+                                                            "pet_size":  null,
+                                                            "wheelchair_accessible":  false
+                                                        },
+                                       "soft_preferences":  {
+                                                                "oceanView":  0.9
+                                                            },
+                                       "geo":  null,
+                                       "limit":  15
+                                   },
+    "lodging_candidates":  [
+                               {
+                                   "place_id":  "LODGING:14",
+                                   "name":  "초록바다펜션",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.1374409734,
+                                   "longitude":  128.5877142465,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 양양군 강현면 장산3길 56-4",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:14"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:34",
+                                   "name":  "리센 오션파크 호텔",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.1889114921,
+                                   "longitude":  128.6032576737,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 속초시 해오름로 167 (조양동)",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:34"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:31",
+                                   "name":  "라마다 속초 호텔",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.1742416099,
+                                   "longitude":  128.6101261534,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 속초시 대포항희망길 106 (대포동)",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:31"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:15",
+                                   "name":  "하조대 비치하우스",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.0199857976,
+                                   "longitude":  128.7263267092,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 양양군 현북면 하륜길 26",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:15"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:18",
+                                   "name":  "신라모노그램 강릉",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  37.7859717489,
+                                   "longitude":  128.9260793926,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 강릉시 해안로 210 (송정동)",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:18"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:38",
+                                   "name":  "롯데리조트 속초",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.1806417552,
+                                   "longitude":  128.6130465313,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 속초시 대포항길 186",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:38"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:44",
+                                   "name":  "쏠비치 양양",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.0869931026,
+                                   "longitude":  128.6655971576,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 양양군 손양면 선사유적로 678",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:44"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:39",
+                                   "name":  "강릉강변스테이",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  37.7557793623,
+                                   "longitude":  128.9076948798,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:39"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:30",
+                                   "name":  "디그니티호텔",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.1085177621,
+                                   "longitude":  128.6405183593,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 양양군 양양읍 일출로 159-5",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:30"
+                                                  ]
+                               },
+                               {
+                                   "place_id":  "LODGING:37",
+                                   "name":  "호텔 더블루테라",
+                                   "distance_km":  null,
+                                   "status":  "OK",
+                                   "missing_fields":  [
+
+                                                      ],
+                                   "latitude":  38.1848501627,
+                                   "longitude":  128.6014845189,
+                                   "opens_at":  "15:00",
+                                   "closes_at":  "11:00",
+                                   "address":  "강원특별자치도 속초시 동해대로 3920 (조양동)",
+                                   "reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                   "matched_conditions":  [
+                                                              "oceanView"
+                                                          ],
+                                   "pet_allowed":  null,
+                                   "max_pet_size":  null,
+                                   "indoor_pet_allowed":  null,
+                                   "wheelchair_accessible":  null,
+                                   "source_ids":  [
+                                                      "lodging:LODGING:37"
+                                                  ]
+                               }
+                           ],
+    "search_request":  {
+                           "domain":  "LODGING",
+                           "slot":  "D1_LODGING",
+                           "region_codes":  [
+                                                "GOSEONG",
+                                                "SOKCHO",
+                                                "YANGYANG",
+                                                "GANGNEUNG",
+                                                "DONGHAE",
+                                                "SAMCHEOK"
+                                            ],
+                           "query_text":  "바다",
+                           "hard_filters":  {
+                                                "pet_allowed":  false,
+                                                "pet_size":  null,
+                                                "wheelchair_accessible":  false
+                                            },
+                           "soft_preferences":  {
+                                                    "oceanView":  0.9
+                                                },
+                           "geo":  null,
+                           "limit":  10
+                       },
+    "restaurant_candidates":  [
+                                  {
+                                      "place_id":  "RESTAURANT:1",
+                                      "name":  "깨 로스터리 옥희방앗간",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.3423475168,
+                                      "longitude":  127.972101229,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "18:30",
+                                      "address":  "강원특별자치도 원주시 행구로 145 (행구동)",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:1"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:10",
+                                      "name":  "뜰안채",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.5923278071,
+                                      "longitude":  128.3180951318,
+                                      "opens_at":  "08:00",
+                                      "closes_at":  "21:00",
+                                      "address":  "강원특별자치도 평창군 봉평면 태기로 32",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:10"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:11",
+                                      "name":  "동이네막국수",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6127647457,
+                                      "longitude":  128.3716608755,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 평창군 봉평면 이효석길 144",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:11"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:12",
+                                      "name":  "밥먹을시간",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6726651035,
+                                      "longitude":  128.7083248676,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "22:00",
+                                      "address":  "강원특별자치도 평창군 대관령면 횡계2길 3-7",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:12"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:13",
+                                      "name":  "오셨뜨래요 메밀여행",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6159322773,
+                                      "longitude":  128.3777170246,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "17:00",
+                                      "address":  "강원특별자치도 평창군 봉평면 동이장터길 12",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:13"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:14",
+                                      "name":  "시래기밥상",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6731001646,
+                                      "longitude":  128.708198611,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "22:00",
+                                      "address":  "강원특별자치도 평창군 대관령면 횡계길 15",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:14"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:15",
+                                      "name":  "소문난 식당",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6167443777,
+                                      "longitude":  128.3772454559,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 평창군 봉평면 기풍로 161",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:15"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:16",
+                                      "name":  "뉴새말토종순대국",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.4509735078,
+                                      "longitude":  128.0737558086,
+                                      "opens_at":  "05:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 횡성군 우천면 한우로 1385",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:16"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:17",
+                                      "name":  "네덜란드꿩만두 새말점",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.4514117618,
+                                      "longitude":  128.074326703,
+                                      "opens_at":  "08:30",
+                                      "closes_at":  "19:00",
+                                      "address":  "강원특별자치도 횡성군 우천면 한우로우항7길 12",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:17"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:18",
+                                      "name":  "이선생 중화요리",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6711467194,
+                                      "longitude":  128.709627074,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "21:00",
+                                      "address":  "강원특별자치도 평창군 대관령면 눈마을길 39",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:18"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:19",
+                                      "name":  "들꽃향기",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  38.1945855273,
+                                      "longitude":  127.2267034998,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "19:30",
+                                      "address":  "강원특별자치도 철원군 동송읍 금학로 52",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:19"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:2",
+                                      "name":  "소양강양어장",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.9250629737,
+                                      "longitude":  127.7818459392,
+                                      "opens_at":  "11:30",
+                                      "closes_at":  "20:30",
+                                      "address":  "강원특별자치도 춘천시 동면 소양강로 675",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:2"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:20",
+                                      "name":  "풍년갈비",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.691592124,
+                                      "longitude":  127.8885687221,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "21:30",
+                                      "address":  "강원특별자치도 홍천군 홍천읍 꽃뫼로 134",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:20"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:21",
+                                      "name":  "함백산돌솥밥",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.1941910683,
+                                      "longitude":  128.8680218088,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "16:00",
+                                      "address":  "강원특별자치도 정선군 고한읍 상갈래길 1",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:21"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:22",
+                                      "name":  "찬이네감자탕",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.2272242368,
+                                      "longitude":  128.8186735258,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "02:00",
+                                      "address":  "강원특별자치도 정선군 사북읍 사북중앙로 35",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:22"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:23",
+                                      "name":  "봉평식당",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6151988033,
+                                      "longitude":  128.3779745096,
+                                      "opens_at":  "06:00",
+                                      "closes_at":  "19:00",
+                                      "address":  "강원특별자치도 평창군 봉평면 동이장터길 1-1",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:23"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:24",
+                                      "name":  "돈감자탕",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6723572055,
+                                      "longitude":  128.7087958659,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "21:00",
+                                      "address":  "강원특별자치도 평창군 대관령면 대관령로 113",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:24"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:25",
+                                      "name":  "호남가든",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.4736708852,
+                                      "longitude":  128.4029554054,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 평창군 대화면 선애길 88",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:25"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:26",
+                                      "name":  "방림추어탕",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.4258966162,
+                                      "longitude":  128.3932874729,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 평창군 방림면 서동로 1334",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:26"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:27",
+                                      "name":  "초록뿔언덕카페",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.1777691466,
+                                      "longitude":  128.9725520889,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 태백시 고원로 369",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:27"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:29",
+                                      "name":  "프렘식당",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.63553862,
+                                      "longitude":  128.557357886,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 평창군 진부면 진부중앙로 44-1",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:29"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:3",
+                                      "name":  "부안막국수",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.8816345167,
+                                      "longitude":  127.749612128,
+                                      "opens_at":  "11:00",
+                                      "closes_at":  "21:00",
+                                      "address":  "강원특별자치도 춘천시 후석로344번길 8 (후평동)",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:3"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:30",
+                                      "name":  "오대산 정가네 순메밀막국수",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.7160494973,
+                                      "longitude":  128.6013056335,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "19:00",
+                                      "address":  "강원특별자치도 평창군 진부면 오대산로 152",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:30"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:32",
+                                      "name":  "홍천원조화로구이",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.659903083,
+                                      "longitude":  127.8311823389,
+                                      "opens_at":  "10:30",
+                                      "closes_at":  "20:30",
+                                      "address":  "강원특별자치도 홍천군 홍천읍 양지말길 17-8",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:32"
+                                                     ]
+                                  }
+                              ],
+    "restaurant_search_request":  {
+                                      "domain":  "RESTAURANT",
+                                      "slot":  "D1_LUNCH",
+                                      "region_codes":  [
+
+                                                       ],
+                                      "query_text":  "",
+                                      "hard_filters":  {
+                                                           "pet_allowed":  false,
+                                                           "pet_size":  null,
+                                                           "wheelchair_accessible":  false
+                                                       },
+                                      "soft_preferences":  {
+                                                               "oceanView":  0.9
+                                                           },
+                                      "geo":  null,
+                                      "limit":  24
+                                  },
+    "hard_validation":  {
+                            "status":  "VALID",
+                            "violations":  [
+
+                                           ],
+                            "next_actions":  [
+
+                                             ]
+                        },
+    "quality_validation":  {
+                               "status":  "PASS",
+                               "score":  100,
+                               "issues":  [
+
+                                          ],
+                               "next_actions":  [
+
+                                                ]
+                           },
+    "itinerary_status":  "READY",
+    "itinerary":  [
+                      {
+                          "slot":  "D1_DESTINATION",
+                          "day":  1,
+                          "place_id":  "D606",
+                          "name":  "외옹치해변",
+                          "category":  "DESTINATION",
+                          "start_time":  "10:00",
+                          "end_time":  "12:00",
+                          "travel_minutes_from_previous":  0,
+                          "latitude":  38.18220478,
+                          "longitude":  128.60767115,
+                          "source_ids":  [
+                                             "destination:606"
+                                         ],
+                          "tags":  [
+                                       "",
+                                       "oceanView"
+                                   ],
+                          "address":  "강원특별자치도 속초시 해오름로 83 (대포동)",
+                          "opens_at":  "00:00",
+                          "closes_at":  "24:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                          "matched_conditions":  [
+                                                     "oceanView"
+                                                 ]
+                      },
+                      {
+                          "slot":  "D1_LUNCH",
+                          "day":  1,
+                          "place_id":  "RESTAURANT:12",
+                          "name":  "밥먹을시간",
+                          "category":  "RESTAURANT",
+                          "start_time":  "12:30",
+                          "end_time":  "13:30",
+                          "travel_minutes_from_previous":  69,
+                          "latitude":  37.6726651035,
+                          "longitude":  128.7083248676,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:12"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 대관령면 횡계2길 3-7",
+                          "opens_at":  "10:00",
+                          "closes_at":  "22:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D1_DINNER",
+                          "day":  1,
+                          "place_id":  "RESTAURANT:14",
+                          "name":  "시래기밥상",
+                          "category":  "RESTAURANT",
+                          "start_time":  "18:00",
+                          "end_time":  "19:30",
+                          "travel_minutes_from_previous":  5,
+                          "latitude":  37.6731001646,
+                          "longitude":  128.708198611,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:14"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 대관령면 횡계길 15",
+                          "opens_at":  "10:00",
+                          "closes_at":  "22:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D1_LODGING",
+                          "day":  1,
+                          "place_id":  "LODGING:39",
+                          "name":  "강릉강변스테이",
+                          "category":  "LODGING",
+                          "start_time":  "20:00",
+                          "end_time":  "21:00",
+                          "travel_minutes_from_previous":  24,
+                          "latitude":  37.7557793623,
+                          "longitude":  128.9076948798,
+                          "source_ids":  [
+                                             "lodging:LODGING:39"
+                                         ],
+                          "tags":  [
+                                       "LODGING"
+                                   ],
+                          "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                          "opens_at":  "15:00",
+                          "closes_at":  "11:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                          "matched_conditions":  [
+                                                     "oceanView"
+                                                 ]
+                      },
+                      {
+                          "slot":  "D2_BREAKFAST",
+                          "day":  2,
+                          "place_id":  "RESTAURANT:23",
+                          "name":  "봉평식당",
+                          "category":  "RESTAURANT",
+                          "start_time":  "08:00",
+                          "end_time":  "09:00",
+                          "travel_minutes_from_previous":  59,
+                          "latitude":  37.6151988033,
+                          "longitude":  128.3779745096,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:23"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 봉평면 동이장터길 1-1",
+                          "opens_at":  "06:00",
+                          "closes_at":  "19:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D2_DESTINATION",
+                          "day":  2,
+                          "place_id":  "D487",
+                          "name":  "순포해변",
+                          "category":  "DESTINATION",
+                          "start_time":  "10:00",
+                          "end_time":  "12:00",
+                          "travel_minutes_from_previous":  61,
+                          "latitude":  37.81931907,
+                          "longitude":  128.89029854,
+                          "source_ids":  [
+                                             "destination:487"
+                                         ],
+                          "tags":  [
+                                       "",
+                                       "oceanView"
+                                   ],
+                          "address":  "강원특별자치도 강릉시 사천면 해안로 722",
+                          "opens_at":  "00:00",
+                          "closes_at":  "24:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                          "matched_conditions":  [
+                                                     "oceanView"
+                                                 ]
+                      },
+                      {
+                          "slot":  "D2_LUNCH",
+                          "day":  2,
+                          "place_id":  "RESTAURANT:18",
+                          "name":  "이선생 중화요리",
+                          "category":  "RESTAURANT",
+                          "start_time":  "12:30",
+                          "end_time":  "13:30",
+                          "travel_minutes_from_previous":  27,
+                          "latitude":  37.6711467194,
+                          "longitude":  128.709627074,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:18"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 대관령면 눈마을길 39",
+                          "opens_at":  "09:00",
+                          "closes_at":  "21:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D2_DINNER",
+                          "day":  2,
+                          "place_id":  "RESTAURANT:24",
+                          "name":  "돈감자탕",
+                          "category":  "RESTAURANT",
+                          "start_time":  "18:00",
+                          "end_time":  "19:30",
+                          "travel_minutes_from_previous":  5,
+                          "latitude":  37.6723572055,
+                          "longitude":  128.7087958659,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:24"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 대관령면 대관령로 113",
+                          "opens_at":  "11:00",
+                          "closes_at":  "21:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D2_LODGING",
+                          "day":  2,
+                          "place_id":  "LODGING:39",
+                          "name":  "강릉강변스테이",
+                          "category":  "LODGING",
+                          "start_time":  "20:00",
+                          "end_time":  "21:00",
+                          "travel_minutes_from_previous":  24,
+                          "latitude":  37.7557793623,
+                          "longitude":  128.9076948798,
+                          "source_ids":  [
+                                             "lodging:LODGING:39"
+                                         ],
+                          "tags":  [
+                                       "LODGING"
+                                   ],
+                          "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                          "opens_at":  "15:00",
+                          "closes_at":  "11:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                          "matched_conditions":  [
+                                                     "oceanView"
+                                                 ]
+                      },
+                      {
+                          "slot":  "D3_BREAKFAST",
+                          "day":  3,
+                          "place_id":  "RESTAURANT:10",
+                          "name":  "뜰안채",
+                          "category":  "RESTAURANT",
+                          "start_time":  "08:00",
+                          "end_time":  "09:00",
+                          "travel_minutes_from_previous":  66,
+                          "latitude":  37.5923278071,
+                          "longitude":  128.3180951318,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:10"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 봉평면 태기로 32",
+                          "opens_at":  "08:00",
+                          "closes_at":  "21:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D3_DESTINATION",
+                          "day":  3,
+                          "place_id":  "D239",
+                          "name":  "동산포해변",
+                          "category":  "DESTINATION",
+                          "start_time":  "10:00",
+                          "end_time":  "12:00",
+                          "travel_minutes_from_previous":  70,
+                          "latitude":  37.98215593,
+                          "longitude":  128.75702774,
+                          "source_ids":  [
+                                             "destination:239"
+                                         ],
+                          "tags":  [
+                                       "",
+                                       "oceanView"
+                                   ],
+                          "address":  "강원특별자치도 양양군 현남면 동산리",
+                          "opens_at":  "00:00",
+                          "closes_at":  "24:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                          "matched_conditions":  [
+                                                     "oceanView"
+                                                 ]
+                      },
+                      {
+                          "slot":  "D3_LUNCH",
+                          "day":  3,
+                          "place_id":  "RESTAURANT:30",
+                          "name":  "오대산 정가네 순메밀막국수",
+                          "category":  "RESTAURANT",
+                          "start_time":  "12:30",
+                          "end_time":  "13:30",
+                          "travel_minutes_from_previous":  39,
+                          "latitude":  37.7160494973,
+                          "longitude":  128.6013056335,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:30"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 진부면 오대산로 152",
+                          "opens_at":  "10:00",
+                          "closes_at":  "19:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D3_DINNER",
+                          "day":  3,
+                          "place_id":  "RESTAURANT:29",
+                          "name":  "프렘식당",
+                          "category":  "RESTAURANT",
+                          "start_time":  "18:00",
+                          "end_time":  "19:30",
+                          "travel_minutes_from_previous":  20,
+                          "latitude":  37.63553862,
+                          "longitude":  128.557357886,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:29"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 평창군 진부면 진부중앙로 44-1",
+                          "opens_at":  "11:00",
+                          "closes_at":  "20:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      }
+                  ],
+    "itinerary_score":  3075.8,
+    "itinerary_alternatives":  [
+                                   [
+                                       {
+                                           "slot":  "D1_DESTINATION",
+                                           "day":  1,
+                                           "place_id":  "D606",
+                                           "name":  "외옹치해변",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  0,
+                                           "latitude":  38.18220478,
+                                           "longitude":  128.60767115,
+                                           "source_ids":  [
+                                                              "destination:606"
+                                                          ],
+                                           "tags":  [
+                                                        "",
+                                                        "oceanView"
+                                                    ],
+                                           "address":  "강원특별자치도 속초시 해오름로 83 (대포동)",
+                                           "opens_at":  "00:00",
+                                           "closes_at":  "24:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_LUNCH",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:12",
+                                           "name":  "밥먹을시간",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  69,
+                                           "latitude":  37.6726651035,
+                                           "longitude":  128.7083248676,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:12"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 횡계2길 3-7",
+                                           "opens_at":  "10:00",
+                                           "closes_at":  "22:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_DINNER",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:14",
+                                           "name":  "시래기밥상",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  5,
+                                           "latitude":  37.6731001646,
+                                           "longitude":  128.708198611,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:14"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 횡계길 15",
+                                           "opens_at":  "10:00",
+                                           "closes_at":  "22:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_LODGING",
+                                           "day":  1,
+                                           "place_id":  "LODGING:39",
+                                           "name":  "강릉강변스테이",
+                                           "category":  "LODGING",
+                                           "start_time":  "20:00",
+                                           "end_time":  "21:00",
+                                           "travel_minutes_from_previous":  24,
+                                           "latitude":  37.7557793623,
+                                           "longitude":  128.9076948798,
+                                           "source_ids":  [
+                                                              "lodging:LODGING:39"
+                                                          ],
+                                           "tags":  [
+                                                        "LODGING"
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                           "opens_at":  "15:00",
+                                           "closes_at":  "11:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_BREAKFAST",
+                                           "day":  2,
+                                           "place_id":  "RESTAURANT:23",
+                                           "name":  "봉평식당",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "08:00",
+                                           "end_time":  "09:00",
+                                           "travel_minutes_from_previous":  59,
+                                           "latitude":  37.6151988033,
+                                           "longitude":  128.3779745096,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:23"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 봉평면 동이장터길 1-1",
+                                           "opens_at":  "06:00",
+                                           "closes_at":  "19:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_DESTINATION",
+                                           "day":  2,
+                                           "place_id":  "D487",
+                                           "name":  "순포해변",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  61,
+                                           "latitude":  37.81931907,
+                                           "longitude":  128.89029854,
+                                           "source_ids":  [
+                                                              "destination:487"
+                                                          ],
+                                           "tags":  [
+                                                        "",
+                                                        "oceanView"
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 사천면 해안로 722",
+                                           "opens_at":  "00:00",
+                                           "closes_at":  "24:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_LUNCH",
+                                           "day":  2,
+                                           "place_id":  "RESTAURANT:24",
+                                           "name":  "돈감자탕",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  27,
+                                           "latitude":  37.6723572055,
+                                           "longitude":  128.7087958659,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:24"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 대관령로 113",
+                                           "opens_at":  "11:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_DINNER",
+                                           "day":  2,
+                                           "place_id":  "RESTAURANT:18",
+                                           "name":  "이선생 중화요리",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  5,
+                                           "latitude":  37.6711467194,
+                                           "longitude":  128.709627074,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:18"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 눈마을길 39",
+                                           "opens_at":  "09:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_LODGING",
+                                           "day":  2,
+                                           "place_id":  "LODGING:39",
+                                           "name":  "강릉강변스테이",
+                                           "category":  "LODGING",
+                                           "start_time":  "20:00",
+                                           "end_time":  "21:00",
+                                           "travel_minutes_from_previous":  24,
+                                           "latitude":  37.7557793623,
+                                           "longitude":  128.9076948798,
+                                           "source_ids":  [
+                                                              "lodging:LODGING:39"
+                                                          ],
+                                           "tags":  [
+                                                        "LODGING"
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                           "opens_at":  "15:00",
+                                           "closes_at":  "11:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_BREAKFAST",
+                                           "day":  3,
+                                           "place_id":  "RESTAURANT:10",
+                                           "name":  "뜰안채",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "08:00",
+                                           "end_time":  "09:00",
+                                           "travel_minutes_from_previous":  66,
+                                           "latitude":  37.5923278071,
+                                           "longitude":  128.3180951318,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:10"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 봉평면 태기로 32",
+                                           "opens_at":  "08:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_DESTINATION",
+                                           "day":  3,
+                                           "place_id":  "D239",
+                                           "name":  "동산포해변",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  70,
+                                           "latitude":  37.98215593,
+                                           "longitude":  128.75702774,
+                                           "source_ids":  [
+                                                              "destination:239"
+                                                          ],
+                                           "tags":  [
+                                                        "",
+                                                        "oceanView"
+                                                    ],
+                                           "address":  "강원특별자치도 양양군 현남면 동산리",
+                                           "opens_at":  "00:00",
+                                           "closes_at":  "24:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_LUNCH",
+                                           "day":  3,
+                                           "place_id":  "RESTAURANT:30",
+                                           "name":  "오대산 정가네 순메밀막국수",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  39,
+                                           "latitude":  37.7160494973,
+                                           "longitude":  128.6013056335,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:30"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 진부면 오대산로 152",
+                                           "opens_at":  "10:00",
+                                           "closes_at":  "19:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_DINNER",
+                                           "day":  3,
+                                           "place_id":  "RESTAURANT:29",
+                                           "name":  "프렘식당",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  20,
+                                           "latitude":  37.63553862,
+                                           "longitude":  128.557357886,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:29"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 진부면 진부중앙로 44-1",
+                                           "opens_at":  "11:00",
+                                           "closes_at":  "20:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       }
+                                   ],
+                                   [
+                                       {
+                                           "slot":  "D1_DESTINATION",
+                                           "day":  1,
+                                           "place_id":  "D606",
+                                           "name":  "외옹치해변",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  0,
+                                           "latitude":  38.18220478,
+                                           "longitude":  128.60767115,
+                                           "source_ids":  [
+                                                              "destination:606"
+                                                          ],
+                                           "tags":  [
+                                                        "",
+                                                        "oceanView"
+                                                    ],
+                                           "address":  "강원특별자치도 속초시 해오름로 83 (대포동)",
+                                           "opens_at":  "00:00",
+                                           "closes_at":  "24:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_LUNCH",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:12",
+                                           "name":  "밥먹을시간",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  69,
+                                           "latitude":  37.6726651035,
+                                           "longitude":  128.7083248676,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:12"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 횡계2길 3-7",
+                                           "opens_at":  "10:00",
+                                           "closes_at":  "22:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_DINNER",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:18",
+                                           "name":  "이선생 중화요리",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  5,
+                                           "latitude":  37.6711467194,
+                                           "longitude":  128.709627074,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:18"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 눈마을길 39",
+                                           "opens_at":  "09:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_LODGING",
+                                           "day":  1,
+                                           "place_id":  "LODGING:39",
+                                           "name":  "강릉강변스테이",
+                                           "category":  "LODGING",
+                                           "start_time":  "20:00",
+                                           "end_time":  "21:00",
+                                           "travel_minutes_from_previous":  24,
+                                           "latitude":  37.7557793623,
+                                           "longitude":  128.9076948798,
+                                           "source_ids":  [
+                                                              "lodging:LODGING:39"
+                                                          ],
+                                           "tags":  [
+                                                        "LODGING"
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                           "opens_at":  "15:00",
+                                           "closes_at":  "11:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_BREAKFAST",
+                                           "day":  2,
+                                           "place_id":  "RESTAURANT:23",
+                                           "name":  "봉평식당",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "08:00",
+                                           "end_time":  "09:00",
+                                           "travel_minutes_from_previous":  59,
+                                           "latitude":  37.6151988033,
+                                           "longitude":  128.3779745096,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:23"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 봉평면 동이장터길 1-1",
+                                           "opens_at":  "06:00",
+                                           "closes_at":  "19:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_DESTINATION",
+                                           "day":  2,
+                                           "place_id":  "D487",
+                                           "name":  "순포해변",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  61,
+                                           "latitude":  37.81931907,
+                                           "longitude":  128.89029854,
+                                           "source_ids":  [
+                                                              "destination:487"
+                                                          ],
+                                           "tags":  [
+                                                        "",
+                                                        "oceanView"
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 사천면 해안로 722",
+                                           "opens_at":  "00:00",
+                                           "closes_at":  "24:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_LUNCH",
+                                           "day":  2,
+                                           "place_id":  "RESTAURANT:14",
+                                           "name":  "시래기밥상",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  27,
+                                           "latitude":  37.6731001646,
+                                           "longitude":  128.708198611,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:14"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 횡계길 15",
+                                           "opens_at":  "10:00",
+                                           "closes_at":  "22:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_DINNER",
+                                           "day":  2,
+                                           "place_id":  "RESTAURANT:24",
+                                           "name":  "돈감자탕",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  5,
+                                           "latitude":  37.6723572055,
+                                           "longitude":  128.7087958659,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:24"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 대관령면 대관령로 113",
+                                           "opens_at":  "11:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D2_LODGING",
+                                           "day":  2,
+                                           "place_id":  "LODGING:39",
+                                           "name":  "강릉강변스테이",
+                                           "category":  "LODGING",
+                                           "start_time":  "20:00",
+                                           "end_time":  "21:00",
+                                           "travel_minutes_from_previous":  24,
+                                           "latitude":  37.7557793623,
+                                           "longitude":  128.9076948798,
+                                           "source_ids":  [
+                                                              "lodging:LODGING:39"
+                                                          ],
+                                           "tags":  [
+                                                        "LODGING"
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                           "opens_at":  "15:00",
+                                           "closes_at":  "11:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_BREAKFAST",
+                                           "day":  3,
+                                           "place_id":  "RESTAURANT:10",
+                                           "name":  "뜰안채",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "08:00",
+                                           "end_time":  "09:00",
+                                           "travel_minutes_from_previous":  66,
+                                           "latitude":  37.5923278071,
+                                           "longitude":  128.3180951318,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:10"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 봉평면 태기로 32",
+                                           "opens_at":  "08:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_DESTINATION",
+                                           "day":  3,
+                                           "place_id":  "D239",
+                                           "name":  "동산포해변",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  70,
+                                           "latitude":  37.98215593,
+                                           "longitude":  128.75702774,
+                                           "source_ids":  [
+                                                              "destination:239"
+                                                          ],
+                                           "tags":  [
+                                                        "",
+                                                        "oceanView"
+                                                    ],
+                                           "address":  "강원특별자치도 양양군 현남면 동산리",
+                                           "opens_at":  "00:00",
+                                           "closes_at":  "24:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+                                                                      "oceanView"
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_LUNCH",
+                                           "day":  3,
+                                           "place_id":  "RESTAURANT:30",
+                                           "name":  "오대산 정가네 순메밀막국수",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  39,
+                                           "latitude":  37.7160494973,
+                                           "longitude":  128.6013056335,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:30"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 진부면 오대산로 152",
+                                           "opens_at":  "10:00",
+                                           "closes_at":  "19:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D3_DINNER",
+                                           "day":  3,
+                                           "place_id":  "RESTAURANT:29",
+                                           "name":  "프렘식당",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  20,
+                                           "latitude":  37.63553862,
+                                           "longitude":  128.557357886,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:29"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 평창군 진부면 진부중앙로 44-1",
+                                           "opens_at":  "11:00",
+                                           "closes_at":  "20:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       }
+                                   ]
+                               ],
+    "missing_slots":  [
+
+                      ],
+    "retry_actions":  [
+
+                      ],
+    "final_response":  {
+                           "response_status":  "READY",
+                           "title":  "강원도 3일 여행 일정",
+                           "summary":  "검증을 통과한 13개 방문 일정입니다.",
+                           "answer":  "강원도 3일 여행 일정\n\n1일차 - DESTINATION, RESTAURANT, LODGING 중심의 1일차 코스\n- 시간 미확인-시간 미확인 외옹치해변 / 강원특별자치도 속초시 해오름로 83 (대포동): 검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.\n- 시간 미확인-시간 미확인 밥먹을시간 / 강원특별자치도 평창군 대관령면 횡계2길 3-7: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 시래기밥상 / 강원특별자치도 평창군 대관령면 횡계길 15: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 강릉강변스테이 / 강원특별자치도 강릉시 강변로372번길 18 (입암동): 검색 조건과 일치하는 숙소 후보입니다.\n\n2일차 - RESTAURANT, DESTINATION, LODGING 중심의 2일차 코스\n- 시간 미확인-시간 미확인 봉평식당 / 강원특별자치도 평창군 봉평면 동이장터길 1-1: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 순포해변 / 강원특별자치도 강릉시 사천면 해안로 722: 검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.\n- 시간 미확인-시간 미확인 이선생 중화요리 / 강원특별자치도 평창군 대관령면 눈마을길 39: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 돈감자탕 / 강원특별자치도 평창군 대관령면 대관령로 113: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 강릉강변스테이 / 강원특별자치도 강릉시 강변로372번길 18 (입암동): 검색 조건과 일치하는 숙소 후보입니다.\n\n3일차 - RESTAURANT, DESTINATION 중심의 3일차 코스\n- 시간 미확인-시간 미확인 뜰안채 / 강원특별자치도 평창군 봉평면 태기로 32: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 동산포해변 / 강원특별자치도 양양군 현남면 동산리: 검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.\n- 시간 미확인-시간 미확인 오대산 정가네 순메밀막국수 / 강원특별자치도 평창군 진부면 오대산로 152: 검색 조건에 맞는 음식점입니다.\n- 시간 미확인-시간 미확인 프렘식당 / 강원특별자치도 평창군 진부면 진부중앙로 44-1: 검색 조건에 맞는 음식점입니다.\n\n방문 전 확인\n- 외옹치해변: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 외옹치해변: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 외옹치해변: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 외옹치해변: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 밥먹을시간: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 밥먹을시간: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 밥먹을시간: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 밥먹을시간: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 시래기밥상: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 시래기밥상: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 시래기밥상: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 시래기밥상: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 강릉강변스테이: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 강릉강변스테이: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 강릉강변스테이: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 강릉강변스테이: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 봉평식당: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 봉평식당: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 봉평식당: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 봉평식당: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 순포해변: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 순포해변: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 순포해변: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 순포해변: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 이선생 중화요리: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 이선생 중화요리: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 이선생 중화요리: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 이선생 중화요리: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 돈감자탕: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 돈감자탕: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 돈감자탕: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 돈감자탕: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 뜰안채: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 뜰안채: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 뜰안채: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 뜰안채: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 동산포해변: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 동산포해변: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 동산포해변: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 동산포해변: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 오대산 정가네 순메밀막국수: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 오대산 정가네 순메밀막국수: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 오대산 정가네 순메밀막국수: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 오대산 정가네 순메밀막국수: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 프렘식당: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 프렘식당: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 프렘식당: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.\n- 프렘식당: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                           "days":  [
+                                        {
+                                            "day":  1,
+                                            "date":  null,
+                                            "summary":  "DESTINATION, RESTAURANT, LODGING 중심의 1일차 코스",
+                                            "visits":  [
+                                                           {
+                                                               "slot":  "D1_DESTINATION",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "D606",
+                                                               "name":  "외옹치해변",
+                                                               "category":  "DESTINATION",
+                                                               "address":  "강원특별자치도 속초시 해오름로 83 (대포동)",
+                                                               "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                                               "operating_hours":  "00:00-24:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  0,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "destination:606"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D1_LUNCH",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:12",
+                                                               "name":  "밥먹을시간",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 대관령면 횡계2길 3-7",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "10:00-22:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  69,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:12"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D1_DINNER",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:14",
+                                                               "name":  "시래기밥상",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 대관령면 횡계길 15",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "10:00-22:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  5,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:14"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D1_LODGING",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "LODGING:39",
+                                                               "name":  "강릉강변스테이",
+                                                               "category":  "LODGING",
+                                                               "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                                               "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                                               "operating_hours":  "15:00-11:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  24,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "lodging:LODGING:39"
+                                                                              ]
+                                                           }
+                                                       ]
+                                        },
+                                        {
+                                            "day":  2,
+                                            "date":  null,
+                                            "summary":  "RESTAURANT, DESTINATION, LODGING 중심의 2일차 코스",
+                                            "visits":  [
+                                                           {
+                                                               "slot":  "D2_BREAKFAST",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:23",
+                                                               "name":  "봉평식당",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 봉평면 동이장터길 1-1",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "06:00-19:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  59,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:23"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D2_DESTINATION",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "D487",
+                                                               "name":  "순포해변",
+                                                               "category":  "DESTINATION",
+                                                               "address":  "강원특별자치도 강릉시 사천면 해안로 722",
+                                                               "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                                               "operating_hours":  "00:00-24:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  61,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "destination:487"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D2_LUNCH",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:18",
+                                                               "name":  "이선생 중화요리",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 대관령면 눈마을길 39",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "09:00-21:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  27,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:18"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D2_DINNER",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:24",
+                                                               "name":  "돈감자탕",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 대관령면 대관령로 113",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "11:00-21:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  5,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:24"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D2_LODGING",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "LODGING:39",
+                                                               "name":  "강릉강변스테이",
+                                                               "category":  "LODGING",
+                                                               "address":  "강원특별자치도 강릉시 강변로372번길 18 (입암동)",
+                                                               "recommendation_reason":  "검색 조건과 일치하는 숙소 후보입니다.",
+                                                               "operating_hours":  "15:00-11:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  24,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "lodging:LODGING:39"
+                                                                              ]
+                                                           }
+                                                       ]
+                                        },
+                                        {
+                                            "day":  3,
+                                            "date":  null,
+                                            "summary":  "RESTAURANT, DESTINATION 중심의 3일차 코스",
+                                            "visits":  [
+                                                           {
+                                                               "slot":  "D3_BREAKFAST",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:10",
+                                                               "name":  "뜰안채",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 봉평면 태기로 32",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "08:00-21:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  66,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:10"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D3_DESTINATION",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "D239",
+                                                               "name":  "동산포해변",
+                                                               "category":  "DESTINATION",
+                                                               "address":  "강원특별자치도 양양군 현남면 동산리",
+                                                               "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                                               "operating_hours":  "00:00-24:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  70,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "destination:239"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D3_LUNCH",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:30",
+                                                               "name":  "오대산 정가네 순메밀막국수",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 진부면 오대산로 152",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "10:00-19:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  39,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:30"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D3_DINNER",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:29",
+                                                               "name":  "프렘식당",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 평창군 진부면 진부중앙로 44-1",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "11:00-20:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  20,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:29"
+                                                                              ]
+                                                           }
+                                                       ]
+                                        }
+                                    ],
+                           "notices":  [
+                                           "외옹치해변: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "외옹치해변: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "외옹치해변: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "외옹치해변: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "밥먹을시간: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "밥먹을시간: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "밥먹을시간: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "밥먹을시간: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "시래기밥상: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "시래기밥상: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "시래기밥상: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "시래기밥상: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉강변스테이: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉강변스테이: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉강변스테이: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉강변스테이: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "봉평식당: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "봉평식당: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "봉평식당: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "봉평식당: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "순포해변: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "순포해변: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "순포해변: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "순포해변: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "이선생 중화요리: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "이선생 중화요리: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "이선생 중화요리: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "이선생 중화요리: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "돈감자탕: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "돈감자탕: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "돈감자탕: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "돈감자탕: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "뜰안채: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "뜰안채: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "뜰안채: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "뜰안채: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "동산포해변: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "동산포해변: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "동산포해변: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "동산포해변: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "오대산 정가네 순메밀막국수: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "오대산 정가네 순메밀막국수: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "오대산 정가네 순메밀막국수: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "오대산 정가네 순메밀막국수: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "프렘식당: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "프렘식당: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "프렘식당: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "프렘식당: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요."
+                                       ],
+                           "quality_score":  100,
+                           "source_ids":  [
+                                              "destination:606",
+                                              "restaurant:RESTAURANT:12",
+                                              "restaurant:RESTAURANT:14",
+                                              "lodging:LODGING:39",
+                                              "restaurant:RESTAURANT:23",
+                                              "destination:487",
+                                              "restaurant:RESTAURANT:18",
+                                              "restaurant:RESTAURANT:24",
+                                              "restaurant:RESTAURANT:10",
+                                              "destination:239",
+                                              "restaurant:RESTAURANT:30",
+                                              "restaurant:RESTAURANT:29"
+                                          ]
+                       }
+}

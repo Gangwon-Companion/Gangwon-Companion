@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
@@ -114,6 +116,7 @@ public class GlobalExceptionHandler {
             RestClientException e,
             HttpServletRequest request
     ) {
+        log.warn("External API request failed. path={}", request.getRequestURI(), e);
         return buildResponse(ErrorCode.EXTERNAL_API_ERROR, request);
     }
 
@@ -125,6 +128,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
+        log.error("Unexpected request failure. path={}", request.getRequestURI(), e);
         return buildResponse(ErrorCode.INTERNAL_SERVER_ERROR, request);
     }
 

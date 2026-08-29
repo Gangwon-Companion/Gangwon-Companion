@@ -23,7 +23,8 @@ public interface LodgingRepository extends JpaRepository<Lodging, Long>, JpaSpec
             SELECT DISTINCT l FROM Lodging l
             LEFT JOIN l.photos p
             WHERE l.externalId IS NOT NULL
-              AND (l.description IS NULL OR l.roomType IS NULL OR p.id IS NULL)
+              AND (l.description IS NULL OR l.roomType IS NULL OR l.checkInTime IS NULL
+                   OR l.checkInTime = '' OR l.checkOutTime IS NULL OR l.checkOutTime = '' OR p.id IS NULL)
             ORDER BY l.id
             """)
     List<Lodging> findNeedingDetails(Pageable pageable);

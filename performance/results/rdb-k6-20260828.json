@@ -1,0 +1,11 @@
+{
+  "runId": "rdb-k6-20260828",
+  "generatedAt": "2026-08-28T05:06:15.774Z",
+  "p95Ms": 36.31368285,
+  "p99Ms": 52.27875458000015,
+  "requests": 11364,
+  "throughputRps": 162.24756385469905,
+  "errorRate": 0,
+  "checkRate": 1,
+  "durationMs": 70041.113284
+}

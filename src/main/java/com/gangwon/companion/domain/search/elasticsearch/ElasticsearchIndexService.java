@@ -107,6 +107,9 @@ public class ElasticsearchIndexService {
         propertiesMap.put("price", Map.of("type", "long"));
         propertiesMap.put("petInfoText", text);
         propertiesMap.put("accessibilityInfoText", text);
+        propertiesMap.put("opensAt", Map.of("type", "keyword"));
+        propertiesMap.put("closesAt", Map.of("type", "keyword"));
+        propertiesMap.put("operatingHoursRaw", Map.of("type", "text", "index", false));
         propertiesMap.put("updatedAt", Map.of("type", "date"));
         propertiesMap.put("documentVersion", Map.of("type", "integer"));
         propertiesMap.put("source", Map.of("type", "keyword"));

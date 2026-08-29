@@ -19,8 +19,13 @@ ELASTICSEARCH_API_KEY=
 ELASTICSEARCH_REINDEX_KEY=
 ```
 
-기본 엔진은 `rdb`다. 전체 색인과 alias 전환이 끝난 뒤
-`SEARCH_ENGINE=elasticsearch`로 변경한다.
+운영 검색 엔진은 Elasticsearch로 확정했다. `rdb`는 색인 구축 전이나 장애 분석을 위한
+안전한 코드 기본값으로만 유지한다. 운영 및 E2E 환경에서는 반드시
+`SEARCH_ENGINE=elasticsearch`를 명시한다.
+
+2026-08-29 확인 시 `gangwon-places` alias와 문서 버전 3 색인은 이미 존재한다. 다만
+Compose 기본값과 `.env.example`은 아직 `rdb`이고 환경변수가 없는 현재 로컬 Spring
+컨테이너도 `rdb`로 실행되고 있으므로, 이는 운영 설정 완료 상태가 아니다.
 
 ## 검색 문서
 

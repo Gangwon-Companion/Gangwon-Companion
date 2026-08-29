@@ -83,6 +83,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         accessibilityInfoRepository.findAllByDestinationIdIn(ids)
                 .forEach(info -> accessibility.putIfAbsent(info.getDestination().getId(), info));
         Map<Long, String> overviews = overviewsByDestination(ids);
+        Map<Long, String> hours = operatingHoursByDestination(ids);
 
         List<PlaceSearchResponse.Candidate> result = new ArrayList<>();
         for (Destination row : rows) {
@@ -91,6 +92,7 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
             List<String> missing = new ArrayList<>();
             List<PlaceSearchResponse.Evidence> evidence = new ArrayList<>();
             if (!policyPasses(request, pet, access, missing, evidence)) continue;
+            addOperatingHours(hours.get(row.getId()), missing, evidence);
             Double distance = distance(request, decimal(row.getMapY()), decimal(row.getMapX()));
             if (outsideRadius(request, distance)) continue;
             String text = join(row.getTitle(), row.getAddr1(), row.getAddr2(),
@@ -108,10 +110,13 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         for (Restaurant row : rows) {
             Double distance = distance(request, row.getLatitude(), row.getLongitude());
             if (outsideRadius(request, distance)) continue;
+            List<String> missing = missingPolicyFields(request);
+            List<PlaceSearchResponse.Evidence> evidence = new ArrayList<>();
+            addOperatingHours(row.getOpenTime(), missing, evidence);
             result.add(candidate("RESTAURANT:" + row.getId(), request.domain(), row.getName(), row.getAddress(),
                     row.getLatitude(), row.getLongitude(), distance,
                     join(row.getName(), row.getMenuType(), row.getRegion(), row.getAddress()),
-                    request, missingPolicyFields(request), List.of()));
+                    request, missing, evidence));
         }
         return result;
     }
@@ -122,10 +127,13 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         for (Lodging row : rows) {
             Double distance = distance(request, row.getLatitude(), row.getLongitude());
             if (outsideRadius(request, distance)) continue;
+            List<String> missing = missingPolicyFields(request);
+            List<PlaceSearchResponse.Evidence> evidence = new ArrayList<>();
+            addOperatingHours(join(row.getCheckInTime(), row.getCheckOutTime()), missing, evidence);
             result.add(candidate("LODGING:" + row.getId(), request.domain(), row.getName(), row.getAddress(),
                     row.getLatitude(), row.getLongitude(), distance,
                     join(row.getName(), row.getDescription(), row.getRegion(), row.getAddress()),
-                    request, missingPolicyFields(request), List.of()));
+                    request, missing, evidence));
         }
         return result;
     }
@@ -189,6 +197,23 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
         Map<Long, String> result = new HashMap<>();
         grouped.forEach((id, values) -> result.put(id, String.join(" ", values)));
         return result;
+    }
+
+    private Map<Long, String> operatingHoursByDestination(List<Long> ids) {
+        Map<Long, String> result = new HashMap<>();
+        if (ids.isEmpty()) return result;
+        destinationDetailRepository.findAllByDestinationIdIn(ids).stream()
+                .filter(detail -> detail.getUsageTime() != null && !detail.getUsageTime().isBlank())
+                .forEach(detail -> result.putIfAbsent(detail.getDestination().getId(), detail.getUsageTime()));
+        return result;
+    }
+
+    private void addOperatingHours(String raw, List<String> missing,
+                                   List<PlaceSearchResponse.Evidence> evidence) {
+        OperatingHours.parse(raw).ifPresentOrElse(range -> {
+            evidence.add(new PlaceSearchResponse.Evidence("opens_at", range.opensAt(), "TOUR_API"));
+            evidence.add(new PlaceSearchResponse.Evidence("closes_at", range.closesAt(), "TOUR_API"));
+        }, () -> missing.add("operating_hours"));
     }
 
     private Specification<Restaurant> restaurantSpec(PlaceSearchRequest request, boolean relaxed) {

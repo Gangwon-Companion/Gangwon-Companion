@@ -1,6 +1,7 @@
 package com.gangwon.companion.domain.search.service;
 
 import com.gangwon.companion.domain.destination.entity.Destination;
+import com.gangwon.companion.domain.destination.entity.DestinationDetail;
 import com.gangwon.companion.domain.destination.entity.PetInfo;
 import com.gangwon.companion.domain.destination.entity.SourceType;
 import com.gangwon.companion.domain.destination.repository.AccessibilityInfoRepository;
@@ -56,6 +57,8 @@ class RdbPlaceSearchEngineTest {
         PetInfo petInfo = PetInfo.builder().destination(destination).contentId(1L).build();
         petInfo.applySearchNormalization(true, true, false, false, "v1");
         petInfoRepository.save(petInfo);
+        destinationDetailRepository.save(DestinationDetail.builder().destination(destination)
+                .sourceType(SourceType.KOREAN).contentId(1L).usageTime("09:00~18:00").build());
 
         var response = engine.search(request(PlaceSearchRequest.Domain.DESTINATION, "바다",
                 new PlaceSearchRequest.HardFilters(true, PlaceSearchRequest.PetSize.SMALL, null)));
@@ -76,7 +79,7 @@ class RdbPlaceSearchEngineTest {
 
         assertThat(response.results()).hasSize(1);
         assertThat(response.results().get(0).missingFields())
-                .containsExactly("pet_allowed", "pet_size", "wheelchair_accessible");
+                .containsExactly("pet_allowed", "pet_size", "wheelchair_accessible", "operating_hours");
         assertThat(response.results().get(0).status().name()).isEqualTo("INSUFFICIENT_EVIDENCE");
     }
 
