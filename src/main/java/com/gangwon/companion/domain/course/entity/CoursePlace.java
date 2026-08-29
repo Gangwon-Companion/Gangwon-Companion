@@ -44,11 +44,28 @@ public class CoursePlace {
     @Column(name = "visit_order", nullable = false)
     private Integer visitOrder;
 
+    @Column(name = "travel_day")
+    private Integer day;
+
+    @Column(name = "place_name", length = 100)
+    private String name;
+
+    @Column(name = "visit_time", length = 30)
+    private String visitTime;
+
+    @Column(length = 255)
+    private String address;
+
     @Builder
-    public CoursePlace(SavedCourse course, PlaceType placeType, Long placeId, Integer visitOrder) {
+    public CoursePlace(SavedCourse course, PlaceType placeType, Long placeId, Integer visitOrder,
+                       Integer day, String name, String visitTime, String address) {
         this.course = course;
         this.placeType = placeType;
         this.placeId = placeId;
         this.visitOrder = visitOrder;
+        this.day = day;
+        this.name = name;
+        this.visitTime = visitTime;
+        this.address = address;
     }
 }
