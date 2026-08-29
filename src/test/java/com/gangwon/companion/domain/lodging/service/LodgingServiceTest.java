@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,10 +63,12 @@ class LodgingServiceTest {
     void createReview_returnsSavedReview_whenUserExists() {
         Lodging lodging = lodging();
         User user = user("owner");
-        given(lodgingRepository.findById(1L)).willReturn(Optional.of(lodging));
+        given(lodgingRepository.findByIdForUpdate(1L)).willReturn(Optional.of(lodging));
         given(userRepository.findByUsername("owner")).willReturn(Optional.of(user));
         given(lodgingReviewRepository.save(any(LodgingReview.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
+        given(lodgingReviewRepository.calculateAverageRatingByLodgingId(1L)).willReturn(4.25);
+        given(lodgingReviewRepository.countByLodgingId(1L)).willReturn(2L);
 
         LodgingReviewResponse response = lodgingService.createReview(
                 1L,
@@ -76,6 +79,8 @@ class LodgingServiceTest {
         assertThat(response.nickname()).isEqualTo("ownerNick");
         assertThat(response.content()).isEqualTo("great stay");
         assertThat(response.rating()).isEqualTo(4.5);
+        assertThat(lodging.getRating()).isEqualTo(4.3);
+        assertThat(lodging.getReviewCount()).isEqualTo(2L);
         verify(lodgingReviewRepository).save(any(LodgingReview.class));
     }
 
@@ -84,6 +89,9 @@ class LodgingServiceTest {
     void updateReview_returnsUpdatedReview_whenUserIsOwner() {
         LodgingReview review = review("owner", "before", 3.0);
         given(lodgingReviewRepository.findByIdAndLodgingId(10L, 1L)).willReturn(Optional.of(review));
+        given(lodgingRepository.findByIdForUpdate(1L)).willReturn(Optional.of(review.getLodging()));
+        given(lodgingReviewRepository.calculateAverageRatingByLodgingId(1L)).willReturn(5.0);
+        given(lodgingReviewRepository.countByLodgingId(1L)).willReturn(1L);
 
         LodgingReviewResponse response = lodgingService.updateReview(
                 1L,
@@ -94,6 +102,8 @@ class LodgingServiceTest {
 
         assertThat(response.content()).isEqualTo("after");
         assertThat(response.rating()).isEqualTo(5.0);
+        assertThat(review.getLodging().getRating()).isEqualTo(5.0);
+        assertThat(review.getLodging().getReviewCount()).isEqualTo(1L);
     }
 
     @Test
@@ -117,9 +127,14 @@ class LodgingServiceTest {
     void deleteReview_deletesReview_whenUserIsOwner() {
         LodgingReview review = review("owner", "content", 4.0);
         given(lodgingReviewRepository.findByIdAndLodgingId(10L, 1L)).willReturn(Optional.of(review));
+        given(lodgingRepository.findByIdForUpdate(1L)).willReturn(Optional.of(review.getLodging()));
+        given(lodgingReviewRepository.calculateAverageRatingByLodgingId(1L)).willReturn(0.0);
+        given(lodgingReviewRepository.countByLodgingId(1L)).willReturn(0L);
 
         lodgingService.deleteReview(1L, 10L, "owner");
 
+        assertThat(review.getLodging().getRating()).isEqualTo(0.0);
+        assertThat(review.getLodging().getReviewCount()).isEqualTo(0L);
         verify(lodgingReviewRepository).delete(eq(review));
     }
 
@@ -137,7 +152,7 @@ class LodgingServiceTest {
     @Test
     @DisplayName("create lodging review missing lodging -> RESOURCE_NOT_FOUND exception")
     void createReview_throwsNotFound_whenLodgingDoesNotExist() {
-        given(lodgingRepository.findById(1L)).willReturn(Optional.empty());
+        given(lodgingRepository.findByIdForUpdate(1L)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> lodgingService.createReview(
                 1L,
@@ -149,7 +164,7 @@ class LodgingServiceTest {
     }
 
     private Lodging lodging() {
-        return Lodging.builder()
+        Lodging lodging = Lodging.builder()
                 .name("Ocean Hotel")
                 .description("description")
                 .region("Sokcho")
@@ -160,6 +175,8 @@ class LodgingServiceTest {
                 .latitude(38.2)
                 .longitude(128.5)
                 .build();
+        ReflectionTestUtils.setField(lodging, "id", 1L);
+        return lodging;
     }
 
     private LodgingReview review(String username, String content, Double rating) {

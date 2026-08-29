@@ -12,6 +12,7 @@ public class LodgingItemResponse {
     private final String region;
     private final Long price;
     private final Double rating;
+    private final Long reviewCount;
 
     public LodgingItemResponse(Lodging lodging) {
         this.lodgingId = lodging.getId();
@@ -20,5 +21,6 @@ public class LodgingItemResponse {
         this.region = lodging.getRegion();
         this.price = lodging.getPrice();
         this.rating = lodging.getRating();
+        this.reviewCount = lodging.getReviewCount();
     }
 }

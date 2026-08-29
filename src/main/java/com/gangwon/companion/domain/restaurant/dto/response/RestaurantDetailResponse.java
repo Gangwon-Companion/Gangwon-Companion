@@ -17,6 +17,7 @@ public class RestaurantDetailResponse {
     private final String address;
     private final Double latitude;
     private final Double longitude;
+    private final Long reviewCount;
     private final String firstMenu;
     private final String treatMenu;
     private final String openTime;
@@ -35,6 +36,7 @@ public class RestaurantDetailResponse {
         this.address = restaurant.getAddress();
         this.latitude = restaurant.getLatitude();
         this.longitude = restaurant.getLongitude();
+        this.reviewCount = restaurant.getReviewCount();
         this.firstMenu = restaurant.getFirstMenu();
         this.treatMenu = restaurant.getTreatMenu();
         this.openTime = restaurant.getOpenTime();

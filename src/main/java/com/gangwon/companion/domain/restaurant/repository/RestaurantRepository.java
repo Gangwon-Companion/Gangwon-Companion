@@ -1,9 +1,11 @@
 package com.gangwon.companion.domain.restaurant.repository;
 
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,6 +16,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long>, J
 
     @Query("SELECT r FROM Restaurant r LEFT JOIN FETCH r.photos WHERE r.id = :id")
     Optional<Restaurant> findByIdWithPhotos(@Param("id") Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT r FROM Restaurant r WHERE r.id = :id")
+    Optional<Restaurant> findByIdForUpdate(@Param("id") Long id);
 
     Optional<Restaurant> findByExternalId(String externalId);
 

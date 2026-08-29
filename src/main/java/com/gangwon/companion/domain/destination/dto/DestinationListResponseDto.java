@@ -10,12 +10,16 @@ public class DestinationListResponseDto {
     private final Long id;
     private final String title;
     private final String firstImage;
+    private final Double rating;
+    private final Long reviewCount;
 
     public static DestinationListResponseDto from(Destination destination) {
         return new DestinationListResponseDto(
                 destination.getId(),
                 destination.getTitle(),
-                destination.getFirstImage());
+                destination.getFirstImage(),
+                destination.getRating(),
+                destination.getReviewCount());
     }
 
 }

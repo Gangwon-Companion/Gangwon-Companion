@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,10 +63,12 @@ class RestaurantServiceTest {
     void createReview_returnsSavedReview_whenUserExists() {
         Restaurant restaurant = restaurant();
         User user = user("owner");
-        given(restaurantRepository.findById(1L)).willReturn(Optional.of(restaurant));
+        given(restaurantRepository.findByIdForUpdate(1L)).willReturn(Optional.of(restaurant));
         given(userRepository.findByUsername("owner")).willReturn(Optional.of(user));
         given(restaurantReviewRepository.save(any(RestaurantReview.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
+        given(restaurantReviewRepository.calculateAverageRatingByRestaurantId(1L)).willReturn(4.25);
+        given(restaurantReviewRepository.countByRestaurantId(1L)).willReturn(2L);
 
         RestaurantReviewResponse response = restaurantService.createReview(
                 1L,
@@ -76,6 +79,8 @@ class RestaurantServiceTest {
         assertThat(response.nickname()).isEqualTo("ownerNick");
         assertThat(response.content()).isEqualTo("great food");
         assertThat(response.rating()).isEqualTo(4.5);
+        assertThat(restaurant.getRating()).isEqualTo(4.3);
+        assertThat(restaurant.getReviewCount()).isEqualTo(2L);
         verify(restaurantReviewRepository).save(any(RestaurantReview.class));
     }
 
@@ -84,6 +89,9 @@ class RestaurantServiceTest {
     void updateReview_returnsUpdatedReview_whenUserIsOwner() {
         RestaurantReview review = review("owner", "before", 3.0);
         given(restaurantReviewRepository.findByIdAndRestaurantId(10L, 1L)).willReturn(Optional.of(review));
+        given(restaurantRepository.findByIdForUpdate(1L)).willReturn(Optional.of(review.getRestaurant()));
+        given(restaurantReviewRepository.calculateAverageRatingByRestaurantId(1L)).willReturn(5.0);
+        given(restaurantReviewRepository.countByRestaurantId(1L)).willReturn(1L);
 
         RestaurantReviewResponse response = restaurantService.updateReview(
                 1L,
@@ -94,6 +102,8 @@ class RestaurantServiceTest {
 
         assertThat(response.content()).isEqualTo("after");
         assertThat(response.rating()).isEqualTo(5.0);
+        assertThat(review.getRestaurant().getRating()).isEqualTo(5.0);
+        assertThat(review.getRestaurant().getReviewCount()).isEqualTo(1L);
     }
 
     @Test
@@ -117,9 +127,14 @@ class RestaurantServiceTest {
     void deleteReview_deletesReview_whenUserIsOwner() {
         RestaurantReview review = review("owner", "content", 4.0);
         given(restaurantReviewRepository.findByIdAndRestaurantId(10L, 1L)).willReturn(Optional.of(review));
+        given(restaurantRepository.findByIdForUpdate(1L)).willReturn(Optional.of(review.getRestaurant()));
+        given(restaurantReviewRepository.calculateAverageRatingByRestaurantId(1L)).willReturn(0.0);
+        given(restaurantReviewRepository.countByRestaurantId(1L)).willReturn(0L);
 
         restaurantService.deleteReview(1L, 10L, "owner");
 
+        assertThat(review.getRestaurant().getRating()).isEqualTo(0.0);
+        assertThat(review.getRestaurant().getReviewCount()).isEqualTo(0L);
         verify(restaurantReviewRepository).delete(eq(review));
     }
 
@@ -137,7 +152,7 @@ class RestaurantServiceTest {
     @Test
     @DisplayName("create restaurant review missing restaurant -> RESOURCE_NOT_FOUND exception")
     void createReview_throwsNotFound_whenRestaurantDoesNotExist() {
-        given(restaurantRepository.findById(1L)).willReturn(Optional.empty());
+        given(restaurantRepository.findByIdForUpdate(1L)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> restaurantService.createReview(
                 1L,
@@ -149,7 +164,7 @@ class RestaurantServiceTest {
     }
 
     private Restaurant restaurant() {
-        return Restaurant.builder()
+        Restaurant restaurant = Restaurant.builder()
                 .name("Sea Restaurant")
                 .menuType("Korean")
                 .region("Gangneung")
@@ -159,6 +174,8 @@ class RestaurantServiceTest {
                 .latitude(37.7)
                 .longitude(128.9)
                 .build();
+        ReflectionTestUtils.setField(restaurant, "id", 1L);
+        return restaurant;
     }
 
     private RestaurantReview review(String username, String content, Double rating) {

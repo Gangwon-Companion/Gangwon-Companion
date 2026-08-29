@@ -109,7 +109,7 @@ public class PlaceSearchDocumentAssembler {
                             petInfoText, accessibilityInfoText), location(row),
                     pet == null ? null : pet.getPetAllowed(), pet == null ? null : pet.getSmallPetAllowed(),
                     pet == null ? null : pet.getMediumPetAllowed(), pet == null ? null : pet.getLargePetAllowed(),
-                    accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, null, null,
+                    accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, row.getRating(), null,
                     petInfoText, accessibilityInfoText, opens(operatingHours), closes(operatingHours), operatingHours,
                     timestamp(row.getUpdatedAt()), DOCUMENT_VERSION,
                     "TOUR_API", evidence);
@@ -139,7 +139,7 @@ public class PlaceSearchDocumentAssembler {
                 location(row), pet == null ? null : pet.getPetAllowed(),
                 pet == null ? null : pet.getSmallPetAllowed(), pet == null ? null : pet.getMediumPetAllowed(),
                 pet == null ? null : pet.getLargePetAllowed(),
-                accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, null, null,
+                accessibility == null ? null : accessibility.getWheelchairAccessible(), theme, null, row.getRating(), null,
                 petInfoText, accessibilityInfoText, opens(operatingHours), closes(operatingHours), operatingHours,
                 timestamp(row.getUpdatedAt()), DOCUMENT_VERSION, "TOUR_API", evidence);
     }

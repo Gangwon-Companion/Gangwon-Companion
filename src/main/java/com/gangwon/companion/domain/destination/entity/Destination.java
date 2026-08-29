@@ -73,6 +73,12 @@ public class Destination {
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
+    @Column
+    private Double rating = 0.0;
+
+    @Column
+    private Long reviewCount = 0L;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -114,6 +120,20 @@ public class Destination {
         this.lclsSystem2 = lclsSystem2;
         this.lclsSystem3 = lclsSystem3;
         this.theme = theme;
+        this.rating = 0.0;
+        this.reviewCount = 0L;
     }
 
+    public Long getReviewCount() {
+        return reviewCount == null ? 0L : reviewCount;
+    }
+
+    public Double getRating() {
+        return rating == null ? 0.0 : rating;
+    }
+
+    public void updateReviewStats(Double rating, Long reviewCount) {
+        this.rating = rating == null ? 0.0 : rating;
+        this.reviewCount = reviewCount == null ? 0L : reviewCount;
+    }
 }

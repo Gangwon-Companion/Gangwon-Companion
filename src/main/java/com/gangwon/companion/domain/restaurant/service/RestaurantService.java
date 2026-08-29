@@ -54,7 +54,7 @@ public class RestaurantService {
 
     @Transactional
     public RestaurantReviewResponse createReview(Long restaurantId, String username, RestaurantReviewRequest request) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+        Restaurant restaurant = restaurantRepository.findByIdForUpdate(restaurantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
         User user = findUserByUsername(username);
 
@@ -66,6 +66,7 @@ public class RestaurantService {
                 .build();
 
         RestaurantReview saved = restaurantReviewRepository.save(review);
+        updateRestaurantReviewStats(restaurant);
         return toReviewResponse(saved);
     }
 
@@ -73,8 +74,11 @@ public class RestaurantService {
     public RestaurantReviewResponse updateReview(Long restaurantId, Long reviewId, String username, RestaurantReviewRequest request) {
         RestaurantReview review = findReviewByIdAndRestaurantId(reviewId, restaurantId);
         checkOwnership(review.getUser().getUsername(), username);
+        Restaurant restaurant = restaurantRepository.findByIdForUpdate(restaurantId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
 
         review.update(request.content(), request.rating());
+        updateRestaurantReviewStats(restaurant);
         return toReviewResponse(review);
     }
 
@@ -82,8 +86,11 @@ public class RestaurantService {
     public void deleteReview(Long restaurantId, Long reviewId, String username) {
         RestaurantReview review = findReviewByIdAndRestaurantId(reviewId, restaurantId);
         checkOwnership(review.getUser().getUsername(), username);
+        Restaurant restaurant = restaurantRepository.findByIdForUpdate(restaurantId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
 
         restaurantReviewRepository.delete(review);
+        updateRestaurantReviewStats(restaurant);
     }
 
     private Restaurant findRestaurantWithPhotos(Long restaurantId) {
@@ -105,6 +112,20 @@ public class RestaurantService {
         if (!ownerUsername.equals(requestUsername)) {
             throw new BusinessException(ErrorCode.REVIEW_FORBIDDEN);
         }
+    }
+
+    private void updateRestaurantReviewStats(Restaurant restaurant) {
+        Long restaurantId = restaurant.getId();
+        Double averageRating = restaurantReviewRepository.calculateAverageRatingByRestaurantId(restaurantId);
+        long reviewCount = restaurantReviewRepository.countByRestaurantId(restaurantId);
+        restaurant.updateReviewStats(roundToOneDecimal(averageRating), reviewCount);
+    }
+
+    private double roundToOneDecimal(Double value) {
+        if (value == null) {
+            return 0.0;
+        }
+        return Math.round(value * 10.0) / 10.0;
     }
 
     private RestaurantReviewResponse toReviewResponse(RestaurantReview review) {

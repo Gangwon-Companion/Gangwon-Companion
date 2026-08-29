@@ -1,6 +1,7 @@
 package com.gangwon.companion.domain.destination.service;
 
 import com.gangwon.companion.domain.destination.dto.DestinationDetailResponseDto;
+import com.gangwon.companion.domain.destination.dto.DestinationReviewRequest;
 import com.gangwon.companion.domain.destination.entity.AccessibilityInfo;
 import com.gangwon.companion.domain.destination.entity.Destination;
 import com.gangwon.companion.domain.destination.entity.DestinationDetail;
@@ -14,6 +15,8 @@ import com.gangwon.companion.domain.destination.repository.DestinationRepository
 import com.gangwon.companion.domain.destination.repository.PetInfoRepository;
 import com.gangwon.companion.domain.theme.entity.Theme;
 import com.gangwon.companion.domain.theme.repository.ThemeRepository;
+import com.gangwon.companion.domain.user.entity.User;
+import com.gangwon.companion.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,6 +50,9 @@ class DestinationDetailServiceTest {
 
     @Autowired
     private ThemeRepository themeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void getDestinationDetailByDestinationIdReturnsKoreanDetailByDefault() {
@@ -134,6 +140,33 @@ class DestinationDetailServiceTest {
         assertThat(result.getAccessibilityInfo().getRestroom()).isEqualTo("Accessible restroom");
         assertThat(result.getDestinationImageList()).hasSize(1);
         assertThat(result.getDestinationImageList().get(0).getOriginImgUrl()).isEqualTo("pet-both-origin.jpg");
+    }
+
+    @Test
+    void createDestinationReviewUpdatesRatingAndDetailReviews() {
+        Theme theme = themeRepository.save(new Theme("TEST_DETAIL_REVIEW", "Test Detail Review", 992));
+        Destination destination = saveDestination(theme, "Review Destination", 4005L);
+        saveDetail(destination, SourceType.KOREAN, 5005L, "Review overview");
+        User user = userRepository.save(User.builder()
+                .username("destinationReviewer")
+                .password("encoded")
+                .email("destination-reviewer@test.com")
+                .nickname("rev")
+                .build());
+
+        destinationDetailService.createReview(
+                destination.getId(),
+                user.getUsername(),
+                new DestinationReviewRequest("좋았어요", 4.5)
+        );
+
+        DestinationDetailResponseDto result =
+                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, false);
+
+        assertThat(result.getRating()).isEqualTo(4.5);
+        assertThat(result.getReviewCount()).isEqualTo(1L);
+        assertThat(result.getReviews()).hasSize(1);
+        assertThat(result.getReviews().get(0).rating()).isEqualTo(4.5);
     }
 
     private Destination saveDestination(Theme theme, String title, Long contentId) {

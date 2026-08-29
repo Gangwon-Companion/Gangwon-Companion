@@ -85,6 +85,8 @@ class RestaurantControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Sea Restaurant"))
                 .andExpect(jsonPath("$.address").value("Gangneung"))
+                .andExpect(jsonPath("$.rating").value(4.6))
+                .andExpect(jsonPath("$.reviewCount").value(0))
                 .andExpect(jsonPath("$.firstMenu").value("grilled fish"))
                 .andExpect(jsonPath("$.openTime").value("10:00~20:00"));
     }
