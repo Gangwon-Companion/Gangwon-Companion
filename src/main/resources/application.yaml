@@ -47,6 +47,8 @@ tour-api:
 
 ai:
   base-url: ${AI_SERVER_URL:http://localhost:8000}
+  connect-timeout: ${AI_CONNECT_TIMEOUT:2s}
+  read-timeout: ${AI_READ_TIMEOUT:30s}
 
 aws:
   region: ${AWS_REGION:ap-northeast-2}

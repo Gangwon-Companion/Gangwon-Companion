@@ -129,18 +129,18 @@ Spring과 AI 컨테이너가 실행 중일 때 Companion 루트에서 실행한�
 
 ### P0 — 장애 응답 계약
 
-- [ ] AI 서버 중단 시 Spring 오류 응답 검증
-- [ ] AI 응답 timeout 검증 및 RestClient timeout 명시
-- [ ] AI 4xx 응답 전달 정책 검증
-- [ ] AI 5xx 및 잘못된 JSON 응답 검증
+- [x] AI 서버 중단 시 Spring 오류 응답 검증
+- [x] AI 응답 timeout 검증 및 RestClient timeout 명시
+- [x] AI 4xx 응답 전달 정책 검증
+- [x] AI 5xx 및 잘못된 JSON 응답 검증
 - [ ] `GlobalExceptionHandler`의 외부 API 오류 코드와 로그 검증
-- [ ] 위 항목의 자동화 테스트 추가
+- [x] 위 항목의 자동화 테스트 추가
 
 ### P0 — AI 저장소 E2E 강화
 
-- [ ] 기존 live test의 `READY 또는 FAILED` 허용을 성공 시나리오에서는 `READY` 필수로 변경
+- [x] 기존 live test의 `READY 또는 FAILED` 허용을 성공 시나리오에서는 `READY` 필수로 변경
 - [ ] 깨진 한글 테스트 문자열과 fixture를 UTF-8로 정리
-- [ ] 기본 성공 시나리오와 의도된 `FAILED` 시나리오 분리
+- [x] 기본 성공 시나리오와 의도된 `FAILED` 시나리오 분리
 - [ ] CI에서 Spring 의존 E2E를 선택적으로 실행할 수 있도록 명령 정리
 
 ### P1 — 확정된 Elasticsearch 운영 경로 검증
@@ -149,17 +149,17 @@ Spring과 AI 컨테이너가 실행 중일 때 Companion 루트에서 실행한�
 - [x] 현재 alias의 문서 3,143건이 모두 문서 버전 3임을 확인
 - [x] `opensAt`, `closesAt`이 있는 문서 450건 확인
 - [x] `DESTINATION` 1,030건, `RESTAURANT` 1,548건, `LODGING` 565건 확인
-- [ ] 최신 영업시간 파서 변경을 반영하도록 전체 재색인
-- [ ] 현재 RDB 기본값으로 확인한 성공 시나리오를 Elasticsearch 모드에서 `READY`로 재검증
+- [x] 최신 영업시간 파서 변경을 반영하도록 전체 재색인
+- [x] 현재 RDB 기본값으로 확인한 성공 시나리오를 Elasticsearch 모드에서 `READY`로 재검증
 - [ ] Kafka/Debezium 변경 후 영업시간 문서 갱신 확인
 
 ### P1 — 일정 범위 확장
 
-- [ ] 1박 2일 요청에서 Lodging Agent 포함 `READY`
+- [x] 1박 2일 요청에서 Lodging Agent 포함 `READY` (평창, 일정 8개)
 - [ ] 2박 3일 이상 다일 일정 검증
-- [ ] 같은 장소 중복 배치 방지 검증
-- [ ] 방문 시간이 실제 영업시간 안에 있는지 검증
-- [ ] 이동시간과 지역 반경 검증
+- [x] 같은 장소 중복 배치 방지 검증
+- [x] 방문 시간이 실제 영업시간 안에 있는지 검증
+- [x] 이동시간과 지역 반경 검증
 - [ ] 숙소 체크인·체크아웃 시간 의미를 일반 영업시간과 분리할지 결정
 
 ### P1 — 정책 조건 확장
@@ -189,4 +189,9 @@ Spring과 AI 컨테이너가 실행 중일 때 Companion 루트에서 실행한�
 
 ## 현재 판단
 
-기본 비반려동물 1일 코스의 핵심 E2E와 Agent 노드·Search Tool 연결은 실제 요청으로 확인됐다. 단, 당시 Spring 컨테이너의 `SEARCH_ENGINE` 값은 기본값인 `rdb`였다. 운영 검색 엔진은 Elasticsearch로 확정되어 있으므로 전체 재색인 후 Elasticsearch 모드에서 같은 `READY` 결과를 다시 통과해야 운영 E2E 완료로 본다. 그 밖의 남은 핵심은 장애 내성, 숙박 포함 다일 일정, 반려동물·접근성 근거 데이터 확장이다.
+2026-08-29 최신 Spring·AI 이미지와 `SEARCH_ENGINE=elasticsearch` 구성에서 강릉 1일 코스와 평창 1박 2일 코스가 각각 `READY`, `VALID`, `PASS`로 통과했다. 전체 재색인은 원본 3,143건과 색인 3,143건이 일치하고 alias 전환도 성공했다. 구체 검색어가 0건이면 지역·도메인·정책·영업시간 hard filter를 유지한 채 텍스트만 제거하는 최종 fallback을 적용한다.
+
+반려동물·휠체어 근거는 현재 Elasticsearch 기준 관광지에만 존재한다. 음식점과 숙소는 두 정책 필드가 모두 0건이므로 조건부 전체 코스는 임의 추정 없이 `EVIDENCE_MISSING`으로 실패한다. 네이버 Maps/Local API는 주소·좌표·경로 보강에는 사용할 수 있지만 이 정책 필드를 제공하지 않으므로, 성공 경로 확보에는 별도의 신뢰 가능한 음식점·숙소 정책 데이터가 필요하다.
+# 2026-08-29 바다 2박 3일 검증
+
+해안 범위 보정, 최종 JWT E2E, Kafka CDC, k6 RDB/ES 비교 결과는 [강원도 바다 2박 3일 코스 E2E·검색 성능 검증](ocean-course-e2e-performance-20260829.md)에 정리했다.

@@ -1,8 +1,25 @@
 param(
-    [string]$BackendUrl = "http://localhost:8080"
+    [string]$BackendUrl = "http://localhost:8080",
+    [string]$Message = "",
+    [string]$Region = "",
+    [int]$TravelDays = 1,
+    [int]$Nights = 0,
+    [bool]$PetAllowed = $false,
+    [bool]$WheelchairAccessible = $false,
+    [string[]]$Preferences = @(),
+    [string]$OutputPath = ""
 )
 
 $ErrorActionPreference = "Stop"
+
+# Windows PowerShell 5 reads UTF-8 files without a BOM as the system code page.
+# Keep the script source ASCII-only while preserving Korean defaults.
+if ([string]::IsNullOrWhiteSpace($Region)) {
+    $Region = -join [char[]](0xAC15, 0xB989)
+}
+if ([string]::IsNullOrWhiteSpace($Message)) {
+    $Message = $Region + (-join [char[]](0xC5D0, 0xC11C, 0x20, 0xD558, 0xB8E8, 0x20, 0xC5EC, 0xD589, 0xD558, 0xACE0, 0x20, 0xC2F6, 0xC5B4, 0xC694))
+}
 
 $id = [Guid]::NewGuid().ToString("N")
 $username = "e2e" + $id.Substring(0, 12)
@@ -37,14 +54,34 @@ if ([string]::IsNullOrWhiteSpace($token)) {
     throw "Login response did not contain a JWT."
 }
 
-$recommendationBody = '{"message":"\uac15\ub989\uc5d0\uc11c \ud558\ub8e8 \uc5ec\ud589\ud558\uace0 \uc2f6\uc5b4\uc694","region":"\uac15\ub989","travel_days":1,"nights":0,"pet_allowed":false,"preferences":[]}'
+$recommendationBody = @{
+    message = $Message
+    region = $Region
+    travel_days = $TravelDays
+    nights = $Nights
+    pet_allowed = $PetAllowed
+    wheelchair_accessible = $WheelchairAccessible
+    preferences = $Preferences
+} | ConvertTo-Json -Depth 5
 
-$response = Invoke-RestMethod `
+$httpResponse = Invoke-WebRequest `
+    -UseBasicParsing `
     -Method Post `
     -Uri "$BackendUrl/api/v1/courses/recommendations" `
     -Headers @{ Authorization = "Bearer $token" } `
     -ContentType "application/json; charset=utf-8" `
     -Body ([System.Text.Encoding]::UTF8.GetBytes($recommendationBody))
+$responseBytes = $httpResponse.RawContentStream.ToArray()
+$response = [System.Text.Encoding]::UTF8.GetString($responseBytes) | ConvertFrom-Json
+
+# Preserve failed responses as diagnostics as well as successful evidence.
+if (-not [string]::IsNullOrWhiteSpace($OutputPath)) {
+    $outputDirectory = Split-Path -Parent $OutputPath
+    if ($outputDirectory) {
+        New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
+    }
+    $response | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $OutputPath -Encoding UTF8
+}
 
 if ($response.status -ne "completed") {
     throw "Expected status=completed but received '$($response.status)'."

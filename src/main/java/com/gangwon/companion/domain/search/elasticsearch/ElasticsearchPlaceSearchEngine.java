@@ -29,9 +29,12 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
-        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false));
+        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false, false));
         if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
-            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true));
+            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true, false));
+        }
+        if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
+            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true, true));
         }
         List<PlaceSearchResponse.Candidate> candidates = new ArrayList<>();
         for (JsonNode hit : response.path("hits").path("hits")) candidates.add(candidate(hit, request));
@@ -41,7 +44,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
                 .limit(request.limit()).toList());
     }
 
-    private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed) {
+    private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed, boolean filterOnly) {
         List<Object> filters = new ArrayList<>();
         filters.add(Map.of("term", Map.of("domain", request.domain().name())));
         filters.add(Map.of("exists", Map.of("field", "opensAt")));
@@ -63,7 +66,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
 
         Map<String, Object> bool = new LinkedHashMap<>();
         bool.put("filter", filters);
-        if (!request.queryText().isBlank()) {
+        if (!request.queryText().isBlank() && !filterOnly) {
             Map<String, Object> multiMatch = new LinkedHashMap<>();
             multiMatch.put("query", request.queryText());
             multiMatch.put("operator", relaxed ? "or" : "and");

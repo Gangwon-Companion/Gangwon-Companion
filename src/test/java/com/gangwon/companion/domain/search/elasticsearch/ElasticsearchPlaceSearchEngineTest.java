@@ -2,6 +2,7 @@ package com.gangwon.companion.domain.search.elasticsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gangwon.companion.domain.search.dto.PlaceSearchRequest;
+import com.gangwon.companion.domain.search.dto.PlaceSearchResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 class ElasticsearchPlaceSearchEngineTest {
@@ -68,5 +70,32 @@ class ElasticsearchPlaceSearchEngineTest {
         var candidate = engine.search(request).results().get(0);
 
         assertThat(candidate.distanceKm()).isBetween(1.0, 1.2);
+    }
+
+    @Test
+    void fallsBackToHardFiltersWhenTextMatchesNothing() throws Exception {
+        var empty = mapper.readTree("{\"hits\":{\"hits\":[]}}");
+        var fallback = mapper.readTree("""
+                {"hits":{"hits":[{"_score":0.2,"_source":{
+                  "placeId":"RESTAURANT:64","domain":"RESTAURANT","name":"롱블랙",
+                  "address":"강릉","regionCode":"GANGNEUNG","searchText":"카페 커피",
+                  "opensAt":"10:00","closesAt":"21:00","source":"TOUR_API","evidenceFields":[]
+                }}]}}
+                """);
+        when(client.post(eq("/gangwon-places/_search"), org.mockito.ArgumentMatchers.any()))
+                .thenReturn(empty, empty, fallback);
+        var request = new PlaceSearchRequest(PlaceSearchRequest.Domain.RESTAURANT, "D1_LUNCH",
+                List.of(PlaceSearchRequest.RegionCode.GANGNEUNG), "강릉 점심 맛집",
+                new PlaceSearchRequest.HardFilters(null, null, null), Map.of(), null, 5);
+
+        var response = engine.search(request);
+
+        assertThat(response.results()).extracting(PlaceSearchResponse.Candidate::placeId)
+                .containsExactly("RESTAURANT:64");
+        ArgumentCaptor<Object> bodies = ArgumentCaptor.forClass(Object.class);
+        verify(client, times(3)).post(eq("/gangwon-places/_search"), bodies.capture());
+        String fallbackJson = mapper.writeValueAsString(bodies.getAllValues().get(2));
+        assertThat(fallbackJson).contains("RESTAURANT", "GANGNEUNG", "opensAt", "closesAt");
+        assertThat(fallbackJson).doesNotContain("multi_match", "강릉 점심 맛집");
     }
 }

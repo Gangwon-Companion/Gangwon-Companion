@@ -7,6 +7,11 @@ public enum ErrorCode {
     DESTINATION_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "DESTINATION_DETAIL_NOT_FOUND", "장소 상세정보를 찾을 수 없습니다."),
     EXTERNAL_API_RATE_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "EXTERNAL_API_RATE_LIMIT", "외부 API 호출 한도를 초과했습니다."),
     EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, "EXTERNAL_API_ERROR", "외부 API 호출 중 오류가 발생했습니다."),
+    AI_SERVICE_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "AI_SERVICE_TIMEOUT", "AI 코스추천 응답 시간이 초과되었습니다."),
+    AI_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "AI_SERVICE_UNAVAILABLE", "AI 코스추천 서비스에 연결할 수 없습니다."),
+    AI_CLIENT_ERROR(HttpStatus.BAD_GATEWAY, "AI_CLIENT_ERROR", "AI 서비스가 요청을 처리하지 못했습니다."),
+    AI_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "AI_SERVER_ERROR", "AI 서비스 내부 오류가 발생했습니다."),
+    AI_INVALID_RESPONSE(HttpStatus.BAD_GATEWAY, "AI_INVALID_RESPONSE", "AI 서비스 응답 형식이 올바르지 않습니다."),
 
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "DUPLICATE_USERNAME", "이미 사용 중인 아이디입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "DUPLICATE_EMAIL", "이미 사용 중인 이메일입니다."),
