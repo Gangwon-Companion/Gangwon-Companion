@@ -48,6 +48,14 @@ tour-api:
   service-key: ${TOUR_API_KEY}
   base-url: https://apis.data.go.kr
 
+external:
+  tour-api:
+    service-key: ${TOUR_API_KEY}
+    base-url: https://apis.data.go.kr/B551011/KorService2
+  tats-cnctr-rate:
+    service-key: ${TOUR_API_KEY}
+    base-url: https://apis.data.go.kr/B551011/TatsCnctrRateService
+
 ai:
   base-url: ${AI_SERVER_URL:http://localhost:8000}
   connect-timeout: ${AI_CONNECT_TIMEOUT:2s}
