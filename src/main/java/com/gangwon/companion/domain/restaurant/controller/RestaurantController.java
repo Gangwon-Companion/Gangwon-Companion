@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -62,8 +63,10 @@ public class RestaurantController {
     @SecurityRequirements
     @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantDetailResponse> getRestaurantDetail(
-            @Parameter(description = "음식점 ID") @PathVariable Long restaurantId) {
-        return ResponseEntity.ok(restaurantService.getRestaurantDetail(restaurantId));
+            @Parameter(description = "음식점 ID") @PathVariable Long restaurantId,
+            Authentication authentication) {
+        return ResponseEntity.ok(restaurantService.getRestaurantDetail(
+                restaurantId, authentication == null ? null : authentication.getName()));
     }
 
     @Operation(summary = "음식점 리뷰 작성")

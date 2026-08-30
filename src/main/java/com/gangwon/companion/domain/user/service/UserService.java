@@ -1,10 +1,15 @@
 package com.gangwon.companion.domain.user.service;
 
+import com.gangwon.companion.domain.destination.entity.DestinationReview;
+import com.gangwon.companion.domain.lodging.entity.LodgingReview;
+import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
 import com.gangwon.companion.domain.user.dto.request.LoginRequest;
-import com.gangwon.companion.domain.user.dto.request.SignUpRequest;
-import com.gangwon.companion.domain.user.dto.request.PasswordChangeRequest;
 import com.gangwon.companion.domain.user.dto.request.NicknameChangeRequest;
+import com.gangwon.companion.domain.user.dto.request.PasswordChangeRequest;
+import com.gangwon.companion.domain.user.dto.request.ProfileImageChangeRequest;
+import com.gangwon.companion.domain.user.dto.request.SignUpRequest;
 import com.gangwon.companion.domain.user.dto.response.MyPageResponse;
+import com.gangwon.companion.domain.user.dto.response.MyReviewResponse;
 import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.domain.destination.repository.DestinationReviewRepository;
@@ -18,6 +23,7 @@ import com.gangwon.companion.global.security.JwtTokenProvider;
 import com.gangwon.companion.global.security.PersonalDataCrypto;
 import com.gangwon.companion.global.security.CaptchaVerifier;
 import com.gangwon.companion.global.security.TokenBlacklistService;
+import com.gangwon.companion.global.storage.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +31,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +52,7 @@ public class UserService {
     private final TokenBlacklistService tokenBlacklistService;
     private final SavedCourseRepository savedCourseRepository;
     private final VisitRecordRepository visitRecordRepository;
+    private final S3FileService s3FileService;
 
     @Transactional
     public void signUp(SignUpRequest request) {
@@ -85,7 +96,7 @@ public class UserService {
         long savedCourseCount = savedCourseRepository.countByUserUsername(username);
         long visitedPlaceCount = visitRecordRepository.countByUserUsername(username);
 
-        return MyPageResponse.of(user, savedCourseCount, visitedPlaceCount, reviewCount);
+        return MyPageResponse.of(user, savedCourseCount, visitedPlaceCount, reviewCount, profileImageUrl(user));
     }
 
     @Transactional
@@ -105,6 +116,38 @@ public class UserService {
             throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
         }
         user.changeNickname(request.nickname());
+    }
+
+    @Transactional
+    public void changeProfileImage(String username, ProfileImageChangeRequest request) {
+        String profileImageS3Key = request.profileImageS3Key();
+        findUser(username).changeProfileImage(profileImageS3Key == null || profileImageS3Key.isBlank() ? null : profileImageS3Key);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyReviewResponse> getMyReviews(String username) {
+        findUser(username);
+
+        return Stream.concat(
+                        Stream.concat(
+                                destinationReviewRepository.findAllByUserUsername(username).stream()
+                                        .map(this::destinationReviewResponse),
+                                restaurantReviewRepository.findAllByUserUsername(username).stream()
+                                        .map(this::restaurantReviewResponse)
+                        ),
+                        lodgingReviewRepository.findAllByUserUsername(username).stream()
+                                .map(this::lodgingReviewResponse)
+                )
+                .sorted(Comparator.comparing(MyReviewResponse::createdAt, Comparator.nullsLast(Comparator.reverseOrder())))
+                .toList();
+    }
+
+    @Transactional
+    public void withdraw(String username, String token) {
+        findUser(username).withdraw();
+        if (token != null && !token.isBlank()) {
+            tokenBlacklistService.block(token, jwtTokenProvider.getExpirationTime(token));
+        }
     }
 
     public void logout(String token) {
@@ -131,5 +174,25 @@ public class UserService {
 
     private String emailHash(String email) {
         return personalDataCrypto == null ? null : personalDataCrypto.hash(email);
+    }
+
+    private String profileImageUrl(User user) {
+        String key = user.getProfileImageS3Key();
+        return key == null || key.isBlank() ? null : s3FileService.createDownloadUrl(key);
+    }
+
+    private MyReviewResponse destinationReviewResponse(DestinationReview review) {
+        return new MyReviewResponse("DESTINATION", review.getDestination().getId(), review.getDestination().getTitle(),
+                review.getId(), review.getContent(), review.getRating(), review.getCreatedAt());
+    }
+
+    private MyReviewResponse restaurantReviewResponse(RestaurantReview review) {
+        return new MyReviewResponse("RESTAURANT", review.getRestaurant().getId(), review.getRestaurant().getName(),
+                review.getId(), review.getContent(), review.getRating(), review.getCreatedAt());
+    }
+
+    private MyReviewResponse lodgingReviewResponse(LodgingReview review) {
+        return new MyReviewResponse("LODGING", review.getLodging().getId(), review.getLodging().getName(),
+                review.getId(), review.getContent(), review.getRating(), review.getCreatedAt());
     }
 }

@@ -20,6 +20,7 @@ import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
+import com.gangwon.companion.global.storage.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +38,9 @@ public class DestinationDetailService {
     private final PetInfoRepository petInfoRepository;
     private final AccessibilityInfoRepository accessibilityInfoRepository;
     private final UserRepository userRepository;
+    private final S3FileService s3FileService;
 
-    public DestinationDetailResponseDto getDestinationDetailByDestinationId(Long destinationId, boolean pet, boolean accessibility) {
+    public DestinationDetailResponseDto getDestinationDetailByDestinationId(Long destinationId, boolean pet, boolean accessibility, String username) {
 
         SourceType sourceType = resolveSourceType(pet, accessibility);
         DestinationDetail destinationDetail = destinationDetailRepository.findByDestinationIdAndSourceType(destinationId, sourceType)
@@ -61,7 +63,7 @@ public class DestinationDetailService {
                 : null;
 
         List<DestinationReviewResponse> reviews = destinationReviewRepository.findByDestinationId(destinationId).stream()
-                .map(this::toReviewResponse)
+                .map(review -> toReviewResponse(review, username))
                 .toList();
 
         return DestinationDetailResponseDto.from(destinationDetail, destinationImageList, petInfo, accessibilityInfo, reviews);
@@ -83,7 +85,7 @@ public class DestinationDetailService {
 
         DestinationReview saved = destinationReviewRepository.save(review);
         updateDestinationReviewStats(destination);
-        return toReviewResponse(saved);
+        return toReviewResponse(saved, username);
     }
 
     @Transactional
@@ -96,7 +98,7 @@ public class DestinationDetailService {
 
         review.update(request.content(), request.rating());
         updateDestinationReviewStats(destination);
-        return toReviewResponse(review);
+        return toReviewResponse(review, username);
     }
 
     @Transactional
@@ -131,14 +133,21 @@ public class DestinationDetailService {
         return Math.round(value * 10.0) / 10.0;
     }
 
-    private DestinationReviewResponse toReviewResponse(DestinationReview review) {
+    private DestinationReviewResponse toReviewResponse(DestinationReview review, String username) {
         return new DestinationReviewResponse(
                 review.getId(),
                 review.getUser().getNickname(),
+                profileImageUrl(review.getUser()),
                 review.getContent(),
                 review.getRating(),
-                review.getCreatedAt()
+                review.getCreatedAt(),
+                username != null && review.getUser().getUsername().equals(username)
         );
+    }
+
+    private String profileImageUrl(User user) {
+        String key = user.getProfileImageS3Key();
+        return key == null || key.isBlank() ? null : s3FileService.createDownloadUrl(key);
     }
 
     private SourceType resolveSourceType(boolean pet, boolean accessibility) {

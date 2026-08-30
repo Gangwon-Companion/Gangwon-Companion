@@ -15,6 +15,7 @@ import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
+import com.gangwon.companion.global.storage.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class LodgingService {
     private final LodgingRepository lodgingRepository;
     private final LodgingReviewRepository lodgingReviewRepository;
     private final UserRepository userRepository;
+    private final S3FileService s3FileService;
 
     @Transactional(readOnly = true)
     public LodgingListResponse searchLodgings(LodgingSearchCriteria criteria) {
@@ -45,11 +47,11 @@ public class LodgingService {
     }
 
     @Transactional(readOnly = true)
-    public LodgingDetailResponse getLodgingDetail(Long lodgingId) {
+    public LodgingDetailResponse getLodgingDetail(Long lodgingId, String username) {
         Lodging lodging = findLodgingWithPhotos(lodgingId);
         List<LodgingReview> reviews = lodgingReviewRepository.findByLodgingId(lodgingId);
 
-        return new LodgingDetailResponse(lodging, reviews);
+        return new LodgingDetailResponse(lodging, reviews, username, this::profileImageUrl);
     }
 
     @Transactional
@@ -67,7 +69,7 @@ public class LodgingService {
 
         LodgingReview saved = lodgingReviewRepository.save(review);
         updateLodgingReviewStats(lodging);
-        return toReviewResponse(saved);
+        return toReviewResponse(saved, username);
     }
 
     @Transactional
@@ -79,7 +81,7 @@ public class LodgingService {
 
         review.update(request.content(), request.rating());
         updateLodgingReviewStats(lodging);
-        return toReviewResponse(review);
+        return toReviewResponse(review, username);
     }
 
     @Transactional
@@ -128,13 +130,20 @@ public class LodgingService {
         return Math.round(value * 10.0) / 10.0;
     }
 
-    private LodgingReviewResponse toReviewResponse(LodgingReview review) {
+    private LodgingReviewResponse toReviewResponse(LodgingReview review, String username) {
         return new LodgingReviewResponse(
                 review.getId(),
                 review.getUser().getNickname(),
+                profileImageUrl(review.getUser()),
                 review.getContent(),
                 review.getRating(),
-                review.getCreatedAt()
+                review.getCreatedAt(),
+                username != null && review.getUser().getUsername().equals(username)
         );
+    }
+
+    private String profileImageUrl(User user) {
+        String key = user.getProfileImageS3Key();
+        return key == null || key.isBlank() ? null : s3FileService.createDownloadUrl(key);
     }
 }
