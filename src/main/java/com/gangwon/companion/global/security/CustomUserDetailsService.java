@@ -18,6 +18,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
+        if (user.isWithdrawn()) {
+            throw new UsernameNotFoundException("탈퇴한 사용자입니다: " + username);
+        }
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())

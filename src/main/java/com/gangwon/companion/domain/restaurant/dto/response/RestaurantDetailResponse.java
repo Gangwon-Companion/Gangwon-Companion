@@ -2,9 +2,11 @@ package com.gangwon.companion.domain.restaurant.dto.response;
 
 import com.gangwon.companion.domain.restaurant.entity.Restaurant;
 import com.gangwon.companion.domain.restaurant.entity.RestaurantReview;
+import com.gangwon.companion.domain.user.entity.User;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
 public class RestaurantDetailResponse {
@@ -27,7 +29,8 @@ public class RestaurantDetailResponse {
     private final List<String> photos;
     private final List<RestaurantReviewResponse> reviews;
 
-    public RestaurantDetailResponse(Restaurant restaurant, List<RestaurantReview> reviews) {
+    public RestaurantDetailResponse(Restaurant restaurant, List<RestaurantReview> reviews, String username,
+                                    Function<User, String> profileImageUrlResolver) {
         this.restaurantId = restaurant.getId();
         this.name = restaurant.getName();
         this.menuType = restaurant.getMenuType();
@@ -54,9 +57,11 @@ public class RestaurantDetailResponse {
                 .map(review -> new RestaurantReviewResponse(
                         review.getId(),
                         review.getUser().getNickname(),
+                        profileImageUrlResolver.apply(review.getUser()),
                         review.getContent(),
                         review.getRating(),
-                        review.getCreatedAt()
+                        review.getCreatedAt(),
+                        username != null && review.getUser().getUsername().equals(username)
                 ))
                 .toList();
     }

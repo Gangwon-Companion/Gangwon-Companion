@@ -78,8 +78,8 @@ class RestaurantControllerTest {
     @Test
     @DisplayName("GET /api/v1/restaurants/{restaurantId} -> HTTP 200 detail")
     void getRestaurantDetail_returnsDetail_whenRestaurantExists() throws Exception {
-        given(restaurantService.getRestaurantDetail(1L))
-                .willReturn(new RestaurantDetailResponse(restaurant(), List.of()));
+        given(restaurantService.getRestaurantDetail(1L, null))
+                .willReturn(new RestaurantDetailResponse(restaurant(), List.of(), null, user -> null));
 
         mockMvc.perform(get("/api/v1/restaurants/1"))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ class RestaurantControllerTest {
     @DisplayName("POST /api/v1/restaurants/{restaurantId}/reviews -> HTTP 201 created")
     void createReview_returnsCreated_whenRequestValid() throws Exception {
         given(restaurantService.createReview(eq(1L), eq("owner"), any()))
-                .willReturn(new RestaurantReviewResponse(10L, "ownerNick", "great", 4.5, LocalDateTime.now()));
+                .willReturn(new RestaurantReviewResponse(10L, "ownerNick", null, "great", 4.5, LocalDateTime.now(), true));
 
         mockMvc.perform(post("/api/v1/restaurants/1/reviews")
                         .contentType(MediaType.APPLICATION_JSON)

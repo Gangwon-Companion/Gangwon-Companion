@@ -8,16 +8,19 @@ public record MyPageResponse(
         String username,
         String email,
         String nickname,
+        String profileImageUrl,
         LocalDateTime joinedAt,
         TravelStats travelStats
 ) {
 
     public static MyPageResponse of(User user, long savedCourseCount,
-                                    long visitedPlaceCount, long reviewCount) {
+                                    long visitedPlaceCount, long reviewCount,
+                                    String profileImageUrl) {
         return new MyPageResponse(
                 user.getUsername(),
                 user.getEmail(),
                 user.getNickname(),
+                profileImageUrl,
                 user.getCreatedAt(),
                 new TravelStats(savedCourseCount, visitedPlaceCount, reviewCount)
         );

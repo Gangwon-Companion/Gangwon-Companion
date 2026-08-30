@@ -43,6 +43,12 @@ public class User {
     @Column(nullable = false, unique = true, length = 6)
     private String nickname;
 
+    @Column(name = "profile_image_s3_key", length = 500)
+    private String profileImageS3Key;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean withdrawn = false;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -62,5 +68,13 @@ public class User {
 
     public void changeNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void changeProfileImage(String profileImageS3Key) {
+        this.profileImageS3Key = profileImageS3Key;
+    }
+
+    public void withdraw() {
+        this.withdrawn = true;
     }
 }

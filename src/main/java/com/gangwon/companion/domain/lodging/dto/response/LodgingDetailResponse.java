@@ -2,10 +2,12 @@ package com.gangwon.companion.domain.lodging.dto.response;
 
 import com.gangwon.companion.domain.lodging.entity.Lodging;
 import com.gangwon.companion.domain.lodging.entity.LodgingReview;
+import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.global.web.LocationResponse;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
 public class LodgingDetailResponse {
@@ -27,7 +29,8 @@ public class LodgingDetailResponse {
     private final List<LodgingReviewResponse> reviews;
     private final LocationResponse location;
 
-    public LodgingDetailResponse(Lodging lodging, List<LodgingReview> reviews) {
+    public LodgingDetailResponse(Lodging lodging, List<LodgingReview> reviews, String username,
+                                 Function<User, String> profileImageUrlResolver) {
         this.lodgingId = lodging.getId();
         this.name = lodging.getName();
         this.description = lodging.getDescription();
@@ -52,9 +55,11 @@ public class LodgingDetailResponse {
                 .map(review -> new LodgingReviewResponse(
                         review.getId(),
                         review.getUser().getNickname(),
+                        profileImageUrlResolver.apply(review.getUser()),
                         review.getContent(),
                         review.getRating(),
-                        review.getCreatedAt()
+                        review.getCreatedAt(),
+                        username != null && review.getUser().getUsername().equals(username)
                 ))
                 .toList();
         this.location = new LocationResponse(lodging.getLatitude(), lodging.getLongitude(), lodging.getAddress());
