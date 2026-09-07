@@ -98,4 +98,23 @@ class ElasticsearchPlaceSearchEngineTest {
         assertThat(fallbackJson).contains("RESTAURANT", "GANGNEUNG", "opensAt", "closesAt");
         assertThat(fallbackJson).doesNotContain("multi_match", "강릉 점심 맛집");
     }
+
+    @Test
+    void buildsHybridRrfWithTheSameMandatoryFilters() throws Exception {
+        var embeddingProperties = new EmbeddingProperties();
+        embeddingProperties.setEnabled(true);
+        embeddingProperties.setRankWindow(40);
+        embeddingProperties.setRankConstant(60);
+        var embeddingClient = mock(EmbeddingClient.class);
+        when(embeddingClient.embed("바다 카페", "query")).thenReturn(List.of(0.1, 0.2));
+        var hybridEngine = new ElasticsearchPlaceSearchEngine(client, properties, mapper,
+                embeddingProperties, embeddingClient);
+        var request = new PlaceSearchRequest(PlaceSearchRequest.Domain.RESTAURANT, "D1_LUNCH", List.of(),
+                "바다 카페", new PlaceSearchRequest.HardFilters(true, null, null), Map.of(), null, 5);
+
+        String json = mapper.writeValueAsString(hybridEngine.hybridBody(request));
+        assertThat(json).contains("rrf", "standard", "knn", "query_vector", "embedding",
+                "rank_window_size", "petAllowed", "opensAt", "closesAt");
+        org.mockito.Mockito.verify(embeddingClient).embed("바다 카페", "query");
+    }
 }
