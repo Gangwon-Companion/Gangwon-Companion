@@ -1,0 +1,27 @@
+services:
+  embedding:
+    build: ./services/embedding
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8091:8091"
+    volumes:
+      - embedding_models:/models
+    networks:
+      - networks_gangwon
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8091/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+      start_period: 180s
+  spring:
+    depends_on:
+      embedding:
+        condition: service_healthy
+    environment:
+      SEARCH_ENGINE: hybrid
+      SEARCH_EMBEDDING_ENABLED: "true"
+      SEARCH_EMBEDDING_URL: http://embedding:8091
+      ELASTICSEARCH_INDEX_PREFIX: gangwon-places-e5-v1
+volumes:
+  embedding_models:
