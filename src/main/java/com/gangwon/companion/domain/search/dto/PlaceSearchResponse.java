@@ -1,10 +1,23 @@
 package com.gangwon.companion.domain.search.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
-public record PlaceSearchResponse(List<Candidate> results) {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record PlaceSearchResponse(List<Candidate> results, SearchTrace trace) {
+    public PlaceSearchResponse(List<Candidate> results) {
+        this(results, null);
+    }
+
+    public record SearchTrace(
+            @JsonProperty("schema_version") int schemaVersion,
+            @JsonProperty("request_id") String requestId,
+            @JsonProperty("retrieved_at") String retrievedAt,
+            String engine, String path,
+            List<GroundingSnapshot> snapshots
+    ) {}
     public enum Status {
         OK,
         INSUFFICIENT_EVIDENCE
@@ -23,6 +36,11 @@ public record PlaceSearchResponse(List<Candidate> results) {
             @JsonProperty("matched_preferences") List<String> matchedPreferences,
             List<Evidence> evidence
     ) {
+        public Candidate {
+            missingFields = List.copyOf(missingFields);
+            matchedPreferences = List.copyOf(matchedPreferences);
+            evidence = List.copyOf(evidence);
+        }
     }
 
     public record Location(Double lat, Double lon) {
