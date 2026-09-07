@@ -15,6 +15,15 @@ spring:
 
 search:
   engine: ${SEARCH_ENGINE:rdb}
+  embedding:
+    enabled: ${SEARCH_EMBEDDING_ENABLED:false}
+    url: ${SEARCH_EMBEDDING_URL:http://localhost:8091}
+    model: ${SEARCH_EMBEDDING_MODEL:intfloat/multilingual-e5-small}
+    revision: ${SEARCH_EMBEDDING_REVISION:614241f622f53c4eeff9890bdc4f31cfecc418b3}
+    dimensions: ${SEARCH_EMBEDDING_DIMENSIONS:384}
+    timeout: ${SEARCH_EMBEDDING_TIMEOUT:2s}
+    rank-window: ${SEARCH_EMBEDDING_RANK_WINDOW:50}
+    rank-constant: ${SEARCH_EMBEDDING_RANK_CONSTANT:60}
   indexer:
     enabled: ${SEARCH_INDEXER_ENABLED:false}
     group-id: ${SEARCH_INDEXER_GROUP_ID:gangwon-search-indexer}
