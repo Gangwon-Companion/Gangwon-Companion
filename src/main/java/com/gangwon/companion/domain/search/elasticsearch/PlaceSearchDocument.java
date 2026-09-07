@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"embedding", "embeddingHash", "embeddingModel", "embeddingRevision",
+        "embeddingStatus", "embeddingFailure", "embeddingDimensions", "embeddingCreatedAt"})
 public record PlaceSearchDocument(
         String placeId, String domain, String name, String address, String regionCode,
         String searchText, Location location, Boolean petAllowed, Boolean smallPetAllowed,
