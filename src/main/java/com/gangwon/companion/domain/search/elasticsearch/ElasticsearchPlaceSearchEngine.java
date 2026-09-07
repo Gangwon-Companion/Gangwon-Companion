@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gangwon.companion.domain.search.dto.PlaceSearchRequest;
 import com.gangwon.companion.domain.search.dto.PlaceSearchResponse;
 import com.gangwon.companion.domain.search.service.PlaceSearchEngine;
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import com.gangwon.companion.domain.search.service.SearchTraceRecorder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ import java.util.Map;
 import java.util.Comparator;
 
 @Service
-@RequiredArgsConstructor
-@ConditionalOnProperty(name = "search.engine", havingValue = "elasticsearch")
+@ConditionalOnExpression("'${search.engine:elasticsearch}' == 'elasticsearch' or '${search.engine:elasticsearch}' == 'hybrid'")
 public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
     private static final Map<String, List<String>> PREFERENCE_TERMS = Map.of(
             "quiet", List.of("조용", "한적"), "ocean_view", List.of("바다", "해변", "오션뷰"),
@@ -26,25 +26,89 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
     private final ElasticsearchHttpClient client;
     private final ElasticsearchProperties properties;
     private final ObjectMapper objectMapper;
+    private final EmbeddingProperties embeddingProperties;
+    private final EmbeddingClient embeddingClient;
+
+    public ElasticsearchPlaceSearchEngine(ElasticsearchHttpClient client, ElasticsearchProperties properties,
+                                          ObjectMapper objectMapper) {
+        this(client, properties, objectMapper, disabledEmbeddingProperties(), null);
+    }
+
+    @Autowired
+    public ElasticsearchPlaceSearchEngine(ElasticsearchHttpClient client, ElasticsearchProperties properties,
+                                          ObjectMapper objectMapper, EmbeddingProperties embeddingProperties,
+                                          EmbeddingClient embeddingClient) {
+        this.client = client;
+        this.properties = properties;
+        this.objectMapper = objectMapper;
+        this.embeddingProperties = embeddingProperties;
+        this.embeddingClient = embeddingClient;
+    }
+
+    private static EmbeddingProperties disabledEmbeddingProperties() {
+        EmbeddingProperties value = new EmbeddingProperties();
+        value.setEnabled(false);
+        return value;
+    }
 
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
-        JsonNode response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false, false));
+        JsonNode response;
+        String path = "keyword";
+        if (embeddingProperties.isEnabled() && !request.queryText().isBlank()) {
+            try {
+                response = client.post("/" + properties.getAlias() + "/_search", hybridBody(request));
+                path = "hybrid_rrf";
+            } catch (RuntimeException ignored) {
+                response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false, false));
+                path = "keyword_embedding_failed";
+            }
+        } else {
+            response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, false, false));
+        }
         if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
             response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true, false));
+            path = "relaxed_keyword";
         }
         if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
             response = client.post("/" + properties.getAlias() + "/_search", searchBody(request, true, true));
+            path = "filter_only";
         }
         List<PlaceSearchResponse.Candidate> candidates = new ArrayList<>();
         for (JsonNode hit : response.path("hits").path("hits")) candidates.add(candidate(hit, request));
-        return new PlaceSearchResponse(candidates.stream()
+        return SearchTraceRecorder.capture(candidates.stream()
                 .sorted(Comparator.comparingDouble(PlaceSearchResponse.Candidate::score).reversed()
                         .thenComparing(PlaceSearchResponse.Candidate::placeId))
-                .limit(request.limit()).toList());
+                .limit(request.limit()).toList(), "elasticsearch", path);
     }
 
-    private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed, boolean filterOnly) {
+    Map<String, Object> hybridBody(PlaceSearchRequest request) {
+        List<Double> vector = embeddingClient.embed(request.queryText(), "query");
+        Map<String, Object> keyword = searchBody(request, false, false);
+        Map<String, Object> functionScore = cast(keyword.get("query"));
+        Map<String, Object> bool = cast(cast(functionScore.get("function_score")).get("query"));
+        Map<String, Object> knn = new LinkedHashMap<>();
+        knn.put("field", "embedding");
+        knn.put("query_vector", vector);
+        knn.put("k", Math.min(500, Math.max(50, request.limit() * 10)));
+        knn.put("num_candidates", Math.min(1000, Math.max(100, request.limit() * 20)));
+        Object filters = bool.getOrDefault("filter", List.of());
+        knn.put("filter", Map.of("bool", Map.of("filter", filters)));
+        Map<String, Object> retriever = Map.of("rrf", Map.of(
+                "retrievers", List.of(Map.of("standard", Map.of("query", functionScore)), Map.of("knn", knn)),
+                "rank_window_size", embeddingProperties.getRankWindow(),
+                "rank_constant", embeddingProperties.getRankConstant()));
+        return Map.of("size", keyword.get("size"), "_source", keyword.get("_source"),
+                "retriever", retriever, "track_scores", true,
+                "sort", List.of(Map.of("_score", "desc"), Map.of("placeId", "asc")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> cast(Object value) {
+        return (Map<String, Object>) value;
+    }
+
+    Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed, boolean filterOnly) {
         List<Object> filters = new ArrayList<>();
         filters.add(Map.of("term", Map.of("domain", request.domain().name())));
         filters.add(Map.of("exists", Map.of("field", "opensAt")));
@@ -86,7 +150,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
         functionScore.put("functions", rankingFunctions(request));
         functionScore.put("score_mode", "sum");
         functionScore.put("boost_mode", "sum");
-        return Map.of("size", fetchSize, "track_scores", true, "query", Map.of("function_score", functionScore),
+        return Map.of("size", fetchSize, "_source", Map.of("excludes", List.of("embedding")), "track_scores", true, "query", Map.of("function_score", functionScore),
                 "sort", List.of(Map.of("_score", "desc"), Map.of("placeId", "asc")));
     }
 
@@ -128,7 +192,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
         return boosts;
     }
 
-    private PlaceSearchResponse.Candidate candidate(JsonNode hit, PlaceSearchRequest request) {
+    PlaceSearchResponse.Candidate candidate(JsonNode hit, PlaceSearchRequest request) {
         try {
             PlaceSearchDocument doc = objectMapper.treeToValue(hit.path("_source"), PlaceSearchDocument.class);
             List<String> missing = missingFields(doc, request);
