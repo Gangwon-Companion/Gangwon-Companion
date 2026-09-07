@@ -2,8 +2,8 @@ package com.gangwon.companion.domain.search.elasticsearch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
@@ -13,13 +13,35 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class ElasticsearchIndexService {
     private final ElasticsearchHttpClient client;
     private final ElasticsearchProperties properties;
     private final PlaceSearchDocumentAssembler assembler;
     private final ObjectMapper objectMapper;
+    private final EmbeddingDocumentService embeddings;
     private final Clock clock = Clock.systemUTC();
+
+    public ElasticsearchIndexService(ElasticsearchHttpClient client, ElasticsearchProperties properties,
+                                     PlaceSearchDocumentAssembler assembler, ObjectMapper objectMapper) {
+        this(client, properties, assembler, objectMapper, disabledEmbeddings(objectMapper));
+    }
+
+    @Autowired
+    public ElasticsearchIndexService(ElasticsearchHttpClient client, ElasticsearchProperties properties,
+                                     PlaceSearchDocumentAssembler assembler, ObjectMapper objectMapper,
+                                     EmbeddingDocumentService embeddings) {
+        this.client = client;
+        this.properties = properties;
+        this.assembler = assembler;
+        this.objectMapper = objectMapper;
+        this.embeddings = embeddings;
+    }
+
+    private static EmbeddingDocumentService disabledEmbeddings(ObjectMapper mapper) {
+        EmbeddingProperties props = new EmbeddingProperties();
+        props.setEnabled(false);
+        return new EmbeddingDocumentService(props, null, mapper);
+    }
 
     public ReindexReport reindex() {
         String index = properties.getIndexPrefix() + "-" + DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
@@ -44,11 +66,25 @@ public class ElasticsearchIndexService {
         return new ReindexReport(index, documents.size(), indexed, List.of(), retriedIds, true, retryCount);
     }
 
-    public void upsert(PlaceSearchDocument document) {
-        client.put("/" + properties.getAlias() + "/_doc/" + document.placeId(), document);
+    public synchronized void upsert(PlaceSearchDocument document) {
+        String path = "/" + properties.getAlias() + "/_doc/" + document.placeId();
+        if (!embeddings.enabled()) {
+            client.put(path, document);
+            return;
+        }
+        JsonNode previous = client.exists(path) ? client.get(path) : null;
+        var enriched = embeddings.enrich(document, previous == null ? null : previous.path("_source"));
+        String[] identity = document.placeId().split(":", 2);
+        var current = assembler.loadOne(identity[0], Long.parseLong(identity[1]));
+        if (current.isEmpty()) { delete(document.placeId()); return; }
+        if (!current.get().equals(document)) throw new ElasticsearchOperationException("Source changed during embedding; retry latest aggregate");
+        // Optimistic concurrency prevents stale work overwriting another indexer's update.
+        String condition = previous == null ? "?op_type=create" : "?if_seq_no=" + previous.path("_seq_no").asLong()
+                + "&if_primary_term=" + previous.path("_primary_term").asLong();
+        client.put(path + condition, enriched);
     }
 
-    public void delete(String placeId) {
+    public synchronized void delete(String placeId) {
         if (client.exists("/" + properties.getAlias() + "/_doc/" + placeId)) {
             client.delete("/" + properties.getAlias() + "/_doc/" + placeId);
         }
@@ -61,7 +97,7 @@ public class ElasticsearchIndexService {
             StringBuilder ndjson = new StringBuilder();
             for (PlaceSearchDocument document : batch) {
                 ndjson.append(json(Map.of("index", Map.of("_id", document.placeId())))).append('\n');
-                ndjson.append(json(document)).append('\n');
+                ndjson.append(json(embeddings.enrich(document, null))).append('\n');
             }
             JsonNode response = client.postNdjson("/" + index + "/_bulk", ndjson.toString());
             if (response.path("errors").asBoolean()) {
@@ -114,7 +150,13 @@ public class ElasticsearchIndexService {
         propertiesMap.put("documentVersion", Map.of("type", "integer"));
         propertiesMap.put("source", Map.of("type", "keyword"));
         propertiesMap.put("evidenceFields", Map.of("type", "keyword"));
-        propertiesMap.put("embedding", Map.of("type", "dense_vector", "similarity", "cosine"));
+        propertiesMap.put("embedding", Map.of("type", "dense_vector", "dims", embeddings.dimensions(),
+                "index", true, "similarity", "cosine", "index_options", Map.of("type", "int8_hnsw")));
+        for (String field : List.of("embeddingHash", "embeddingModel", "embeddingRevision", "embeddingStatus", "embeddingFailure")) {
+            propertiesMap.put(field, Map.of("type", "keyword"));
+        }
+        propertiesMap.put("embeddingDimensions", Map.of("type", "integer"));
+        propertiesMap.put("embeddingCreatedAt", Map.of("type", "date"));
         Map<String, Object> analysis = Map.of(
                 "analyzer", Map.of("gangwon_korean",
                         Map.of("type", "custom", "tokenizer", "nori_tokenizer", "filter", List.of("lowercase", "nori_readingform"))),
