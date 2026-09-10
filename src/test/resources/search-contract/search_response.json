@@ -9,9 +9,15 @@
       "distance_km": 4.9,
       "score": 0.86,
       "status": "OK",
+      "pet_allowed": true,
+      "max_pet_size": "SMALL",
+      "wheelchair_accessible": true,
       "missing_fields": [],
       "matched_preferences": ["ocean_view"],
-      "evidence": [{"field": "pet_allowed", "value": true, "source": "TOUR_API"}]
+      "evidence": [
+        {"field": "pet_allowed", "value": true, "source": "TOUR_API"},
+        {"field": "wheelchair_accessible", "value": true, "source": "TOUR_API"}
+      ]
     },
     {
       "place_id": "DESTINATION:103",

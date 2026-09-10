@@ -29,6 +29,9 @@ class PlaceSearchContractTest {
 
         assertThat(response.results()).hasSize(2);
         assertThat(response.results().get(0).status()).isEqualTo(PlaceSearchResponse.Status.OK);
+        assertThat(response.results().get(0).petAllowed()).isTrue();
+        assertThat(response.results().get(0).maxPetSize()).isEqualTo("SMALL");
+        assertThat(response.results().get(0).wheelchairAccessible()).isTrue();
         assertThat(response.results().get(0).evidence().get(0).source()).isEqualTo("TOUR_API");
         assertThat(response.results().get(1).status())
                 .isEqualTo(PlaceSearchResponse.Status.INSUFFICIENT_EVIDENCE);

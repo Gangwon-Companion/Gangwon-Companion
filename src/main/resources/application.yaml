@@ -26,7 +26,7 @@ search:
     alias: gangwon-places
     index-prefix: gangwon-places-v1
     connect-timeout: 2s
-    request-timeout: 3s
+    request-timeout: ${ELASTICSEARCH_REQUEST_TIMEOUT:3s}
     bulk-size: 500
     reindex-key: ${ELASTICSEARCH_REINDEX_KEY:}
 

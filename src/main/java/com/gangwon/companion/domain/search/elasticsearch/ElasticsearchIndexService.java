@@ -103,6 +103,7 @@ public class ElasticsearchIndexService {
         }
         propertiesMap.put("themeName", text);
         propertiesMap.put("menuType", text);
+        propertiesMap.put("placeSubtype", Map.of("type", "keyword"));
         propertiesMap.put("rating", Map.of("type", "double"));
         propertiesMap.put("price", Map.of("type", "long"));
         propertiesMap.put("petInfoText", text);
