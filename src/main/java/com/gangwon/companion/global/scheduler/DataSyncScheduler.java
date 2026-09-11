@@ -7,6 +7,7 @@ import com.gangwon.companion.domain.destination.service.DestinationSyncService;
 import com.gangwon.companion.domain.lodging.service.LodgingSyncService;
 import com.gangwon.companion.domain.restaurant.service.RestaurantSyncService;
 import com.gangwon.companion.domain.touristcongestion.service.TouristCongestionRateSyncService;
+import com.gangwon.companion.domain.search.elasticsearch.ElasticsearchIndexService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class DataSyncScheduler {
     private final RestaurantSyncService restaurantSyncService;
     private final LodgingSyncService lodgingSyncService;
     private final TouristCongestionRateSyncService touristCongestionRateSyncService;
+    private final ElasticsearchIndexService elasticsearchIndexService;
 
     @Value("${destination-sync.enabled:true}")
     private boolean destinationSyncEnabled;
@@ -37,6 +39,9 @@ public class DataSyncScheduler {
 
     @Value("${activity.sync.enabled:true}")
     private boolean activitySyncEnabled;
+
+    @Value("${search.reindex-after-sync.enabled:false}")
+    private boolean reindexAfterSyncEnabled;
 
     @PostConstruct
     public void init() {
@@ -128,6 +133,20 @@ public class DataSyncScheduler {
             restaurantSyncService.enrichDetails();
         } catch (Exception e) {
             log.error("음식점 상세 보완 중 오류 발생", e);
+        }
+        if (reindexAfterSyncEnabled) {
+            try {
+                ElasticsearchIndexService.ReindexReport report = elasticsearchIndexService.reindex();
+                log.info(
+                        "수집 완료 후 Elasticsearch 재색인 완료 - 인덱스: {}, 원본: {}, 색인: {}, 실패: {}",
+                        report.index(),
+                        report.sourceCount(),
+                        report.indexedCount(),
+                        report.failedIds().size()
+                );
+            } catch (Exception e) {
+                log.error("수집 완료 후 Elasticsearch 재색인 중 오류 발생", e);
+            }
         }
         log.info("=== 전체 데이터 동기화 종료 ===");
     }
