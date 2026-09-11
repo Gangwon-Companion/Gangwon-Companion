@@ -47,7 +47,7 @@ class SearchIndexEventServiceTest {
 
     private PlaceSearchDocument document(String id) {
         return new PlaceSearchDocument(id, "DESTINATION", "장소", null, null, "장소", null,
-                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null,
                 null, 2, "TOUR_API", List.of());
     }
 }
