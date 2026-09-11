@@ -1,0 +1,13 @@
+{
+  "runId": "rag-search-e2e",
+  "generatedAt": "2026-09-11T02:30:05.903Z",
+  "workload": "2-night/3-day ocean course candidate search only",
+  "peakVus": 5,
+  "p95Ms": 12.595483999999992,
+  "p99Ms": 18.420940949999988,
+  "requests": 488,
+  "throughputRps": 32.506025151627554,
+  "errorRate": 0,
+  "checkRate": 1,
+  "durationMs": 15012.60144
+}

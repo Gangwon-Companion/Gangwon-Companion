@@ -1,0 +1,11 @@
+{
+  "runId": "mixed-search-e2e",
+  "generatedAt": "2026-09-11T02:30:27.305Z",
+  "p95Ms": 16.33498475,
+  "p99Ms": 27.862389649999997,
+  "requests": 256,
+  "throughputRps": 17.05720833206896,
+  "errorRate": 0,
+  "checkRate": 1,
+  "durationMs": 15008.317599
+}

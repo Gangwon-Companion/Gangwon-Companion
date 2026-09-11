@@ -8,6 +8,8 @@
 ## 검색 및 Elasticsearch
 
 - [하이브리드 검색 및 RAG 환각 방지 개발 계획](RAG_GROUNDING_DEVELOPMENT_PLAN.md): 벡터 검색·근거 검증 설계, A/B/C/D 전후 비교와 평가 기준 (개발 전)
+- [RAG Grounding 실제 데이터 E2E 검증](RAG_GROUNDING_REAL_E2E_20260908.md): Docker 기반 실제 검색·근거 snapshot·AI E2E 검증 결과
+- [RAG Grounding 실제 데이터 E2E HTML 리포트](RAG_GROUNDING_REAL_E2E_20260908.html): 브라우저용 검증 대시보드
 - [검색·AI 통합 후속 작업](SEARCH_INTEGRATION_NEXT_STEPS.md): 코드 기준 통합 현황과 후속 작업
 - [Elasticsearch 장소 검색](SEARCH_ELASTICSEARCH.md): 실행 설정, 재색인, alias 및 테스트 절차
 - [검색 문서 개선 진행상황](SEARCH_DOCUMENT_ENHANCEMENT.md): 검색 문서와 ranking 개선 내역
