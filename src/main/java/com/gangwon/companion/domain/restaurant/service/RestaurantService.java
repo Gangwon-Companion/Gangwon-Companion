@@ -15,6 +15,7 @@ import com.gangwon.companion.domain.user.entity.User;
 import com.gangwon.companion.domain.user.repository.UserRepository;
 import com.gangwon.companion.global.exception.BusinessException;
 import com.gangwon.companion.global.exception.ErrorCode;
+import com.gangwon.companion.global.storage.S3FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantReviewRepository restaurantReviewRepository;
     private final UserRepository userRepository;
+    private final S3FileService s3FileService;
 
     @Transactional(readOnly = true)
     public RestaurantListResponse searchRestaurants(RestaurantSearchCriteria criteria) {
@@ -45,11 +47,11 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public RestaurantDetailResponse getRestaurantDetail(Long restaurantId) {
+    public RestaurantDetailResponse getRestaurantDetail(Long restaurantId, String username) {
         Restaurant restaurant = findRestaurantWithPhotos(restaurantId);
         List<RestaurantReview> reviews = restaurantReviewRepository.findByRestaurantId(restaurantId);
 
-        return new RestaurantDetailResponse(restaurant, reviews);
+        return new RestaurantDetailResponse(restaurant, reviews, username, this::profileImageUrl);
     }
 
     @Transactional
@@ -67,7 +69,7 @@ public class RestaurantService {
 
         RestaurantReview saved = restaurantReviewRepository.save(review);
         updateRestaurantReviewStats(restaurant);
-        return toReviewResponse(saved);
+        return toReviewResponse(saved, username);
     }
 
     @Transactional
@@ -79,7 +81,7 @@ public class RestaurantService {
 
         review.update(request.content(), request.rating());
         updateRestaurantReviewStats(restaurant);
-        return toReviewResponse(review);
+        return toReviewResponse(review, username);
     }
 
     @Transactional
@@ -128,13 +130,20 @@ public class RestaurantService {
         return Math.round(value * 10.0) / 10.0;
     }
 
-    private RestaurantReviewResponse toReviewResponse(RestaurantReview review) {
+    private RestaurantReviewResponse toReviewResponse(RestaurantReview review, String username) {
         return new RestaurantReviewResponse(
                 review.getId(),
                 review.getUser().getNickname(),
+                profileImageUrl(review.getUser()),
                 review.getContent(),
                 review.getRating(),
-                review.getCreatedAt()
+                review.getCreatedAt(),
+                username != null && review.getUser().getUsername().equals(username)
         );
+    }
+
+    private String profileImageUrl(User user) {
+        String key = user.getProfileImageS3Key();
+        return key == null || key.isBlank() ? null : s3FileService.createDownloadUrl(key);
     }
 }

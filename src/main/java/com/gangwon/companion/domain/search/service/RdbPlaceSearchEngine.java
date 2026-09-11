@@ -53,17 +53,15 @@ public class RdbPlaceSearchEngine implements PlaceSearchEngine {
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
         List<PlaceSearchResponse.Candidate> candidates = searchCandidates(request, false);
-        String path = "keyword";
         if (candidates.isEmpty() && request.queryText() != null && !request.queryText().isBlank()) {
             candidates = searchCandidates(request, true);
-            path = "relaxed_keyword";
         }
         int limit = request.limit() == null ? 5 : Math.max(1, Math.min(request.limit(), 100));
-        return SearchTraceRecorder.capture(candidates.stream()
+        return new PlaceSearchResponse(candidates.stream()
                 .sorted(Comparator.comparingDouble(PlaceSearchResponse.Candidate::score).reversed()
                         .thenComparing(PlaceSearchResponse.Candidate::placeId))
                 .limit(limit)
-                .toList(), "rdb", path);
+                .toList());
     }
 
     private List<PlaceSearchResponse.Candidate> searchCandidates(PlaceSearchRequest request, boolean relaxed) {

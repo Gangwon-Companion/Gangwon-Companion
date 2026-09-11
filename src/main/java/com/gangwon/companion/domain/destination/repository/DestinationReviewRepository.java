@@ -12,6 +12,8 @@ public interface DestinationReviewRepository extends JpaRepository<DestinationRe
 
     List<DestinationReview> findByDestinationId(Long destinationId);
 
+    List<DestinationReview> findAllByUserUsername(String username);
+
     Optional<DestinationReview> findByIdAndDestinationId(Long id, Long destinationId);
 
     long countByDestinationId(Long destinationId);

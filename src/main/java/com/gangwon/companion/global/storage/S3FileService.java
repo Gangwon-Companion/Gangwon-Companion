@@ -20,10 +20,14 @@ public class S3FileService {
     private final AwsS3Properties properties;
 
     public UploadUrl createUploadUrl(String originalFileName, String contentType) {
+        return createUploadUrl("community", originalFileName, contentType);
+    }
+
+    public UploadUrl createUploadUrl(String directory, String originalFileName, String contentType) {
         String extension = "";
         int dot = originalFileName.lastIndexOf('.');
         if (dot >= 0) extension = originalFileName.substring(dot).toLowerCase();
-        String key = "community/" + UUID.randomUUID() + extension;
+        String key = directory + "/" + UUID.randomUUID() + extension;
         PutObjectRequest objectRequest = PutObjectRequest.builder().bucket(properties.getS3().getBucket()).key(key).contentType(contentType).build();
         PutObjectPresignRequest request = PutObjectPresignRequest.builder().signatureDuration(EXPIRATION).putObjectRequest(objectRequest).build();
         return new UploadUrl(key, presigner.presignPutObject(request).url().toString(), (int) EXPIRATION.toSeconds());

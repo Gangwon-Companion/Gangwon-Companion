@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,8 +65,10 @@ public class LodgingController {
     @SecurityRequirements
     @GetMapping("/{lodgingId}")
     public ResponseEntity<LodgingDetailResponse> getLodgingDetail(
-            @Parameter(description = "숙소 ID") @PathVariable Long lodgingId) {
-        return ResponseEntity.ok(lodgingService.getLodgingDetail(lodgingId));
+            @Parameter(description = "숙소 ID") @PathVariable Long lodgingId,
+            Authentication authentication) {
+        return ResponseEntity.ok(lodgingService.getLodgingDetail(
+                lodgingId, authentication == null ? null : authentication.getName()));
     }
 
     @Operation(summary = "숙소 리뷰 작성")

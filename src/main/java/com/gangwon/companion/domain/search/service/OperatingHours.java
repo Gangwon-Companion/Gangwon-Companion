@@ -5,7 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class OperatingHours {
-    private static final Pattern ALWAYS_OPEN = Pattern.compile("상시\\s*(?:개방|운영)|24\\s*시간");
+    private static final Pattern ALWAYS_OPEN = Pattern.compile("24\\s*시간");
+    private static final Pattern ESTIMATED_OPEN = Pattern.compile("상시\\s*(?:개방|운영)|연중\\s*무휴");
     private static final Pattern TIME = Pattern.compile(
             "(?<!\\d)([01]?\\d|2[0-4])(?::([0-5]\\d)|\\s*시(?:\\s*([0-5]?\\d)\\s*분)?)");
 
@@ -15,6 +16,9 @@ public final class OperatingHours {
         if (raw == null || raw.isBlank()) return Optional.empty();
         if (ALWAYS_OPEN.matcher(raw).find()) {
             return Optional.of(new Range("00:00", "24:00"));
+        }
+        if (ESTIMATED_OPEN.matcher(raw).find()) {
+            return Optional.of(new Range("00:00", "22:00", true));
         }
         Matcher matcher = TIME.matcher(raw);
         String opens = next(matcher);
@@ -32,5 +36,9 @@ public final class OperatingHours {
         return "%02d:%02d".formatted(hour, minute);
     }
 
-    public record Range(String opensAt, String closesAt) {}
+    public record Range(String opensAt, String closesAt, boolean estimated) {
+        public Range(String opensAt, String closesAt) {
+            this(opensAt, closesAt, false);
+        }
+    }
 }

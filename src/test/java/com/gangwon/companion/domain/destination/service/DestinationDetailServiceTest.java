@@ -63,7 +63,7 @@ class DestinationDetailServiceTest {
         saveImage(destination, SourceType.KOREAN, 5001L, "korean-origin-2.jpg", "korean-small-2.jpg", "2");
 
         DestinationDetailResponseDto result =
-                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, false);
+                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, false, null);
 
         assertThat(result.getDestinationId()).isEqualTo(destination.getId());
         assertThat(result.getOverview()).isEqualTo("Korean overview");
@@ -86,7 +86,7 @@ class DestinationDetailServiceTest {
         savePetInfo(destination, 6002L);
 
         DestinationDetailResponseDto result =
-                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), true, false);
+                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), true, false, null);
 
         assertThat(result.getDestinationId()).isEqualTo(destination.getId());
         assertThat(result.getOverview()).isEqualTo("Pet overview");
@@ -107,7 +107,7 @@ class DestinationDetailServiceTest {
         saveAccessibilityInfo(destination, 7003L);
 
         DestinationDetailResponseDto result =
-                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, true);
+                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, true, null);
 
         assertThat(result.getDestinationId()).isEqualTo(destination.getId());
         assertThat(result.getOverview()).isEqualTo("Accessibility overview");
@@ -130,7 +130,7 @@ class DestinationDetailServiceTest {
         saveAccessibilityInfo(destination, 7004L);
 
         DestinationDetailResponseDto result =
-                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), true, true);
+                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), true, true, null);
 
         assertThat(result.getDestinationId()).isEqualTo(destination.getId());
         assertThat(result.getOverview()).isEqualTo("Pet overview");
@@ -161,12 +161,13 @@ class DestinationDetailServiceTest {
         );
 
         DestinationDetailResponseDto result =
-                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, false);
+                destinationDetailService.getDestinationDetailByDestinationId(destination.getId(), false, false, user.getUsername());
 
         assertThat(result.getRating()).isEqualTo(4.5);
         assertThat(result.getReviewCount()).isEqualTo(1L);
         assertThat(result.getReviews()).hasSize(1);
         assertThat(result.getReviews().get(0).rating()).isEqualTo(4.5);
+        assertThat(result.getReviews().get(0).isMine()).isTrue();
     }
 
     private Destination saveDestination(Theme theme, String title, Long contentId) {

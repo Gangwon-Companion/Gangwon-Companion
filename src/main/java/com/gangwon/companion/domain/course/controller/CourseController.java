@@ -9,6 +9,7 @@ import com.gangwon.companion.domain.course.service.CourseService;
 import tools.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -37,5 +38,11 @@ public class CourseController {
             @Valid @RequestBody CourseSaveRequest request
     ) {
         return courseService.save(authentication.getName(), request);
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId, Authentication authentication) {
+        courseService.delete(authentication.getName(), courseId);
+        return ResponseEntity.noContent().build();
     }
 }

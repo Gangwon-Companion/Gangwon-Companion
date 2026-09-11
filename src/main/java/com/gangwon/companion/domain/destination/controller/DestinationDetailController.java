@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,11 @@ public class DestinationDetailController {
     public ResponseEntity<DestinationDetailResponseDto> getDestinationDetail(
             @Parameter(description = "여행지 ID") @PathVariable Long destinationId,
             @Parameter(description = "반려동물 상세 정보 포함 여부") @RequestParam(defaultValue = "false") boolean pet,
-            @Parameter(description = "무장애/접근성 상세 정보 포함 여부") @RequestParam(defaultValue = "false") boolean accessibility
+            @Parameter(description = "무장애/접근성 상세 정보 포함 여부") @RequestParam(defaultValue = "false") boolean accessibility,
+            Authentication authentication
     ) {
-        DestinationDetailResponseDto destinationDetail = destinationDetailService.getDestinationDetailByDestinationId(destinationId, pet, accessibility);
+        DestinationDetailResponseDto destinationDetail = destinationDetailService.getDestinationDetailByDestinationId(
+                destinationId, pet, accessibility, authentication == null ? null : authentication.getName());
 
         return ResponseEntity.ok(destinationDetail);
     }

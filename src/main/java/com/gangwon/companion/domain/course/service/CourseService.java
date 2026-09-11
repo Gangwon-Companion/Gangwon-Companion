@@ -33,4 +33,14 @@ public class CourseService {
         }
         return CourseResponse.from(savedCourseRepository.save(course));
     }
+
+    @Transactional
+    public void delete(String username, Long courseId) {
+        SavedCourse course = savedCourseRepository.findById(courseId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+        if (!course.getUser().getUsername().equals(username)) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED);
+        }
+        savedCourseRepository.delete(course);
+    }
 }

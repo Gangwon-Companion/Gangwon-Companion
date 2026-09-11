@@ -10,4 +10,6 @@ import org.springframework.data.repository.query.Param;
 public interface CommunityPostRepository extends JpaRepository<CommunityPost, Long> {
     @Query("select distinct p from CommunityPost p left join p.hashtags h where (:keyword is null or lower(p.title) like lower(concat('%', cast(:keyword as string), '%')) or lower(p.content) like lower(concat('%', cast(:keyword as string), '%')) or lower(h) like lower(concat('%', cast(:keyword as string), '%')))")
     Page<CommunityPost> search(@Param("keyword") String keyword, Pageable pageable);
+
+    Page<CommunityPost> findAllByUserUsername(String username, Pageable pageable);
 }

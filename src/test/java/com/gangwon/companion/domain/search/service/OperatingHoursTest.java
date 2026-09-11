@@ -20,10 +20,18 @@ class OperatingHoursTest {
 
     @Test
     void parsesAlwaysOpenAndMidnightClosing() {
-        assertThat(OperatingHours.parse("상시 개방"))
+        assertThat(OperatingHours.parse("24시간 운영"))
                 .contains(new OperatingHours.Range("00:00", "24:00"));
         assertThat(OperatingHours.parse("평일 08:30~22:00, 주말 08:30~24:00"))
                 .contains(new OperatingHours.Range("08:30", "22:00"));
+    }
+
+    @Test
+    void estimatesAmbiguousAlwaysOpenPhrases() {
+        assertThat(OperatingHours.parse("상시 개방"))
+                .contains(new OperatingHours.Range("00:00", "22:00", true));
+        assertThat(OperatingHours.parse("연중무휴"))
+                .contains(new OperatingHours.Range("00:00", "22:00", true));
     }
 
     @Test

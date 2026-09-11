@@ -12,6 +12,8 @@ public interface RestaurantReviewRepository extends JpaRepository<RestaurantRevi
 
     List<RestaurantReview> findByRestaurantId(Long restaurantId);
 
+    List<RestaurantReview> findAllByUserUsername(String username);
+
     Optional<RestaurantReview> findByIdAndRestaurantId(Long id, Long restaurantId);
 
     long countByRestaurantId(Long restaurantId);
