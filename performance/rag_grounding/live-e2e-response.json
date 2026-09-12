@@ -1,0 +1,868 @@
+﻿{
+    "status":  "completed",
+    "input_complete":  true,
+    "request":  {
+                    "region":  "강릉",
+                    "travel_days":  1,
+                    "nights":  0,
+                    "pet_allowed":  false,
+                    "pet_size":  null,
+                    "wheelchair_accessible":  false,
+                    "indoor_pet":  null,
+                    "max_price":  null,
+                    "preferences":  [
+
+                                    ]
+                },
+    "slots":  [
+                  "D1_DESTINATION",
+                  "D1_LUNCH",
+                  "D1_DINNER"
+              ],
+    "selected_agents":  [
+                            "destination",
+                            "restaurant"
+                        ],
+    "execution_plan":  [
+                           {
+                               "agent":  "destination",
+                               "mode":  "parallel",
+                               "depends_on":  [
+
+                                              ]
+                           },
+                           {
+                               "agent":  "restaurant",
+                               "mode":  "parallel",
+                               "depends_on":  [
+
+                                              ]
+                           },
+                           {
+                               "agent":  "itinerary",
+                               "mode":  "sequential",
+                               "depends_on":  [
+                                                  "destination",
+                                                  "restaurant"
+                                              ]
+                           },
+                           {
+                               "agent":  "validator",
+                               "mode":  "sequential",
+                               "depends_on":  [
+                                                  "itinerary"
+                                              ]
+                           }
+                       ],
+    "preference_profile":  {
+                               "keywords":  [
+
+                                            ],
+                               "soft":  {
+
+                                        }
+                           },
+    "retry_count":  0,
+    "messages":  [
+                     "PreferenceExtractor와 ConflictChecker를 완료했습니다.",
+                     "필수 정보가 모두 있어 Supervisor Agent로 전달합니다.",
+                     "강릉 1일 여행으로 분류했습니다.",
+                     "초기 후보 검색 Agent는 병렬 실행하고, 일정 구성 후 검증합니다.",
+                     "관광지 후보 5개를 찾았습니다.",
+                     "음식점 후보 7개를 찾았습니다.",
+                     "전문 Agent 후보 수집을 완료했습니다: destination 5개, restaurant 7개",
+                     "3개 슬롯으로 일정을 구성했습니다. 최적화 점수는 -22.00점입니다.",
+                     "필수 조건 검증을 통과했습니다.",
+                     "일정 품질 평가 결과는 PASS이며 점수는 100점입니다."
+                 ],
+    "missing_fields":  [
+
+                       ],
+    "clarification_questions":  [
+
+                                ],
+    "conflicts":  [
+
+                  ],
+    "destination_candidates":  [
+                                   {
+                                       "destination_id":  11,
+                                       "title":  "강릉 굴산사지",
+                                       "addr1":  "강원특별자치도 강릉시 구정면 학산리",
+                                       "map_x":  128.89180465,
+                                       "map_y":  37.70726817,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  0.0,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:11"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  12,
+                                       "title":  "강릉 농산물도매시장",
+                                       "addr1":  "강원특별자치도 강릉시 유산로 60 (유산동)",
+                                       "map_x":  128.91826525,
+                                       "map_y":  37.73671528,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  0.0,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+
+                                                              ],
+                                       "opens_at":  "09:00",
+                                       "closes_at":  "18:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:12"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  13,
+                                       "title":  "강릉 동부시장",
+                                       "addr1":  "강원특별자치도 강릉시 옥천로 48 (옥천동)",
+                                       "map_x":  128.90072999,
+                                       "map_y":  37.7601039,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  0.0,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+
+                                                              ],
+                                       "opens_at":  "06:00",
+                                       "closes_at":  "23:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:13"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  14,
+                                       "title":  "강릉 복사꽃마을",
+                                       "addr1":  "강원특별자치도 강릉시 신리천로 527-3 복사꽃정보마을센타",
+                                       "map_x":  128.77737629,
+                                       "map_y":  37.88013482,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  0.0,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:14"
+                                                      ]
+                                   },
+                                   {
+                                       "destination_id":  15,
+                                       "title":  "강릉 오금집",
+                                       "addr1":  "강원특별자치도 강릉시 강릉대로210번길 23-9 (임당동)",
+                                       "map_x":  128.89404182,
+                                       "map_y":  37.75637087,
+                                       "theme_code":  "",
+                                       "source_types":  [
+                                                            "TOUR_API"
+                                                        ],
+                                       "score":  0.0,
+                                       "reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                       "matched_conditions":  [
+
+                                                              ],
+                                       "opens_at":  "00:00",
+                                       "closes_at":  "24:00",
+                                       "pet_allowed":  null,
+                                       "max_pet_size":  null,
+                                       "indoor_pet_allowed":  null,
+                                       "wheelchair_accessible":  null,
+                                       "source_ids":  [
+                                                          "destination:15"
+                                                      ]
+                                   }
+                               ],
+    "destination_search_request":  {
+                                       "domain":  "DESTINATION",
+                                       "slot":  "D1_DESTINATION",
+                                       "region_codes":  [
+                                                            "GANGNEUNG"
+                                                        ],
+                                       "query_text":  "",
+                                       "hard_filters":  {
+                                                            "pet_allowed":  false,
+                                                            "pet_size":  null,
+                                                            "wheelchair_accessible":  false
+                                                        },
+                                       "soft_preferences":  {
+
+                                                            },
+                                       "geo":  null,
+                                       "limit":  5
+                                   },
+    "lodging_candidates":  [
+
+                           ],
+    "search_request":  null,
+    "restaurant_candidates":  [
+                                  {
+                                      "place_id":  "RESTAURANT:1",
+                                      "name":  "마시와 본점",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.8361598554,
+                                      "longitude":  128.8442131312,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "19:00",
+                                      "address":  "강원특별자치도 강릉시 사천면 동해대로 3957",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:1"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:11",
+                                      "name":  "택지골수제생갈비",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.7706274074,
+                                      "longitude":  128.8761450435,
+                                      "opens_at":  "10:30",
+                                      "closes_at":  "22:00",
+                                      "address":  "강원특별자치도 강릉시 하슬라로232번길 1",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:11"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:17",
+                                      "name":  "임계식당",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.7535599271,
+                                      "longitude":  128.8988370688,
+                                      "opens_at":  "08:00",
+                                      "closes_at":  "21:00",
+                                      "address":  "강원특별자치도 강릉시 중앙시장길 22-2 (성남동)",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:17"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:18",
+                                      "name":  "해변횟집",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.652794247,
+                                      "longitude":  129.0494057313,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "22:00",
+                                      "address":  "강원특별자치도 강릉시 옥계면 헌화로 437-4",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:18"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:19",
+                                      "name":  "바우카페",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.868208167,
+                                      "longitude":  128.8465005218,
+                                      "opens_at":  "10:00",
+                                      "closes_at":  "21:30",
+                                      "address":  "강원특별자치도 강릉시 연곡면 해안로 1437",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:19"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:2",
+                                      "name":  "보헤미안박이추커피 본점",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.8646153249,
+                                      "longitude":  128.8424147997,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "17:00",
+                                      "address":  "강원특별자치도 강릉시 홍질목길 55-11",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:2"
+                                                     ]
+                                  },
+                                  {
+                                      "place_id":  "RESTAURANT:9",
+                                      "name":  "테라로사 커피공장",
+                                      "distance_km":  null,
+                                      "cuisine":  [
+
+                                                  ],
+                                      "score":  0.0,
+                                      "status":  "OK",
+                                      "matched_conditions":  [
+
+                                                             ],
+                                      "missing_fields":  [
+
+                                                         ],
+                                      "reason":  "검색 조건에 맞는 음식점입니다.",
+                                      "latitude":  37.6964984769,
+                                      "longitude":  128.8920265096,
+                                      "opens_at":  "09:00",
+                                      "closes_at":  "20:00",
+                                      "address":  "강원특별자치도 강릉시 구정면 현천길 7",
+                                      "pet_allowed":  null,
+                                      "max_pet_size":  null,
+                                      "indoor_pet_allowed":  null,
+                                      "wheelchair_accessible":  null,
+                                      "source_ids":  [
+                                                         "restaurant:RESTAURANT:9"
+                                                     ]
+                                  }
+                              ],
+    "restaurant_search_request":  {
+                                      "domain":  "RESTAURANT",
+                                      "slot":  "D1_LUNCH",
+                                      "region_codes":  [
+                                                           "GANGNEUNG"
+                                                       ],
+                                      "query_text":  "",
+                                      "hard_filters":  {
+                                                           "pet_allowed":  false,
+                                                           "pet_size":  null,
+                                                           "wheelchair_accessible":  false
+                                                       },
+                                      "soft_preferences":  {
+
+                                                           },
+                                      "geo":  null,
+                                      "limit":  8
+                                  },
+    "hard_validation":  {
+                            "status":  "VALID",
+                            "violations":  [
+
+                                           ],
+                            "next_actions":  [
+
+                                             ]
+                        },
+    "quality_validation":  {
+                               "status":  "PASS",
+                               "score":  100,
+                               "issues":  [
+
+                                          ],
+                               "next_actions":  [
+
+                                                ]
+                           },
+    "itinerary_status":  "READY",
+    "itinerary":  [
+                      {
+                          "slot":  "D1_DESTINATION",
+                          "day":  1,
+                          "place_id":  "D12",
+                          "name":  "강릉 농산물도매시장",
+                          "category":  "DESTINATION",
+                          "start_time":  "10:00",
+                          "end_time":  "12:00",
+                          "travel_minutes_from_previous":  0,
+                          "latitude":  37.73671528,
+                          "longitude":  128.91826525,
+                          "source_ids":  [
+                                             "destination:12"
+                                         ],
+                          "tags":  [
+                                       ""
+                                   ],
+                          "address":  "강원특별자치도 강릉시 유산로 60 (유산동)",
+                          "opens_at":  "09:00",
+                          "closes_at":  "18:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D1_LUNCH",
+                          "day":  1,
+                          "place_id":  "RESTAURANT:17",
+                          "name":  "임계식당",
+                          "category":  "RESTAURANT",
+                          "start_time":  "12:30",
+                          "end_time":  "13:30",
+                          "travel_minutes_from_previous":  5,
+                          "latitude":  37.7535599271,
+                          "longitude":  128.8988370688,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:17"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 강릉시 중앙시장길 22-2 (성남동)",
+                          "opens_at":  "08:00",
+                          "closes_at":  "21:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      },
+                      {
+                          "slot":  "D1_DINNER",
+                          "day":  1,
+                          "place_id":  "RESTAURANT:11",
+                          "name":  "택지골수제생갈비",
+                          "category":  "RESTAURANT",
+                          "start_time":  "18:00",
+                          "end_time":  "19:30",
+                          "travel_minutes_from_previous":  6,
+                          "latitude":  37.7706274074,
+                          "longitude":  128.8761450435,
+                          "source_ids":  [
+                                             "restaurant:RESTAURANT:11"
+                                         ],
+                          "tags":  [
+
+                                   ],
+                          "address":  "강원특별자치도 강릉시 하슬라로232번길 1",
+                          "opens_at":  "10:30",
+                          "closes_at":  "22:00",
+                          "pet_allowed":  null,
+                          "max_pet_size":  null,
+                          "indoor_pet_allowed":  null,
+                          "wheelchair_accessible":  null,
+                          "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                          "matched_conditions":  [
+
+                                                 ]
+                      }
+                  ],
+    "itinerary_score":  -22.0,
+    "itinerary_alternatives":  [
+                                   [
+                                       {
+                                           "slot":  "D1_DESTINATION",
+                                           "day":  1,
+                                           "place_id":  "D13",
+                                           "name":  "강릉 동부시장",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  0,
+                                           "latitude":  37.7601039,
+                                           "longitude":  128.90072999,
+                                           "source_ids":  [
+                                                              "destination:13"
+                                                          ],
+                                           "tags":  [
+                                                        ""
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 옥천로 48 (옥천동)",
+                                           "opens_at":  "06:00",
+                                           "closes_at":  "23:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_LUNCH",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:11",
+                                           "name":  "택지골수제생갈비",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  5,
+                                           "latitude":  37.7706274074,
+                                           "longitude":  128.8761450435,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:11"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 하슬라로232번길 1",
+                                           "opens_at":  "10:30",
+                                           "closes_at":  "22:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_DINNER",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:17",
+                                           "name":  "임계식당",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  6,
+                                           "latitude":  37.7535599271,
+                                           "longitude":  128.8988370688,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:17"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 중앙시장길 22-2 (성남동)",
+                                           "opens_at":  "08:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       }
+                                   ],
+                                   [
+                                       {
+                                           "slot":  "D1_DESTINATION",
+                                           "day":  1,
+                                           "place_id":  "D13",
+                                           "name":  "강릉 동부시장",
+                                           "category":  "DESTINATION",
+                                           "start_time":  "10:00",
+                                           "end_time":  "12:00",
+                                           "travel_minutes_from_previous":  0,
+                                           "latitude":  37.7601039,
+                                           "longitude":  128.90072999,
+                                           "source_ids":  [
+                                                              "destination:13"
+                                                          ],
+                                           "tags":  [
+                                                        ""
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 옥천로 48 (옥천동)",
+                                           "opens_at":  "06:00",
+                                           "closes_at":  "23:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_LUNCH",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:17",
+                                           "name":  "임계식당",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "12:30",
+                                           "end_time":  "13:30",
+                                           "travel_minutes_from_previous":  5,
+                                           "latitude":  37.7535599271,
+                                           "longitude":  128.8988370688,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:17"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 중앙시장길 22-2 (성남동)",
+                                           "opens_at":  "08:00",
+                                           "closes_at":  "21:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       },
+                                       {
+                                           "slot":  "D1_DINNER",
+                                           "day":  1,
+                                           "place_id":  "RESTAURANT:11",
+                                           "name":  "택지골수제생갈비",
+                                           "category":  "RESTAURANT",
+                                           "start_time":  "18:00",
+                                           "end_time":  "19:30",
+                                           "travel_minutes_from_previous":  6,
+                                           "latitude":  37.7706274074,
+                                           "longitude":  128.8761450435,
+                                           "source_ids":  [
+                                                              "restaurant:RESTAURANT:11"
+                                                          ],
+                                           "tags":  [
+
+                                                    ],
+                                           "address":  "강원특별자치도 강릉시 하슬라로232번길 1",
+                                           "opens_at":  "10:30",
+                                           "closes_at":  "22:00",
+                                           "pet_allowed":  null,
+                                           "max_pet_size":  null,
+                                           "indoor_pet_allowed":  null,
+                                           "wheelchair_accessible":  null,
+                                           "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                           "matched_conditions":  [
+
+                                                                  ]
+                                       }
+                                   ]
+                               ],
+    "missing_slots":  [
+
+                      ],
+    "retry_actions":  [
+
+                      ],
+    "final_response":  {
+                           "response_status":  "READY",
+                           "title":  "강릉 1일 여행 일정",
+                           "summary":  "검증을 통과한 3개 방문 일정입니다.",
+                           "answer":  "강릉 1일 여행 일정은 강릉 농산물도매시장(09:00-18:00, 강릉시 유산로 60), 임계식당(08:00-21:00, 강릉시 중앙시장길 22-2), 택지골수제생갈비(10:30-22:00, 강릉시 하슬라로232번길 1) 순서로 방문할 수 있습니다. 각 장소의 휠체어 접근성, 반려동물 동반 가능 여부 등은 확인되지 않았으니 방문 전 반드시 직접 문의하시기 바랍니다.",
+                           "days":  [
+                                        {
+                                            "day":  1,
+                                            "date":  null,
+                                            "summary":  "DESTINATION, RESTAURANT 중심의 1일차 코스",
+                                            "visits":  [
+                                                           {
+                                                               "slot":  "D1_DESTINATION",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "D12",
+                                                               "name":  "강릉 농산물도매시장",
+                                                               "category":  "DESTINATION",
+                                                               "address":  "강원특별자치도 강릉시 유산로 60 (유산동)",
+                                                               "recommendation_reason":  "검색어와 선호조건을 기준으로 선정한 관광지 후보입니다.",
+                                                               "operating_hours":  "09:00-18:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  0,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "destination:12"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D1_LUNCH",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:17",
+                                                               "name":  "임계식당",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 강릉시 중앙시장길 22-2 (성남동)",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "08:00-21:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  5,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:17"
+                                                                              ]
+                                                           },
+                                                           {
+                                                               "slot":  "D1_DINNER",
+                                                               "time":  "시간 미확인-시간 미확인",
+                                                               "place_id":  "RESTAURANT:11",
+                                                               "name":  "택지골수제생갈비",
+                                                               "category":  "RESTAURANT",
+                                                               "address":  "강원특별자치도 강릉시 하슬라로232번길 1",
+                                                               "recommendation_reason":  "검색 조건에 맞는 음식점입니다.",
+                                                               "operating_hours":  "10:30-22:00",
+                                                               "accessibility":  {
+                                                                                     "wheelchair_accessible":  null,
+                                                                                     "pet_allowed":  null,
+                                                                                     "indoor_pet_allowed":  null,
+                                                                                     "max_pet_size":  null
+                                                                                 },
+                                                               "travel_minutes_from_previous":  6,
+                                                               "unverified_fields":  [
+                                                                                         "wheelchair_accessible",
+                                                                                         "pet_allowed",
+                                                                                         "indoor_pet_allowed",
+                                                                                         "max_pet_size"
+                                                                                     ],
+                                                               "source_ids":  [
+                                                                                  "restaurant:RESTAURANT:11"
+                                                                              ]
+                                                           }
+                                                       ]
+                                        }
+                                    ],
+                           "notices":  [
+                                           "강릉 농산물도매시장: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉 농산물도매시장: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉 농산물도매시장: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "강릉 농산물도매시장: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "임계식당: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "임계식당: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "임계식당: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "임계식당: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "택지골수제생갈비: wheelchair_accessible 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "택지골수제생갈비: pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "택지골수제생갈비: indoor_pet_allowed 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요.",
+                                           "택지골수제생갈비: max_pet_size 정보는 확인되지 않았습니다. 방문 전에 확인해 주세요."
+                                       ],
+                           "quality_score":  100,
+                           "source_ids":  [
+                                              "destination:12",
+                                              "restaurant:RESTAURANT:17",
+                                              "restaurant:RESTAURANT:11"
+                                          ]
+                       }
+}

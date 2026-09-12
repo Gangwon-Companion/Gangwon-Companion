@@ -15,11 +15,24 @@ spring:
 
 search:
   engine: ${SEARCH_ENGINE:rdb}
+  embedding:
+    enabled: ${SEARCH_EMBEDDING_ENABLED:false}
+    url: ${SEARCH_EMBEDDING_URL:http://localhost:8091}
+    model: ${SEARCH_EMBEDDING_MODEL:intfloat/multilingual-e5-small}
+    revision: ${SEARCH_EMBEDDING_REVISION:614241f622f53c4eeff9890bdc4f31cfecc418b3}
+    dimensions: ${SEARCH_EMBEDDING_DIMENSIONS:384}
+    timeout: ${SEARCH_EMBEDDING_TIMEOUT:2s}
+    rank-window: ${SEARCH_EMBEDDING_RANK_WINDOW:50}
+    rank-constant: ${SEARCH_EMBEDDING_RANK_CONSTANT:60}
   indexer:
     enabled: ${SEARCH_INDEXER_ENABLED:false}
     group-id: ${SEARCH_INDEXER_GROUP_ID:gangwon-search-indexer}
     topics: ${SEARCH_INDEXER_TOPICS:gangwon.public.destinations,gangwon.public.destination_details,gangwon.public.pet_infos,gangwon.public.accessibility_infos,gangwon.public.restaurants,gangwon.public.lodgings}
     retry-attempts: ${SEARCH_INDEXER_RETRY_ATTEMPTS:3}
+  recommendation:
+    jobs:
+      retention: ${COURSE_RECOMMENDATION_JOB_RETENTION:24h}
+      cleanup-interval: ${COURSE_RECOMMENDATION_JOB_CLEANUP_INTERVAL:3600000}
   elasticsearch:
     url: ${ELASTICSEARCH_URL:http://localhost:9200}
     api-key: ${ELASTICSEARCH_API_KEY:}

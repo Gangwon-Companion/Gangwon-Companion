@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><title>RAG Grounding Evaluation</title>
+<style>body{font-family:system-ui,sans-serif;margin:40px;color:#202124}table{border-collapse:collapse}th,td{border:1px solid #bbb;padding:8px 12px}th{background:#eef3f8}.ok{color:green}.warn{color:#a15c00}</style>
+<h1>RAG Grounding Evaluation</h1>
+<p>허용된 grounding snapshot과 생성 리포트의 수치·문서 ID를 비교한 오프라인 평가 결과입니다.</p>
+<table><thead><tr><th>구성</th><th>수치 주장</th><th>허용되지 않은 수치</th><th>수치 위반률</th>
+<th>문서 ID 주장</th><th>허용되지 않은 문서 ID</th><th>문서 ID 위반률</th><th>처리</th></tr></thead>
+<tbody><tr><td>Baseline</td><td>1</td><td>1</td><td>100.0%</td><td>1</td><td>1</td><td>100.0%</td><td>경고</td></tr><tr><td>Guarded</td><td>1</td><td>0</td><td>0.0%</td><td>1</td><td>0</td><td>0.0%</td><td>통과</td></tr></tbody></table>
+<h2>해석</h2><ul><li>Baseline: 4.9와 RESTAURANT:999가 whitelist에 없어 경고가 발생합니다.</li>
+<li>Guarded: grounding snapshot에 존재하는 4.5와 RESTAURANT:101만 포함해 위반률이 0%입니다.</li></ul>
+</html>

@@ -94,7 +94,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
                                                                      HttpServletRequest request) {
+        IllegalArgumentException validationCause = findIllegalArgumentCause(e);
+        if (validationCause != null) {
+            return buildResponse(ErrorCode.INVALID_REQUEST, validationCause.getMessage(), request);
+        }
         return buildResponse(ErrorCode.MALFORMED_JSON, request);
+    }
+
+    private IllegalArgumentException findIllegalArgumentCause(Throwable throwable) {
+        for (Throwable cause = throwable; cause != null; cause = cause.getCause()) {
+            if (cause instanceof IllegalArgumentException illegalArgumentException) {
+                return illegalArgumentException;
+            }
+        }
+        return null;
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

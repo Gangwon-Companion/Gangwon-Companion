@@ -7,6 +7,7 @@ import com.gangwon.companion.domain.destination.service.DestinationSyncService;
 import com.gangwon.companion.domain.lodging.service.LodgingSyncService;
 import com.gangwon.companion.domain.restaurant.service.RestaurantSyncService;
 import com.gangwon.companion.domain.touristcongestion.service.TouristCongestionRateSyncService;
+import com.gangwon.companion.domain.search.elasticsearch.ElasticsearchIndexService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,9 @@ class DataSyncSchedulerTest {
     @Mock
     TouristCongestionRateSyncService touristCongestionRateSyncService;
 
+    @Mock
+    ElasticsearchIndexService elasticsearchIndexService;
+
     DataSyncScheduler dataSyncScheduler;
 
     @BeforeEach
@@ -49,7 +53,8 @@ class DataSyncSchedulerTest {
                 destinationDetailSyncService,
                 restaurantSyncService,
                 lodgingSyncService,
-                touristCongestionRateSyncService
+                touristCongestionRateSyncService,
+                elasticsearchIndexService
         );
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationSyncEnabled", true);
         ReflectionTestUtils.setField(dataSyncScheduler, "destinationDetailSyncEnabled", true);

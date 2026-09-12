@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG Grounding 실제 데이터 E2E 검증</title>
+  <style>
+    :root { --navy:#12304a; --blue:#1976d2; --green:#16845b; --bg:#f4f7fa; --line:#d9e2ec; --muted:#627d98; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--navy); background:var(--bg); font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR",sans-serif; line-height:1.65; }
+    main { max-width:1080px; margin:0 auto; padding:42px 22px 64px; }
+    header { padding:30px 32px; color:white; background:linear-gradient(135deg,#12304a,#1976d2); border-radius:18px; box-shadow:0 8px 24px #12304a22; }
+    h1 { margin:0 0 8px; font-size:clamp(25px,4vw,38px); }
+    h2 { margin:34px 0 14px; font-size:22px; }
+    h3 { margin:22px 0 8px; font-size:17px; }
+    .subtitle { margin:0; opacity:.9; }
+    .meta { margin-top:18px; font-size:14px; opacity:.85; }
+    .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:22px 0; }
+    .card, section { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 3px 12px #12304a0a; }
+    .card { padding:18px; }
+    .card .label { color:var(--muted); font-size:13px; }
+    .card .value { margin-top:4px; font-size:25px; font-weight:750; }
+    section { padding:22px 24px; margin-top:20px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th,td { padding:11px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
+    th { color:#486581; background:#f7fafc; font-weight:650; }
+    tr:last-child td { border-bottom:0; }
+    .ok { color:var(--green); font-weight:700; }
+    .warn { color:#a15c00; font-weight:700; }
+    code { padding:2px 6px; border-radius:5px; background:#edf2f7; color:#243b53; }
+    pre { padding:15px; overflow:auto; color:#e6edf3; background:#172b4d; border-radius:9px; }
+    .note { padding:14px 16px; border-left:4px solid #f0b429; background:#fff8e6; color:#6b4f00; }
+    ul { margin-top:8px; }
+    @media (max-width:760px) { .grid { grid-template-columns:repeat(2,1fr); } th,td { padding:9px 7px; font-size:13px; } }
+    @media (max-width:450px) { .grid { grid-template-columns:1fr 1fr; } main { padding:22px 12px 45px; } section { padding:17px 14px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>RAG Grounding 실제 데이터 E2E 검증</h1>
+    <p class="subtitle">PostgreSQL · Elasticsearch · Spring 검색 스택 및 저장된 AI 여행 코스 응답 검증</p>
+    <div class="meta">검증일: 2026-09-08 · 대상 데이터: 강릉 실제 장소 데이터</div>
+  </header>
+
+  <div class="grid">
+    <div class="card"><div class="label">Docker 서비스</div><div class="value ok">5 / 5 Healthy</div></div>
+    <div class="card"><div class="label">실제 검색 결과</div><div class="value">15건</div></div>
+    <div class="card"><div class="label">Grounding Snapshot</div><div class="value">15건</div></div>
+    <div class="card"><div class="label">AI 품질 점수</div><div class="value">100점</div></div>
+  </div>
+
+  <section>
+    <h2>1. 실행 환경</h2>
+    <table>
+      <thead><tr><th>서비스</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>PostgreSQL</td><td class="ok">healthy</td></tr>
+        <tr><td>Kafka</td><td class="ok">healthy</td></tr>
+        <tr><td>Kafka Connect</td><td class="ok">healthy</td></tr>
+        <tr><td>Elasticsearch</td><td class="ok">healthy</td></tr>
+        <tr><td>Spring Boot</td><td class="ok">healthy · status=UP</td></tr>
+      </tbody>
+    </table>
+    <pre><code>docker compose up -d --build</code></pre>
+  </section>
+
+  <section>
+    <h2>2. 실제 검색 E2E 결과</h2>
+    <p>모든 요청은 <code>X-Grounding-Trace: true</code>로 호출해 검색 결과와 <code>trace.snapshots</code>를 함께 검증했다.</p>
+    <table>
+      <thead><tr><th>시나리오</th><th>결과</th><th>Snapshot</th><th>상태</th><th>판정</th></tr></thead>
+      <tbody>
+        <tr><td>강릉 관광지 기본 검색</td><td>5개</td><td>5개</td><td>모두 <code>OK</code></td><td class="ok">PASS</td></tr>
+        <tr><td>음식점 + 반려동물·휠체어 조건</td><td>5개</td><td>5개</td><td>모두 <code>INSUFFICIENT_EVIDENCE</code></td><td class="ok">PASS</td></tr>
+        <tr><td>숙소 + 반려동물 조건</td><td>5개</td><td>5개</td><td>모두 <code>INSUFFICIENT_EVIDENCE</code></td><td class="ok">PASS</td></tr>
+      </tbody>
+    </table>
+    <h3>확인한 Grounding 계약</h3>
+    <ul>
+      <li>검색 결과 장소 ID와 snapshot의 <code>place_id</code>가 1:1로 일치했다.</li>
+      <li>각 snapshot에 <code>source</code>, <code>content_version</code>, <code>facts</code>, <code>evidence</code>, <code>missing_fields</code>가 포함됐다.</li>
+      <li>근거가 없는 정책값은 추정하지 않고 <code>missing_fields</code>와 <code>INSUFFICIENT_EVIDENCE</code>로 처리했다.</li>
+      <li>영업시간 근거는 <code>opens_at</code>, <code>closes_at</code> evidence로 확인됐다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>3. 저장된 실제 AI E2E 응답</h2>
+    <p><code>performance/rag_grounding/live-e2e-response.json</code>을 실제 데이터 기반 결과 원장으로 검증했다.</p>
+    <table>
+      <thead><tr><th>항목</th><th>결과</th></tr></thead>
+      <tbody>
+        <tr><td>최종 상태</td><td class="ok">READY</td></tr>
+        <tr><td>일정 슬롯</td><td>3개</td></tr>
+        <tr><td>관광지·음식점 후보</td><td>5개 · 7개</td></tr>
+        <tr><td>누락 슬롯 / 재시도</td><td>0개 / 0회</td></tr>
+        <tr><td>품질 점수</td><td>100점</td></tr>
+        <tr><td>최종 source ID</td><td>3개 모두 후보 데이터와 연결</td></tr>
+        <tr><td>근거 부족 안내문</td><td>12건</td></tr>
+      </tbody>
+    </table>
+    <p>반려동물·휠체어·실내 동반 여부 등 확인되지 않은 값은 최종 응답에서 확인 필요 안내로 표시됐다.</p>
+  </section>
+
+  <section>
+    <h2>4. 자동 테스트</h2>
+    <pre><code>$env:PYTHONPATH = "performance/rag_grounding"
+python -m unittest discover -s performance/rag_grounding -p "test_*.py" -v</code></pre>
+    <p class="ok">6개 테스트 통과</p>
+    <ul>
+      <li>60개 grounding adversarial 케이스 검증</li>
+      <li>숫자·문서 ID·출처 누락·정책 반전·문서 간 혼합 탐지</li>
+      <li>Guarded configuration의 계약 위반율 0%</li>
+    </ul>
+    <div class="note">60개 케이스 평가는 합성 데이터 기반 계약 검증이며 실제 운영 LLM의 환각률을 의미하지 않는다.</div>
+  </section>
+
+  <section>
+    <h2>5. 범위와 제한</h2>
+    <p>현재 Compose 구성에는 FastAPI AI 서비스가 포함되어 있지 않아 새 컨테이너에서 <code>POST /internal/travel/plan</code>을 재실행하지는 못했다.</p>
+    <table>
+      <thead><tr><th>검증 범위</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>새로 실행한 Spring → Elasticsearch 실제 검색 E2E</td><td class="ok">완료</td></tr>
+        <tr><td>저장된 실제 AI 여행 코스 응답의 READY·source·근거 부족 검증</td><td class="ok">완료</td></tr>
+        <tr><td>새로 실행한 Spring → FastAPI 전체 E2E</td><td class="warn">AI 컨테이너 별도 기동 필요</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>
