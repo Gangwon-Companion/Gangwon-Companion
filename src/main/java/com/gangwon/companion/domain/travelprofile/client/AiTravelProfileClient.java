@@ -4,6 +4,7 @@ import com.gangwon.companion.domain.course.client.AiTravelClientException;
 import com.gangwon.companion.domain.travelprofile.dto.AiTravelProfileRequest;
 import com.gangwon.companion.domain.travelprofile.dto.AiTravelProfileResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import static com.gangwon.companion.global.exception.ErrorCode.*;
 @Component
 public class AiTravelProfileClient {
     private final RestClient client;
+    @Autowired
     public AiTravelProfileClient(@Value("${ai.base-url}") String baseUrl,
         @Value("${ai.connect-timeout:2s}") String connectTimeout,
         @Value("${ai.read-timeout:30s}") String readTimeout,

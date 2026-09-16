@@ -5,6 +5,8 @@ import com.gangwon.companion.domain.course.client.AiTravelClient;
 import com.gangwon.companion.domain.course.dto.CourseRecommendationJobResponse;
 import com.gangwon.companion.domain.course.dto.CourseRecommendationJobSubmittedResponse;
 import com.gangwon.companion.domain.course.dto.CourseRecommendationRequest;
+import com.gangwon.companion.domain.course.dto.AiCourseRecommendationRequest;
+import com.gangwon.companion.domain.travelprofile.service.TravelProfileService;
 import com.gangwon.companion.domain.course.entity.CourseRecommendationJob;
 import com.gangwon.companion.domain.course.repository.CourseRecommendationJobRepository;
 import com.gangwon.companion.global.exception.BusinessException;
@@ -29,6 +31,7 @@ public class CourseRecommendationJobService {
     private final CourseRecommendationJobRepository repository;
     private final AiTravelClient aiTravelClient;
     private final ObjectMapper objectMapper;
+    private final TravelProfileService travelProfileService;
     @Qualifier("courseRecommendationExecutor")
     private final Executor executor;
     @Value("${course.recommendation.jobs.retention:24h}")
@@ -38,18 +41,20 @@ public class CourseRecommendationJobService {
             CourseRecommendationJobRepository repository,
             AiTravelClient aiTravelClient,
             ObjectMapper objectMapper,
+            TravelProfileService travelProfileService,
             @Qualifier("courseRecommendationExecutor") Executor executor
     ) {
         this.repository = repository;
         this.aiTravelClient = aiTravelClient;
         this.objectMapper = objectMapper;
+        this.travelProfileService = travelProfileService;
         this.executor = executor;
     }
 
     public CourseRecommendationJobSubmittedResponse submit(CourseRecommendationRequest request, String username) {
         CourseRecommendationJob job = repository.save(CourseRecommendationJob.pending(username));
         try {
-            executor.execute(() -> process(job.getId(), request));
+            executor.execute(() -> process(job.getId(), request, username));
         } catch (RuntimeException exception) {
             job.fail(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
             repository.save(job);
@@ -69,13 +74,14 @@ public class CourseRecommendationJobService {
         );
     }
 
-    private void process(UUID jobId, CourseRecommendationRequest request) {
+    private void process(UUID jobId, CourseRecommendationRequest request, String username) {
         CourseRecommendationJob job = repository.findById(jobId).orElse(null);
         if (job == null) return;
         job.markRunning();
         repository.save(job);
         try {
-            JsonNode result = aiTravelClient.recommend(request);
+            var profile = travelProfileService.findUsableContext(username).orElse(null);
+            JsonNode result = aiTravelClient.recommend(AiCourseRecommendationRequest.from(request, profile));
             job.complete(result.toString());
         } catch (AiTravelClientException exception) {
             job.fail(exception.getErrorCode().getCode(), exception.getErrorCode().getMessage());

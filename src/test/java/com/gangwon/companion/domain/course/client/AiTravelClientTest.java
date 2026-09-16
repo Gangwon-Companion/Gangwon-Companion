@@ -1,6 +1,7 @@
 package com.gangwon.companion.domain.course.client;
 
 import com.gangwon.companion.domain.course.dto.CourseRecommendationRequest;
+import com.gangwon.companion.domain.course.dto.AiCourseRecommendationRequest;
 import com.gangwon.companion.global.exception.ErrorCode;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +32,28 @@ class AiTravelClientTest {
         AiTravelClient client = clientResponding(200, "{\"status\":\"completed\"}", Duration.ofSeconds(1));
 
         assertThat(client.recommend(request()).get("status").asText()).isEqualTo("completed");
+    }
+
+    @Test
+    void sendsInternalKeyAndServerOwnedProfileContext() throws Exception {
+        AtomicReference<String> key = new AtomicReference<>();
+        AtomicReference<String> body = new AtomicReference<>();
+        server = HttpServer.create(new InetSocketAddress(0), 0);
+        server.createContext("/internal/travel/plan", exchange -> {
+            key.set(exchange.getRequestHeaders().getFirst("X-Internal-API-Key"));
+            body.set(new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8));
+            send(exchange, 200, "{\"status\":\"completed\"}");
+        });
+        server.start();
+        AiTravelClient client = new AiTravelClient(baseUrl(), Duration.ofSeconds(1), Duration.ofSeconds(1), "shared-key");
+        var profile = new com.gangwon.companion.domain.travelprofile.dto.TravelProfileContext(
+                "NATURE_HEALING", List.of("자연", "산책"), 0.82, "travel-profile-llm-v1"
+        );
+
+        client.recommend(AiCourseRecommendationRequest.from(publicRequest(), profile));
+
+        assertThat(key.get()).isEqualTo("shared-key");
+        assertThat(body.get()).contains("\"travel_profile\"").contains("\"traveler_type\":\"NATURE_HEALING\"");
     }
 
     @Test
@@ -100,7 +124,11 @@ class AiTravelClientTest {
         exchange.close();
     }
 
-    private static CourseRecommendationRequest request() {
+    private static AiCourseRecommendationRequest request() {
+        return AiCourseRecommendationRequest.from(publicRequest(), null);
+    }
+
+    private static CourseRecommendationRequest publicRequest() {
         return new CourseRecommendationRequest(
                 "강릉에서 하루 여행", "강릉", 1, 0, false,
                 null, false, false, null, List.of()

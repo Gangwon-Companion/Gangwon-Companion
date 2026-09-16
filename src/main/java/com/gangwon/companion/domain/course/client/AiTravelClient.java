@@ -1,7 +1,7 @@
 package com.gangwon.companion.domain.course.client;
 
 import tools.jackson.databind.JsonNode;
-import com.gangwon.companion.domain.course.dto.CourseRecommendationRequest;
+import com.gangwon.companion.domain.course.dto.AiCourseRecommendationRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.convert.DurationStyle;
@@ -29,22 +29,30 @@ public class AiTravelClient {
     public AiTravelClient(
             @Value("${ai.base-url}") String baseUrl,
             @Value("${ai.connect-timeout:2s}") String connectTimeout,
-            @Value("${ai.read-timeout:30s}") String readTimeout
+            @Value("${ai.read-timeout:30s}") String readTimeout,
+            @Value("${ai.internal-api-key:}") String internalApiKey
     ) {
-        this(baseUrl, DurationStyle.detectAndParse(connectTimeout), DurationStyle.detectAndParse(readTimeout));
+        this(baseUrl, DurationStyle.detectAndParse(connectTimeout), DurationStyle.detectAndParse(readTimeout), internalApiKey);
     }
 
     AiTravelClient(String baseUrl, Duration connectTimeout, Duration readTimeout) {
+        this(baseUrl, connectTimeout, readTimeout, "");
+    }
+
+    AiTravelClient(String baseUrl, Duration connectTimeout, Duration readTimeout, String internalApiKey) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(connectTimeout);
         requestFactory.setReadTimeout(readTimeout);
-        this.client = RestClient.builder()
+        RestClient.Builder builder = RestClient.builder()
                 .baseUrl(baseUrl)
-                .requestFactory(requestFactory)
-                .build();
+                .requestFactory(requestFactory);
+        if (internalApiKey != null && !internalApiKey.isBlank()) {
+            builder.defaultHeader("X-Internal-API-Key", internalApiKey);
+        }
+        this.client = builder.build();
     }
 
-    public JsonNode recommend(CourseRecommendationRequest request) {
+    public JsonNode recommend(AiCourseRecommendationRequest request) {
         try {
             JsonNode response = client.post()
                     .uri("/internal/travel/plan")

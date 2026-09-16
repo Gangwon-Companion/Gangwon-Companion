@@ -1,5 +1,17 @@
 # AI 여행 취향 프로필 — BE 구현 명세
 
+## 현재 구현 상태
+
+**BE MVP와 여행 추천 개인화 연결 구현 완료**
+
+- 활동 수집, AI 호출, 사용자별 결과 upsert 구현
+- 분석 Job 생성·Polling·중복 실행 방지·완료 Job 정리 구현
+- 최근 7일 이내이며 현재 분석 버전과 일치하는 `COMPLETED` 프로필만 추천에 사용
+- FE 공개 요청과 BE→AI 내부 추천 DTO를 분리해 클라이언트의 프로필 위조 방지
+- 동기·비동기 코스추천 모두 저장 프로필을 선택적 `travel_profile`로 전달
+- 프로필 분석과 코스추천 AI Client 모두 `X-Internal-API-Key` 전송
+- 메인·테스트 소스 컴파일 완료. 실행 환경을 사용한 최종 E2E는 남아 있음
+
 ## 목표
 
 사용자의 검색·방문·저장 코스·리뷰 데이터를 수집해 AI 서버에 분석을 요청하고, 검증된 여행 취향 프로필을 저장하여 FE에 제공한다.
@@ -285,7 +297,7 @@ AI 서버에도 동일한 로컬 키를 설정해야 한다. 키가 비어 있�
     "최근 방문한 장소 중 자연 관광지의 비중이 높아요."
   ],
   "confidence": 0.86,
-  "analysis_version": "travel-profile-v1"
+  "analysis_version": "travel-profile-llm-v1"
 }
 ```
 
@@ -300,7 +312,7 @@ AI 서버에도 동일한 로컬 키를 설정해야 한다. 키가 비어 있�
   "tags": [],
   "evidences": [],
   "confidence": null,
-  "analysis_version": "travel-profile-v1"
+  "analysis_version": "travel-profile-llm-v1"
 }
 ```
 
@@ -342,19 +354,23 @@ Job 상태는 프로필 상태와 별도로 다음 값을 사용한다.
 
 ## 구현 체크리스트
 
-- [ ] `TravelProfile` 엔티티와 Repository 구현
-- [ ] 사용자별 최신 결과 조회 구현
-- [ ] 검색·방문·코스·리뷰 데이터 Collector 구현
-- [ ] AI 요청·응답 DTO 구현
-- [ ] `AiTravelProfileClient` 구현
-- [ ] AI 응답 검증 및 결과 upsert 구현
-- [ ] `TravelProfileAnalysisJob`과 Repository 구현
-- [ ] 전용 Executor와 Job Service 구현
-- [ ] 프로필 GET, Job POST/GET 공개 API 구현
-- [ ] 동시 요청 및 짧은 간격 재요청 정책 구현
-- [ ] 완료·실패 Job 정리 스케줄러 구현
-- [ ] OpenAPI 문서화
-- [ ] 단위·통합 테스트 작성
+- [x] `TravelProfile` 엔티티와 Repository 구현
+- [x] 사용자별 최신 결과 조회 구현
+- [x] 검색·방문·코스·리뷰 데이터 Collector 구현
+- [x] AI 요청·응답 DTO 구현
+- [x] `AiTravelProfileClient` 구현
+- [x] AI 응답 검증 및 결과 upsert 구현
+- [x] `TravelProfileAnalysisJob`과 Repository 구현
+- [x] 전용 Executor와 Job Service 구현
+- [x] 프로필 GET, Job POST/GET 공개 API 구현
+- [x] 동일 인스턴스 내 활성 분석 Job 중복 요청 방지
+- [x] 완료·실패 Job 정리 스케줄러 구현
+- [x] Springdoc 기반 API 노출
+- [x] Client·Controller·프로필 유효성 단위 테스트 작성
+- [x] 유효 프로필의 코스추천 내부 요청 주입
+- [x] 코스추천 내부 API 인증 헤더 적용
+- [ ] 다중 인스턴스 중복 실행 방지용 DB 제약 또는 분산 락
+- [ ] 실제 DB·AI·인증 설정을 사용한 통합 테스트
 
 ## 테스트 조건
 

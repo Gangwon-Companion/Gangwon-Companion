@@ -1,5 +1,16 @@
 # AI 여행 취향 프로필 — AI 구현 명세
 
+## 현재 구현 상태
+
+**LLM-first 분석 및 여행 추천 soft preference 연동 구현 완료** (`travel-profile-llm-v1`)
+
+- LLM이 허용된 여행자 유형, 제목, 설명, 태그, 근거와 신뢰도를 직접 분석
+- 코드는 최소 데이터, Enum, 길이, 입력에 존재하는 근거와 신뢰도 상한을 검증
+- LLM 비활성화·호출 실패·검증 실패 시 결정론적 분류 결과로 fallback
+- 저장 프로필 태그는 기존 추천의 `soft` 점수에만 낮은 가중치로 반영
+- 사용자의 현재 요청 및 `preferences`를 프로필보다 우선 처리
+- 프로필 분석과 여행 계획 내부 API에 동일한 내부 키 검증 적용
+
 ## 목표
 
 BE가 전달한 비식별 사용자 활동 데이터를 분석하여 구조화된 여행 취향 프로필을 반환한다.
@@ -123,7 +134,7 @@ Content-Type: application/json
     "저장한 코스에 산책하기 좋은 장소가 자주 포함됐어요."
   ],
   "confidence": 0.86,
-  "analysis_version": "travel-profile-v1"
+  "analysis_version": "travel-profile-llm-v1"
 }
 ```
 
@@ -138,7 +149,7 @@ Content-Type: application/json
   "tags": [],
   "evidences": [],
   "confidence": null,
-  "analysis_version": "travel-profile-v1"
+  "analysis_version": "travel-profile-llm-v1"
 }
 ```
 
@@ -187,7 +198,7 @@ Content-Type: application/json
 - 부정적이거나 평가적인 표현을 피한다.
 - 취향을 영구적 특성처럼 단정하지 않고 최근 활동 기반으로 설명한다.
 
-LLM을 사용하더라도 유형과 점수 산출은 가능한 한 규칙 또는 구조화된 계산으로 먼저 결정하고, LLM은 제목·설명·근거의 자연어 표현에 사용하는 방식을 권장한다.
+정상 경로에서는 LLM이 활동 전체를 종합해 유형과 사용자용 프로필을 직접 분석한다. 결정론적 계산은 최소 데이터 판정, 신뢰도 상한, 출력 검증과 장애 fallback에 사용한다. 따라서 LLM이 분석의 주체이지만 입력에 없는 근거와 민감 특성 추론은 허용하지 않는다.
 
 ## 기존 여행 추천 AI와의 연동
 
@@ -229,17 +240,21 @@ MVP 권장 기준은 유효 활동 신호 합계가 3건 미만이면 `INSUFFICI
 
 ## 구현 체크리스트
 
-- [ ] 요청·응답 스키마 모델 구현
-- [ ] 기존 `travel_plan`과 분리된 `travel_profile` 모듈 구성
-- [ ] 내부 인증 검증 구현
-- [ ] 데이터 정규화 및 중복 제거 구현
-- [ ] 데이터 부족 판정 구현
-- [ ] 신호별 가중치와 최근성 점수 구현
-- [ ] 여행자 유형 분류 구현
-- [ ] 제목·설명·태그·근거 생성 구현
-- [ ] 출력 후처리와 길이 제한 구현
-- [ ] `analysis_version` 관리 구현
-- [ ] API 및 계약 테스트 작성
+- [x] 요청·응답 스키마 모델 구현
+- [x] 기존 `travel_plan`과 분리된 `travel_profile` 모듈 구성
+- [x] 내부 인증 검증 구현
+- [x] 데이터 정규화 및 중복 제거 구현
+- [x] 데이터 부족 판정 구현
+- [x] LLM-first 여행자 유형 분류 구현
+- [x] 제목·설명·태그·근거 생성 구현
+- [x] 출력 후처리와 길이 제한 구현
+- [x] 결정론적 신뢰도 상한 및 fallback 구현
+- [x] `analysis_version` 관리 구현
+- [x] 기존 여행 추천의 선택적 `travel_profile` 계약 구현
+- [x] 직접 입력 우선 soft preference 병합
+- [x] API 및 계약 테스트 작성
+- [ ] 활동 원본 ID가 연결된 구조화 근거 계약
+- [ ] 실제 BE·LLM·인증 설정을 사용한 최종 E2E
 
 ## 테스트 조건
 
