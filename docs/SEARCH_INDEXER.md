@@ -40,7 +40,9 @@ Indexer는 Debezium의 schema 미포함 JSON과 `payload` wrapper가 있는 JSON
 
 자식 테이블의 DELETE는 장소 자체의 삭제가 아니다. 따라서 ES 문서를 지우지 않고 RDB에 남은 최신 데이터를 다시 조립한다. INSERT, UPDATE, snapshot read도 동일하게 최신 aggregate를 조회해 upsert한다. aggregate가 이미 사라졌다면 오래된 ES 문서를 삭제한다.
 
-정상 처리된 레코드만 offset commit 대상이 된다. 처리 실패 시 retry topic에서 기본 3회까지 재시도하고, 마지막 실패 이벤트는 원본 topic 이름 뒤에 `.DLT`가 붙은 topic으로 이동한다.
+정상 처리된 레코드만 offset commit 대상이 된다. ES 장애 같은 일시 오류는 지수 backoff(1초, 2초, 4초, 8초, 16초, 최대 30초)로 최대 약 1분 동안 7회 시도하고, 파싱 오류처럼 재시도해도 의미가 없는 `IllegalArgumentException`은 즉시 DLT로 보낸다.
+
+DLT에는 원본 payload를 재생용으로 저장하지 않는다. 유효한 이벤트에서 `domain`과 `placeId`만 `search_index_dlt_events`에 unique하게 기록한다. 30초 주기의 recovery scheduler가 현재 PostgreSQL aggregate를 다시 읽어 Elasticsearch에 upsert/delete하므로, 장애 중 같은 row가 여러 번 바뀌어도 최신 DB 값만 반영된다. 성공하면 pending DLT 레코드를 삭제한다.
 
 `SearchIndexerKafkaConfiguration`은 Indexer가 활성화된 경우에만 Kafka listener 인프라를 생성한다. Spring Kafka 4 환경에서 retry topic이 실제로 동작하도록 `@EnableKafkaRetryTopic`, 문자열 producer `KafkaTemplate`, record ack 기반 consumer/listener factory를 명시적으로 구성한다.
 
@@ -53,7 +55,8 @@ SEARCH_ENGINE=elasticsearch
 SEARCH_INDEXER_ENABLED=true
 KAFKA_BOOTSTRAP_SERVERS=localhost:29092
 SEARCH_INDEXER_GROUP_ID=gangwon-search-indexer
-SEARCH_INDEXER_RETRY_ATTEMPTS=3
+SEARCH_INDEXER_RETRY_ATTEMPTS=7
+SEARCH_INDEXER_DLT_RECOVERY_INTERVAL=30000
 ```
 
 Docker 네트워크 안에서 애플리케이션을 실행하면 bootstrap server는 `kafka:9092`를 사용한다.

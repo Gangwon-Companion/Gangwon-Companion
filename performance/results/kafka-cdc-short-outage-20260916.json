@@ -1,0 +1,14 @@
+﻿{
+    "measuredAt":  "2026-09-16T09:57:50.1267772+09:00",
+    "restaurantId":  64,
+    "baselineRating":  0,
+    "testRating":  0.01,
+    "outageSeconds":  20,
+    "esStoppedAt":  "2026-09-16T09:56:40.8252109+09:00",
+    "cdcUpdateAt":  "2026-09-16T09:56:41.0124318+09:00",
+    "esHealthyAt":  "2026-09-16T09:57:01.4932744+09:00",
+    "reflectedAt":  "2026-09-16T09:57:49.7071348+09:00",
+    "reflectedAfterRecovery":  true,
+    "recoveryToReflectionMs":  48213.9,
+    "totalCdcRecoveryMs":  68694.7
+}
