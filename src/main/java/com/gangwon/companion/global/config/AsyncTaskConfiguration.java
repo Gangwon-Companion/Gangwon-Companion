@@ -18,4 +18,15 @@ public class AsyncTaskConfiguration {
         executor.initialize();
         return executor;
     }
+
+    @Bean(name = "travelProfileAnalysisExecutor")
+    public Executor travelProfileAnalysisExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(4);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("travel-profile-analysis-");
+        executor.initialize();
+        return executor;
+    }
 }

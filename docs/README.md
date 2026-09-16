@@ -1,5 +1,12 @@
 # 프로젝트 작업 문서
 
+## AI 여행 취향 프로필
+
+- [통합 구현 및 E2E 체크리스트](AI_TRAVEL_PROFILE_INTEGRATION.md): BE·AI·FE 공통 계약, 갱신 정책, 추천 개인화와 남은 검증
+- [BE 구현 명세](AI_TRAVEL_PROFILE_BE.md): 활동 수집, 비동기 분석 Job, 저장·만료 및 추천 주입
+- [AI 구현 명세](AI_TRAVEL_PROFILE_AI.md): LLM-first 분석, 검증과 결정론적 fallback
+- [FE 구현 명세](AI_TRAVEL_PROFILE_FE.md): 마이페이지 카드, 상태별 UI와 Polling
+
 ## 코스추천 및 관광 데이터
 
 - [여행 코스추천 E2E 현황](course-recommendation-e2e-status.md): 완료된 연결·검증 결과, 재현 방법, 실패 원인, 남은 작업

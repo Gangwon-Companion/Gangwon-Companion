@@ -7,12 +7,16 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 public interface RestaurantReviewRepository extends JpaRepository<RestaurantReview, Long> {
 
     List<RestaurantReview> findByRestaurantId(Long restaurantId);
 
     List<RestaurantReview> findAllByUserUsername(String username);
+    @EntityGraph(attributePaths = "restaurant")
+    List<RestaurantReview> findByUserUsernameOrderByCreatedAtDesc(String username, Pageable pageable);
 
     Optional<RestaurantReview> findByIdAndRestaurantId(Long id, Long restaurantId);
 

@@ -29,8 +29,8 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/recommendations")
-    public JsonNode recommend(@Valid @RequestBody CourseRecommendationRequest request) {
-        return recommendationService.recommend(request);
+    public JsonNode recommend(@Valid @RequestBody CourseRecommendationRequest request, Authentication authentication) {
+        return recommendationService.recommend(request, authentication.getName());
     }
 
     @PostMapping("/recommendations/jobs")

@@ -74,6 +74,15 @@ ai:
   base-url: ${AI_SERVER_URL:http://localhost:8000}
   connect-timeout: ${AI_CONNECT_TIMEOUT:2s}
   read-timeout: ${AI_READ_TIMEOUT:30s}
+  internal-api-key: ${AI_INTERNAL_API_KEY:}
+
+travel-profile:
+  analysis:
+    current-version: ${TRAVEL_PROFILE_ANALYSIS_VERSION:travel-profile-llm-v1}
+    completed-ttl: ${TRAVEL_PROFILE_COMPLETED_TTL:7d}
+    jobs:
+      retention: ${TRAVEL_PROFILE_ANALYSIS_JOB_RETENTION:24h}
+      cleanup-interval: ${TRAVEL_PROFILE_ANALYSIS_JOB_CLEANUP_INTERVAL:3600000}
 
 aws:
   region: ${AWS_REGION:ap-northeast-2}
