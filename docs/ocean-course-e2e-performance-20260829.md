@@ -81,6 +81,21 @@
 | 관측 지연 | 521.6ms |
 | DB·ES 원복 | 성공 |
 
+### ES 장애 복구 검증 (2026-09-16)
+
+재시도 정책을 7회 지수 backoff(약 1분)로 늘리고, DLT에는 payload가 아닌 `domain + placeId`만 DB에 기록하도록 변경했다. 복구 scheduler는 현재 PostgreSQL aggregate를 다시 읽어 ES에 반영한다.
+
+| 항목 | 결과 |
+|---|---|
+| 짧은 장애 | 20초 장애 후 retry만으로 반영, DLT 미발생 |
+| 긴 장애 | 120초 장애 후 DLT DB 기록 및 scheduler 재색인 성공 |
+| 긴 장애 반영 | ES 복구 후 34.8초, 전체 155.3초 |
+| 동일 row 2회 UPDATE | `0 → 0.01 → 0.02`, 최종 ES 값 `0.02` |
+| pending DLT 레코드 | scheduler 처리 후 0건 |
+| DB·ES 원복 | 성공 |
+
+실행 스크립트: [measure-cdc-outage-recovery.ps1](../scripts/measure-cdc-outage-recovery.ps1)
+
 원본: [kafka-cdc-es-20260829.json](../performance/results/kafka-cdc-es-20260829.json)
 
 ## 이번에 확인된 남은 과제

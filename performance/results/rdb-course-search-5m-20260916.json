@@ -1,0 +1,13 @@
+{
+  "runId": "rdb-course-search-5m-20260916",
+  "generatedAt": "2026-09-16T00:12:39.486Z",
+  "workload": "2-night/3-day ocean course candidate search only",
+  "peakVus": 20,
+  "p95Ms": 99.34496714999999,
+  "p99Ms": 148.53216880000014,
+  "requests": 35072,
+  "throughputRps": 116.87864826269927,
+  "errorRate": 0,
+  "checkRate": 1,
+  "durationMs": 300071.916653
+}

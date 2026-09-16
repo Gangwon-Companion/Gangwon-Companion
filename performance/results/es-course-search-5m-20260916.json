@@ -1,0 +1,13 @@
+{
+  "runId": "es-course-search-5m-20260916",
+  "generatedAt": "2026-09-16T00:00:28.867Z",
+  "workload": "2-night/3-day ocean course candidate search only",
+  "peakVus": 20,
+  "p95Ms": 18.21609719999998,
+  "p99Ms": 26.57929383999999,
+  "requests": 42005,
+  "throughputRps": 140.01954813501524,
+  "errorRate": 0,
+  "checkRate": 1,
+  "durationMs": 299993.826287
+}
