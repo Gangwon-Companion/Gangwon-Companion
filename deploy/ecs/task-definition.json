@@ -1,0 +1,221 @@
+{
+  "family": "gangwon-v2-app",
+  "taskRoleArn": "arn:aws:iam::312743357029:role/gangwon-v2-ecs-task-role",
+  "executionRoleArn": "arn:aws:iam::312743357029:role/gangwon-v2-ecs-execution-role",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "1024",
+  "memory": "2048",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "312743357029.dkr.ecr.ap-northeast-2.amazonaws.com/gangwon-v2-be:bootstrap",
+      "essential": true,
+      "cpu": 512,
+      "memoryReservation": 1024,
+      "portMappings": [
+        {
+          "name": "backend-8080-tcp",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "prod"
+        },
+        {
+          "name": "SPRING_DATASOURCE_URL",
+          "value": "jdbc:postgresql://gangwon-v2-db.ct4sygua48gk.ap-northeast-2.rds.amazonaws.com:5432/gangwon"
+        },
+        {
+          "name": "SPRING_DATASOURCE_USERNAME",
+          "value": "gangwon_admin"
+        },
+        {
+          "name": "SPRING_JPA_HIBERNATE_DDL_AUTO",
+          "value": "update"
+        },
+        {
+          "name": "SPRING_JPA_SHOW_SQL",
+          "value": "false"
+        },
+        {
+          "name": "SEARCH_ENGINE",
+          "value": "elasticsearch"
+        },
+        {
+          "name": "SEARCH_INDEXER_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "SEARCH_EMBEDDING_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "KAFKA_BOOTSTRAP_SERVERS",
+          "value": "10.20.15.185:29092"
+        },
+        {
+          "name": "ELASTICSEARCH_URL",
+          "value": "http://10.20.15.185:9200"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "ap-northeast-2"
+        },
+        {
+          "name": "AWS_S3_BUCKET",
+          "value": "gangwon-v2-community-312743357029"
+        },
+        {
+          "name": "AI_SERVER_URL",
+          "value": "http://localhost:8000"
+        },
+        {
+          "name": "CAPTCHA_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "CORS_ALLOWED_ORIGIN_PATTERNS",
+          "value": "https://*.amplifyapp.com,http://localhost:*"
+        },
+        {
+          "name": "DESTINATION_SYNC_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "DESTINATION_DETAIL_SYNC_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "ACTIVITY_SYNC_ENABLED",
+          "value": "true"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "SPRING_DATASOURCE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:SPRING_DATASOURCE_PASSWORD::"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:JWT_SECRET::"
+        },
+        {
+          "name": "PERSONAL_DATA_ENCRYPTION_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:PERSONAL_DATA_ENCRYPTION_KEY::"
+        },
+        {
+          "name": "TOUR_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:TOUR_API_KEY::"
+        },
+        {
+          "name": "AI_INTERNAL_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:AI_INTERNAL_API_KEY::"
+        },
+        {
+          "name": "ELASTICSEARCH_REINDEX_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:ELASTICSEARCH_REINDEX_KEY::"
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "wget -q -O /dev/null http://localhost:8080/actuator/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 120
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/gangwon-v2",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "backend"
+        }
+      }
+    },
+    {
+      "name": "ai",
+      "image": "312743357029.dkr.ecr.ap-northeast-2.amazonaws.com/gangwon-v2-ai:bootstrap",
+      "essential": true,
+      "cpu": 512,
+      "memoryReservation": 512,
+      "portMappings": [
+        {
+          "name": "ai-8000-tcp",
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        {
+          "name": "GANGWON_BE_BASE_URL",
+          "value": "http://localhost:8080"
+        },
+        {
+          "name": "GANGWON_RESPONSE_LLM_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "GANGWON_TRAVEL_PROFILE_LLM_ENABLED",
+          "value": "false"
+        },
+        {
+          "name": "OPENAI_BASE_URL",
+          "value": "https://api.openai.com"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "INTERNAL_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:AI_INTERNAL_API_KEY::"
+        }
+      ],
+      "healthCheck": {
+        "command": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 30
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/gangwon-v2",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ai"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "key": "Project",
+      "value": "gangwon-v2"
+    },
+    {
+      "key": "Environment",
+      "value": "prod"
+    }
+  ]
+}
