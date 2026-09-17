@@ -105,27 +105,27 @@
       "secrets": [
         {
           "name": "SPRING_DATASOURCE_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:SPRING_DATASOURCE_PASSWORD::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:SPRING_DATASOURCE_PASSWORD::"
         },
         {
           "name": "JWT_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:JWT_SECRET::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:JWT_SECRET::"
         },
         {
           "name": "PERSONAL_DATA_ENCRYPTION_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:PERSONAL_DATA_ENCRYPTION_KEY::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:PERSONAL_DATA_ENCRYPTION_KEY::"
         },
         {
           "name": "TOUR_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:TOUR_API_KEY::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:TOUR_API_KEY::"
         },
         {
           "name": "AI_INTERNAL_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:AI_INTERNAL_API_KEY::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:AI_INTERNAL_API_KEY::"
         },
         {
           "name": "ELASTICSEARCH_REINDEX_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:ELASTICSEARCH_REINDEX_KEY::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:ELASTICSEARCH_REINDEX_KEY::"
         }
       ],
       "healthCheck": {
@@ -183,7 +183,7 @@
       "secrets": [
         {
           "name": "INTERNAL_API_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuldOu:AI_INTERNAL_API_KEY::"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:312743357029:secret:gangwon-v2/application-fuIdOu:AI_INTERNAL_API_KEY::"
         }
       ],
       "healthCheck": {
