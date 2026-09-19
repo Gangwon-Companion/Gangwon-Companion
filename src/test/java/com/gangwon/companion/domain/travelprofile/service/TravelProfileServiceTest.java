@@ -28,7 +28,6 @@ class TravelProfileServiceTest {
     @BeforeEach
     void setUp() {
         service = new TravelProfileService(repository, userRepository);
-        ReflectionTestUtils.setField(service, "currentVersion", "travel-profile-llm-v1");
         ReflectionTestUtils.setField(service, "completedTtl", Duration.ofDays(7));
     }
 
@@ -37,15 +36,15 @@ class TravelProfileServiceTest {
         given(repository.findByUserUsername("owner")).willReturn(Optional.of(profile));
         given(profile.getStatus()).willReturn(TravelProfile.ProfileStatus.COMPLETED);
         given(profile.getAnalyzedAt()).willReturn(Instant.now().minus(Duration.ofDays(1)));
-        given(profile.getAnalysisVersion()).willReturn("travel-profile-llm-v1");
-        given(profile.getTravelerType()).willReturn(TravelProfile.TravelerType.NATURE_HEALING);
+        given(profile.getAnalysisVersion()).willReturn("travel-type-16-v1");
+        given(profile.getTravelerType()).willReturn(TravelProfile.TravelerType.NRPH);
         given(profile.getTags()).willReturn(List.of("자연", "산책"));
         given(profile.getConfidence()).willReturn(0.82);
 
         var context = service.findUsableContext("owner");
 
         assertThat(context).isPresent();
-        assertThat(context.orElseThrow().travelerType()).isEqualTo("NATURE_HEALING");
+        assertThat(context.orElseThrow().travelerType()).isEqualTo("NRPH");
     }
 
     @Test
@@ -55,5 +54,13 @@ class TravelProfileServiceTest {
         given(profile.getAnalyzedAt()).willReturn(Instant.now().minus(Duration.ofDays(8)));
 
         assertThat(service.findUsableContext("owner")).isEmpty();
+    }
+
+    @Test
+    void exposesOldVersionAsNotAnalyzedSoItCanBeReanalyzed() {
+        given(repository.findByUserUsername("owner")).willReturn(Optional.of(profile));
+        given(profile.getAnalysisVersion()).willReturn("travel-profile-llm-v1");
+
+        assertThat(service.get("owner").status()).isEqualTo("NOT_ANALYZED");
     }
 }

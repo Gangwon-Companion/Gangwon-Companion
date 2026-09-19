@@ -33,6 +33,14 @@ public class TravelProfile {
     @OrderColumn(name = "evidence_order") @Column(name = "evidence", nullable = false, length = 200)
     private List<String> evidences = new ArrayList<>();
     private Double confidence;
+    private Integer spaceCityScore;
+    private Integer spaceNatureScore;
+    private Integer activityActiveScore;
+    private Integer activityRestScore;
+    private Integer schedulePlannedScore;
+    private Integer scheduleSpontaneousScore;
+    private Integer placeFamousScore;
+    private Integer placeHiddenScore;
     @Column(length = 50) private String analysisVersion;
     private Instant analyzedAt;
     @Column(nullable = false, updatable = false) private Instant createdAt;
@@ -55,11 +63,31 @@ public class TravelProfile {
         tags.clear(); tags.addAll(response.tags());
         evidences.clear(); evidences.addAll(response.evidences());
         confidence = response.confidence();
+        var scores = response.axisScores();
+        if (scores == null) {
+            spaceCityScore = spaceNatureScore = activityActiveScore = activityRestScore = null;
+            schedulePlannedScore = scheduleSpontaneousScore = placeFamousScore = placeHiddenScore = null;
+        } else {
+            spaceCityScore = scores.space().get("C");
+            spaceNatureScore = scores.space().get("N");
+            activityActiveScore = scores.activity().get("A");
+            activityRestScore = scores.activity().get("R");
+            schedulePlannedScore = scores.schedule().get("P");
+            scheduleSpontaneousScore = scores.schedule().get("S");
+            placeFamousScore = scores.place().get("F");
+            placeHiddenScore = scores.place().get("H");
+        }
         analysisVersion = response.analysisVersion();
         analyzedAt = Instant.now();
         updatedAt = analyzedAt;
     }
 
     public enum ProfileStatus { NOT_ANALYZED, COMPLETED, INSUFFICIENT_DATA }
-    public enum TravelerType { NATURE_HEALING, PET_COMPANION, LOCAL_FOOD_EXPLORER, ACTIVITY_ADVENTURE, CULTURE_EXPLORER, BALANCED_TRAVELER }
+    public enum TravelerType {
+        CAPF, CAPH, CASF, CASH, CRPF, CRPH, CRSF, CRSH,
+        NAPF, NAPH, NASF, NASH, NRPF, NRPH, NRSF, NRSH,
+        // Read-only compatibility for profiles stored before travel-type-16-v1.
+        NATURE_HEALING, PET_COMPANION, LOCAL_FOOD_EXPLORER,
+        ACTIVITY_ADVENTURE, CULTURE_EXPLORER, BALANCED_TRAVELER
+    }
 }

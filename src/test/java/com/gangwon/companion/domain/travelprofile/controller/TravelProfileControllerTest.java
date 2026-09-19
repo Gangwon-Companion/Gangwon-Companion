@@ -24,7 +24,9 @@ class TravelProfileControllerTest {
 
     @Test void returnsNotAnalyzedProfile() {
         given(profileService.get("owner")).willReturn(TravelProfileResponse.notAnalyzed());
-        assertThat(controller.get(auth).status()).isEqualTo("NOT_ANALYZED");
+        var response = controller.get(auth);
+        assertThat(response.getBody().status()).isEqualTo("NOT_ANALYZED");
+        assertThat(response.getHeaders().getCacheControl()).isEqualTo("no-store");
     }
 
     @Test void submitsAnalysisJobWithAcceptedStatus() {
