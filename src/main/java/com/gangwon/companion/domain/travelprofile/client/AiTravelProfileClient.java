@@ -58,7 +58,9 @@ public class AiTravelProfileClient {
         if (r.tags().size() > 5 || r.evidences().size() > 3 || r.tags().stream().anyMatch(v -> invalidLength(v, 30))
             || r.evidences().stream().anyMatch(v -> invalidLength(v, 200))) invalid();
         if (r.status() == AiTravelProfileResponse.Status.COMPLETED && (r.travelerType() == null || invalidLength(r.title(), 100)
-            || invalidLength(r.description(), 500) || r.confidence() == null || r.confidence() < 0 || r.confidence() > 1)) invalid();
+            || invalidLength(r.description(), 500) || r.confidence() == null || r.confidence() < 0 || r.confidence() > 1
+            || r.axisScores() == null)) invalid();
+        if (r.axisScores() != null) try { r.axisScores().validate(); } catch (IllegalArgumentException e) { invalid(); }
     }
     private static boolean invalidLength(String v, int max) { return v == null || v.isBlank() || v.length() > max; }
     private static void invalid() { throw new AiTravelClientException(AI_INVALID_RESPONSE, null); }
