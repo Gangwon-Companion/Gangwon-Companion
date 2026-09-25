@@ -137,6 +137,8 @@ erDiagram
 
 `COURSE_PLACE.place_id`는 `place_type`에 따라 관광지·음식점·숙소를 가리키는 다형성 참조이며, 각 장소 테이블과 직접적인 외래 키를 맺지 않습니다.
 
+상세한 테이블 관계와 데이터 저장 원칙은 [상세 ERD](docs/DATABASE_ERD.md)에서 확인할 수 있습니다.
+
 ## 실행 방법
 
 ```powershell
