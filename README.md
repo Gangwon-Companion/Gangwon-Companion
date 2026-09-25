@@ -55,22 +55,87 @@ Gangwon Companion은 공공 관광 API와 내부 데이터를 통합하고, 여�
 | 저장소 | 역할 | 링크 |
 | --- | --- | --- |
 | Gangwon-Companion | 강원도 여행 플랫폼 백엔드 API 및 핵심 서비스 | [Repository](https://github.com/Gangwon-Companion/Gangwon-Companion) |
-| Frontend | 여행지 탐색 및 사용자 화면 | Repository |
-| AI Server | AI 여행 코스 추천 및 임베딩 서비스 | Repository |
+| Frontend | 여행지 탐색 및 사용자 화면 | [Repository](https://github.com/Gangwon-Companion/Gangwon-FE) |
+| AI Server | AI 여행 코스 추천 및 임베딩 서비스 | [Repository](https://github.com/Gangwon-Companion/Gangwon-AI) |
 
 ## 시스템 구성
 
-```text
-한국관광공사 API · 혼잡도 API
-              ↓
-       데이터 동기화 Scheduler
-              ↓
-          PostgreSQL
-        ↙           ↘
-   RDB 검색     Debezium → Kafka → Elasticsearch
-                                  ↓
-                         통합 장소 검색 / RAG
+```mermaid
+flowchart LR
+    FE[Frontend] --> BE[Backend API<br/>Spring Boot]
+
+    BE --> DB[(PostgreSQL)]
+    BE --> ES[(Elasticsearch<br/>통합 장소 검색)]
+    BE --> AI[AI Server<br/>추천 · RAG]
+
+    TOUR[한국관광공사 API<br/>혼잡도 API] --> SYNC[데이터 동기화 Scheduler]
+    SYNC --> DB
+
+    DB --> CDC[Debezium CDC]
+    CDC --> KAFKA[Kafka]
+    KAFKA --> INDEXER[Search Indexer]
+    INDEXER --> ES
 ```
+
+### 대표 ERD
+
+```mermaid
+erDiagram
+    USER ||--o| TRAVEL_PROFILE : has
+    USER ||--o{ DESTINATION_REVIEW : writes
+    DESTINATION ||--o{ DESTINATION_REVIEW : receives
+    USER ||--o{ SAVED_COURSE : saves
+    SAVED_COURSE ||--o{ COURSE_PLACE : contains
+
+    USER {
+        bigint id PK
+        string username UK
+        string email UK
+        string nickname UK
+    }
+
+    TRAVEL_PROFILE {
+        bigint id PK
+        bigint user_id FK
+        string status
+        string traveler_type
+        double confidence
+    }
+
+    DESTINATION {
+        bigint id PK
+        bigint theme_id FK
+        string title
+        string address
+        double rating
+        bigint review_count
+    }
+
+    DESTINATION_REVIEW {
+        bigint id PK
+        bigint destination_id FK
+        bigint user_id FK
+        double rating
+        text content
+    }
+
+    SAVED_COURSE {
+        bigint id PK
+        bigint user_id FK
+        string name
+    }
+
+    COURSE_PLACE {
+        bigint id PK
+        bigint course_id FK
+        string place_type
+        bigint place_id
+        int visit_order
+        int travel_day
+    }
+```
+
+`COURSE_PLACE.place_id`는 `place_type`에 따라 관광지·음식점·숙소를 가리키는 다형성 참조이며, 각 장소 테이블과 직접적인 외래 키를 맺지 않습니다.
 
 ## 실행 방법
 
