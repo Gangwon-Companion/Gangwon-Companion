@@ -58,7 +58,7 @@ erDiagram
 
     TRAVEL_PROFILE {
         bigint id PK
-        bigint user_id FK UK
+        bigint user_id FK
         string status
         string traveler_type
         double confidence
