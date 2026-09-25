@@ -149,7 +149,7 @@ rating/price 데이터 분포 확인 완료
 상세 문서:
 
 ```text
-docs/SEARCH_DOCUMENT_ENHANCEMENT.md
+docs/design/SEARCH_DOCUMENT_ENHANCEMENT.md
 ```
 
 ### A-2. CDC/Kafka 앞단 구축
@@ -163,7 +163,7 @@ docs/SEARCH_DOCUMENT_ENHANCEMENT.md
 - `compose.yaml`
 - `.env.example`
 - Debezium connector 설정 문서 또는 스크립트
-- `docs/SEARCH_ELASTICSEARCH.md`
+- `docs/design/SEARCH_ELASTICSEARCH.md`
 
 작업 내용:
 
@@ -193,7 +193,7 @@ snapshot read, insert, update, delete 이벤트 검증 완료
 상세 문서:
 
 ```text
-docs/SEARCH_CDC_KAFKA_PIPELINE.md
+docs/design/SEARCH_CDC_KAFKA_PIPELINE.md
 ```
 
 1차 범위 추천:
@@ -236,7 +236,7 @@ lodging_reviews
 - RDB/ES의 `false 제외, null 유지` hard filter 정책 통일
 - field boost, 평점 및 거리 기반 `function_score`, 0건 fallback 구현
 - Docker 통합 환경에서 CDC INSERT → ES upsert 및 CDC DELETE → ES delete 검증 완료
-- 상세 설계와 실행 방법: [`SEARCH_INDEXER.md`](SEARCH_INDEXER.md)
+- 상세 설계와 실행 방법: [`SEARCH_INDEXER.md`](../design/SEARCH_INDEXER.md)
 
 ### B-1. 검색 쿼리/랭킹 개선
 

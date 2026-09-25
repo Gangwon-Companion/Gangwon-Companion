@@ -63,7 +63,7 @@
 | 요청 수 | 5,379 | 6,745 | +25.40% |
 
 스크립트: [course-search-load.js](../performance/k6/course-search-load.js)  
-원본: [RDB 결과](../performance/results/rdb-course-search-valid-20260829.json), [ES 결과](../performance/results/es-course-search-valid-20260829.json), [비교표](../performance/results/course-search-rdb-vs-es-20260829.md)
+원본: [RDB 결과](../../performance/results/rdb-course-search-valid-20260829.json), [ES 결과](../../performance/results/es-course-search-valid-20260829.json), [비교표](../../performance/results/course-search-rdb-vs-es-20260829.md)
 
 이 수치는 현재 로컬 Docker 데이터와 50초 부하의 결과다. 장기 soak test, 여러 회 반복의 중앙값, 서버 자원 제한을 고정한 CI 기준값은 별도로 필요하다.
 

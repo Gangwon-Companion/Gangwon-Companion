@@ -30,12 +30,12 @@
 `SEARCH_ENGINE=elasticsearch`, `SEARCH_INDEXER_ENABLED=true`로 재기동한 뒤 같은
 코스추천 E2E를 `READY`로 통과시키는 것이다.
 
-최신 E2E 상세와 남은 작업은 [여행 코스추천 E2E 현황](course-recommendation-e2e-status.md)을
+최신 E2E 상세와 남은 작업은 [여행 코스추천 E2E 현황](../reports/course-recommendation-e2e-status.md)을
 기준 문서로 사용한다.
 
 현재까지 구현한 수동 데이터 동기화 API, Elasticsearch 검색, CDC 증분 색인 및 로컬 통합 테스트 환경을 기준으로 남은 작업을 정리한다.
 
-실행 및 장애 대응 절차는 [로컬 데이터 동기화 및 검색 통합 테스트 문제해결](LOCAL_DATA_SYNC_AND_SEARCH_TROUBLESHOOTING.md)을 참고한다.
+실행 및 장애 대응 절차는 [로컬 데이터 동기화 및 검색 통합 테스트 문제해결](../operations/LOCAL_DATA_SYNC_AND_SEARCH_TROUBLESHOOTING.md)을 참고한다.
 
 ## 1. 최우선: AI evidence 계약 확정
 

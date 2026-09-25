@@ -2,7 +2,7 @@
 
 빈 PostgreSQL에서 관광 데이터를 수집하고 Elasticsearch를 초기화한 뒤 AI 여행 일정 E2E 테스트까지 실행하는 절차와 실제로 확인된 오류를 정리한다.
 
-남은 구현 과제와 우선순위는 [검색·AI 통합 후속 작업](SEARCH_INTEGRATION_NEXT_STEPS.md)을 참고한다.
+남은 구현 과제와 우선순위는 [검색·AI 통합 후속 작업](../plans/SEARCH_INTEGRATION_NEXT_STEPS.md)을 참고한다.
 
 ## 1. 전체 구조
 

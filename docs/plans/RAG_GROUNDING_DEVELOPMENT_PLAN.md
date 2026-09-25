@@ -29,9 +29,9 @@ PostgreSQL의 실제 장소 정보를 근거로 여행 코스를 제공하는 �
 
 관련 자료:
 
-- [코스추천 E2E 현황](course-recommendation-e2e-status.md)
-- [Elasticsearch 장소 검색](SEARCH_ELASTICSEARCH.md)
-- [검색 CDC 파이프라인](SEARCH_CDC_KAFKA_PIPELINE.md)
+- [코스추천 E2E 현황](../reports/course-recommendation-e2e-status.md)
+- [Elasticsearch 장소 검색](../design/SEARCH_ELASTICSEARCH.md)
+- [검색 CDC 파이프라인](../design/SEARCH_CDC_KAFKA_PIPELINE.md)
 - Spring 코드: `domain/course/client/AiTravelClient.java`, `domain/search/elasticsearch/ElasticsearchIndexService.java`
 - AI 코드: `app/agents/itinerary.py`, `app/tools/itinerary_optimizer.py`, `app/validators/hard_validator.py`, `app/agents/response.py`, `app/agents/response_llm.py`
 
