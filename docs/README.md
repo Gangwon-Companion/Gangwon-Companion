@@ -11,6 +11,7 @@
 
 - [여행 코스추천 E2E 현황](reports/course-recommendation-e2e-status.md): 완료된 연결·검증 결과, 재현 방법, 실패 원인, 남은 작업
 - [티맵 기반 인기 관광지·핫플레이스 설계](design/tmap-tourism-rankings.md): 인기 관광지와 핫플레이스 산식, 데이터 모델 및 API 제안
+- [상세 ERD](DATABASE_ERD.md): 테이블 관계와 데이터 저장 원칙
 
 ## 검색 및 Elasticsearch
 
