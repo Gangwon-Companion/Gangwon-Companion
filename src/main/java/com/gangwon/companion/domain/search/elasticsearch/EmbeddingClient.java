@@ -56,4 +56,8 @@ public class EmbeddingClient {
             throw new IllegalStateException("embedding_unavailable", exception);
         }
     }
+
+    public boolean enabled() {
+        return properties.isEnabled();
+    }
 }

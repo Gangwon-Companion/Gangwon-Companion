@@ -57,23 +57,26 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
     private final ElasticsearchHttpClient client;
     private final ElasticsearchProperties properties;
     private final ObjectMapper objectMapper;
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private EmbeddingClient embeddingClient;
 
     @Override
     public PlaceSearchResponse search(PlaceSearchRequest request) {
         boolean strictRequiredPolicy = hasRequiredPolicy(request);
+        List<Double> queryVector = queryVector(request);
         JsonNode response = client.post("/" + properties.getAlias() + "/_search",
-                searchBody(request, false, false, strictRequiredPolicy));
+                searchBody(request, false, false, strictRequiredPolicy, queryVector));
         if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
             response = client.post("/" + properties.getAlias() + "/_search",
-                    searchBody(request, true, false, strictRequiredPolicy));
+                    searchBody(request, true, false, strictRequiredPolicy, queryVector));
         }
         if (!request.queryText().isBlank() && response.path("hits").path("hits").isEmpty()) {
             response = client.post("/" + properties.getAlias() + "/_search",
-                    searchBody(request, true, true, strictRequiredPolicy));
+                    searchBody(request, true, true, strictRequiredPolicy, queryVector));
         }
         if (strictRequiredPolicy && response.path("hits").path("hits").isEmpty()) {
             response = client.post("/" + properties.getAlias() + "/_search",
-                    searchBody(request, true, true, false));
+                    searchBody(request, true, true, false, queryVector));
         }
         List<PlaceSearchResponse.Candidate> candidates = new ArrayList<>();
         for (JsonNode hit : response.path("hits").path("hits")) candidates.add(candidate(hit, request));
@@ -89,12 +92,12 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
     }
 
     private Map<String, Object> searchBody(PlaceSearchRequest request, boolean relaxed, boolean filterOnly,
-                                           boolean strictRequiredPolicy) {
+                                           boolean strictRequiredPolicy, List<Double> queryVector) {
         Map<String, Object> bool = boolQuery(request, relaxed, filterOnly, true, true, true, true, strictRequiredPolicy);
         int fetchSize = Math.min(500, Math.max(50, request.limit() * 10));
         Map<String, Object> functionScore = new LinkedHashMap<>();
         functionScore.put("query", Map.of("bool", bool));
-        functionScore.put("functions", rankingFunctions(request));
+        functionScore.put("functions", rankingFunctions(request, queryVector));
         functionScore.put("score_mode", "sum");
         functionScore.put("boost_mode", "sum");
         return Map.of("size", fetchSize, "track_scores", true, "track_total_hits", true,
@@ -169,7 +172,7 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
         }
     }
 
-    private List<Object> rankingFunctions(PlaceSearchRequest request) {
+    private List<Object> rankingFunctions(PlaceSearchRequest request, List<Double> queryVector) {
         List<Object> functions = new ArrayList<>();
         functions.add(Map.of("field_value_factor", Map.of(
                 "field", "rating", "factor", 0.2, "modifier", "sqrt", "missing", 0)));
@@ -179,7 +182,28 @@ public class ElasticsearchPlaceSearchEngine implements PlaceSearchEngine {
                     "scale", Math.max(1.0, request.geo().radiusKm() / 2.0) + "km", "decay", 0.5)),
                     "weight", 0.5));
         }
+        if (queryVector != null && !queryVector.isEmpty()) {
+            functions.add(Map.of(
+                    "filter", Map.of("exists", Map.of("field", "embedding")),
+                    "script_score", Map.of("script", Map.of(
+                            "source", "cosineSimilarity(params.query_vector, 'embedding') + 1.0",
+                            "params", Map.of("query_vector", queryVector)))));
+        }
         return functions;
+    }
+
+    private List<Double> queryVector(PlaceSearchRequest request) {
+        if (request.queryText() == null || request.queryText().isBlank()
+                || embeddingClient == null || !embeddingClient.enabled()) {
+            return List.of();
+        }
+        try {
+            return embeddingClient.embed(request.queryText(), "query");
+        } catch (RuntimeException exception) {
+            log.warn("Embedding query unavailable; continuing with lexical search. reason={}",
+                    exception.getMessage());
+            return List.of();
+        }
     }
 
     private PlaceSearchResponse.Diagnostics diagnostics(PlaceSearchRequest request, List<PlaceSearchResponse.Candidate> results) {
